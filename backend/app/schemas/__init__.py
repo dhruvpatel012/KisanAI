@@ -1,0 +1,1 @@
+# KisanAI Schemas package
