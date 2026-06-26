@@ -48,3 +48,6 @@ Kisan_AI/
 ## Progress Log
 - **Day 1**: Initialized monorepo workspace. Set up React + Vite frontend scaffold with TailwindCSS v4 integration. Verified successful production build.
 - **Day 2**: Set up FastAPI backend, configured virtual environment, integrated async MongoDB Atlas connection with Motor, validated configurations using Pydantic Settings, and created the `/health` check and auto-documentation routes.
+- **Day 3**: Setup FastAPI password hashing with bcrypt, JSON Web Token (JWT) encoding/decoding utilities, Pydantic schemas, and MongoDB models. Built registration, login, and bearer auth endpoints, validating database creation and security protocols.
+- **Day 4**: Built the frontend authentication client. Integrated Axios with JWT request/response interceptors, created useAuth hook, and built Zod-validated Login and Registration forms with loading states and alert components. Verified redirect flows, validation, and JWT local storage.
+- **Day 5**: Standardized the KisanAI design system in `index.css` (Google Inter font, anti-glare cream background, agricultural green palettes). Created modular `Button`, `Card`, `Badge`, `BottomNav`, and `PageLayout` layout shells. Built the dynamic Dashboard, Scan upload page, and bilingual Profile pages with full mobile responsiveness (360px).
