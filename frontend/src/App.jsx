@@ -3,7 +3,9 @@ import LoginPage from "./features/auth/pages/LoginPage";
 import RegisterPage from "./features/auth/pages/RegisterPage";
 import DashboardPage from "./features/dashboard/DashboardPage";
 import ScanPage from "./features/scan/ScanPage";
+import HistoryPage from "./features/history/HistoryPage";
 import ProfilePage from "./features/profile/ProfilePage";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
@@ -14,10 +16,38 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         
         {/* Core app routes */}
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/scan" element={<ScanPage />} />
-        <Route path="/history" element={<DashboardPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/scan"
+          element={
+            <ProtectedRoute>
+              <ScanPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/history"
+          element={
+            <ProtectedRoute>
+              <HistoryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Fallbacks */}
         <Route path="/" element={<Navigate to="/login" replace />} />
