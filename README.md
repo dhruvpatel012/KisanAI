@@ -51,3 +51,28 @@ Kisan_AI/
 - **Day 3**: Setup FastAPI password hashing with bcrypt, JSON Web Token (JWT) encoding/decoding utilities, Pydantic schemas, and MongoDB models. Built registration, login, and bearer auth endpoints, validating database creation and security protocols.
 - **Day 4**: Built the frontend authentication client. Integrated Axios with JWT request/response interceptors, created useAuth hook, and built Zod-validated Login and Registration forms with loading states and alert components. Verified redirect flows, validation, and JWT local storage.
 - **Day 5**: Standardized the KisanAI design system in `index.css` (Google Inter font, anti-glare cream background, agricultural green palettes). Created modular `Button`, `Card`, `Badge`, `BottomNav`, and `PageLayout` layout shells. Built the dynamic Dashboard, Scan upload page, and bilingual Profile pages with full mobile responsiveness (360px).
+- **Day 6**: Built the backend image upload endpoint (`POST /upload`) supporting JWT verification, file size (5MB) and extension validation, UUID-renamed disk storage, and database metadata logging in MongoDB Atlas. Created the corresponding frontend `useImageUpload` hook with local preview creation and cleanup utilities.
+- **Day 7**: Developed `ImagePicker` and `ImagePreview` frontend components with conditional rendering, and built a dedicated `HistoryPage` displaying bilingual empty states. Integrated a `ProtectedRoute` component to secure all dashboard and profile pages. Completed end-to-end flow verification tests, cleaned up files, and updated `.env.example`.
+
+## Quick Start (Run Project Every Time)
+
+Open **two separate terminal windows** from the `Kisan_AI/` root directory:
+
+### Terminal 1: Start Backend API
+```powershell
+cd backend
+# Activate virtual environment:
+# (CMD): .\venv\Scripts\activate.bat
+# (PowerShell): .\venv\Scripts\Activate.ps1
+.\venv\Scripts\Activate.ps1
+
+# Run the server:
+uvicorn app.main:app --reload --port 8000
+```
+
+### Terminal 2: Start Frontend App
+```powershell
+cd frontend
+# Run the development server:
+npm run dev
+```
