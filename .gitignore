@@ -35,3 +35,8 @@ Thumbs.db
 # Local Databases
 backend/local_db/
 
+# Uploaded Images
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+

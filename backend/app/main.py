@@ -1,10 +1,12 @@
 import asyncio
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from app.database import ping_database, database
 from app.config import settings
-from app.routers import auth
+from app.routers import auth, upload
 
 async def monitor_database_connection():
     try:
@@ -20,6 +22,8 @@ async def monitor_database_connection():
 async def lifespan(app: FastAPI):
     print("Starting KisanAI API...")
     print("Connecting to MongoDB...")
+    # Ensure upload directory exists
+    os.makedirs(settings.upload_dir, exist_ok=True)
     await ping_database()
     print("MongoDB connected successfully!")
     print(f"Environment: {settings.environment}")
@@ -45,6 +49,10 @@ app = FastAPI(
 )
 
 app.include_router(auth.router)
+app.include_router(upload.router)
+
+# Mount the static uploads directory
+app.mount("/uploads", StaticFiles(directory=settings.upload_dir), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,
