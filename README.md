@@ -38,12 +38,13 @@ Kisan_AI/
    *Make sure to configure your `MONGODB_URL` inside the newly created `.env` file.*
 5. Start the API server:
    ```bash
-   uvicorn app.main:app --reload --port 8000
-   ```
+   uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ```
+    *(Note: Running without `--reload` avoids filesystem reload watcher conflicts in sandboxed environments).*
 6. Check endpoints:
-   - Health check: `http://localhost:8000/health`
-   - Swagger Docs: `http://localhost:8000/docs`
-   - ReDoc Docs: `http://localhost:8000/redoc`
+    - Health check: `http://localhost:8000/health`
+    - Swagger Docs: `http://localhost:8000/docs`
+    - ReDoc Docs: `http://localhost:8000/redoc`
 
 ## Progress Log
 - **Day 1**: Initialized monorepo workspace. Set up React + Vite frontend scaffold with TailwindCSS v4 integration. Verified successful production build.
@@ -53,6 +54,8 @@ Kisan_AI/
 - **Day 5**: Standardized the KisanAI design system in `index.css` (Google Inter font, anti-glare cream background, agricultural green palettes). Created modular `Button`, `Card`, `Badge`, `BottomNav`, and `PageLayout` layout shells. Built the dynamic Dashboard, Scan upload page, and bilingual Profile pages with full mobile responsiveness (360px).
 - **Day 6**: Built the backend image upload endpoint (`POST /upload`) supporting JWT verification, file size (5MB) and extension validation, UUID-renamed disk storage, and database metadata logging in MongoDB Atlas. Created the corresponding frontend `useImageUpload` hook with local preview creation and cleanup utilities.
 - **Day 7**: Developed `ImagePicker` and `ImagePreview` frontend components with conditional rendering, and built a dedicated `HistoryPage` displaying bilingual empty states. Integrated a `ProtectedRoute` component to secure all dashboard and profile pages. Completed end-to-end flow verification tests, cleaned up files, and updated `.env.example`.
+- **Day 8**: Integrated backend ML prediction service supporting live HuggingFace Space API and local mock predictions. Added JWT bearer verification and upload ownership checking on `POST /api/analyze`. Implemented frontend geolocation coordinates capturing (`useAnalyze` hook) and created pulsing scanner loader animations (`AnalyzingState`) with rotating crop health tips.
+- **Day 9**: Implemented `GET /api/scans/{scan_id}` backend scan details route with ownership validation. Created a fully styled visual results dashboard (`ResultPage`) incorporating SVGs for circular accuracy meters, risk severity badges, interactive Organic vs Chemical treatment tabs, soil advisories, and similar matches matched cards list.
 
 ## Quick Start (Run Project Every Time)
 
@@ -67,12 +70,13 @@ cd backend
 .\venv\Scripts\Activate.ps1
 
 # Run the server:
-uvicorn app.main:app --reload --port 8000
+.\venv\Scripts\uvicorn.exe app.main:app --host 0.0.0.0 --port 8000
 ```
 
 ### Terminal 2: Start Frontend App
 ```powershell
 cd frontend
-# Run the development server:
-npm run dev
+# Run the development server (allowing external access):
+npm run dev -- --host 0.0.0.0
 ```
+
