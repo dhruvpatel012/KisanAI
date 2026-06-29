@@ -140,3 +140,38 @@ async def analyze_crop(
         "status": "analyzed",
         "message": "Analysis complete"
     }
+
+@router.get("/scans/{scan_id}")
+async def get_scan_details(
+    scan_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    if not ObjectId.is_valid(scan_id):
+        raise HTTPException(status_code=400, detail="Invalid scan ID format")
+        
+    scan = await database["scans"].find_one({"_id": ObjectId(scan_id)})
+    if not scan:
+        raise HTTPException(status_code=404, detail="Scan not found")
+        
+    if scan.get("user_id") != current_user.get("user_id"):
+        raise HTTPException(status_code=403, detail="Forbidden: You do not own this scan")
+        
+    return {
+        "upload_id": str(scan["_id"]),
+        "status": scan.get("status"),
+        "crop": scan.get("crop"),
+        "disease": scan.get("disease"),
+        "confidence": scan.get("confidence"),
+        "severity": scan.get("severity"),
+        "is_healthy": scan.get("is_healthy"),
+        "treatment_steps": scan.get("treatment_steps", []),
+        "fertilizer": scan.get("fertilizer"),
+        "prevention": scan.get("prevention"),
+        "urgency": scan.get("urgency"),
+        "similar_diseases": scan.get("similar_diseases", []),
+        "disclaimer": scan.get("disclaimer"),
+        "message": scan.get("message") if scan.get("status") == "low_confidence" else "Analysis complete",
+        "image_url": f"/uploads/{scan.get('saved_filename')}",
+        "created_at": scan.get("created_at")
+    }
+
