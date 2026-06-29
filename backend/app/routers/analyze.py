@@ -48,7 +48,7 @@ async def analyze_crop(
         raise HTTPException(status_code=403, detail="Forbidden: You do not own this scan")
         
     # If already analyzed, return existing result
-    if scan.get("status") == "analyzed":
+    if scan.get("status") in ["analyzed", "low_confidence"]:
         return {
             "upload_id": upload_id,
             "disease": scan.get("disease"),
@@ -56,14 +56,14 @@ async def analyze_crop(
             "severity": scan.get("severity"),
             "is_healthy": scan.get("is_healthy"),
             "crop": scan.get("crop"),
-            "treatment_steps": scan.get("treatment_steps"),
+            "treatment_steps": scan.get("treatment_steps", []),
             "fertilizer": scan.get("fertilizer"),
             "prevention": scan.get("prevention"),
             "urgency": scan.get("urgency"),
-            "similar_diseases": scan.get("similar_diseases"),
+            "similar_diseases": scan.get("similar_diseases", []),
             "disclaimer": scan.get("disclaimer"),
-            "status": "analyzed",
-            "message": "Analysis complete"
+            "status": scan.get("status"),
+            "message": scan.get("message") if scan.get("status") == "low_confidence" else "Analysis complete"
         }
 
     # Verify image exists on disk
@@ -75,6 +75,34 @@ async def analyze_crop(
     ml_result = await predict_disease(file_path)
     
     # Update MongoDB scan record
+    if ml_result.get("status") == "low_confidence":
+        update_data = {
+            "status": "low_confidence",
+            "confidence": ml_result.get("confidence"),
+            "message": ml_result.get("message"),
+            "analyzed_at": datetime.now(timezone.utc)
+        }
+        await database["scans"].update_one(
+            {"_id": ObjectId(upload_id)},
+            {"$set": update_data}
+        )
+        return {
+            "upload_id": upload_id,
+            "status": "low_confidence",
+            "confidence": ml_result.get("confidence"),
+            "message": ml_result.get("message"),
+            "disease": None,
+            "crop": None,
+            "treatment_steps": [],
+            "severity": "none",
+            "is_healthy": False,
+            "fertilizer": "",
+            "prevention": "",
+            "urgency": "low",
+            "similar_diseases": [],
+            "disclaimer": "Model prediction results."
+        }
+
     update_data = {
         "disease": ml_result.get("disease"),
         "confidence": ml_result.get("confidence"),

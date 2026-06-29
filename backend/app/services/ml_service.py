@@ -61,9 +61,23 @@ async def predict_disease(image_path: str) -> dict:
                 )
             
             if response.status_code != 200:
-                raise HTTPException(status_code=500, detail="ML prediction failed")
+                print("ML service response status:", response.status_code)
+                print("ML service response body:", response.text)
+                raise HTTPException(status_code=500, detail=f"ML prediction failed: status {response.status_code}, body: {response.text}")
+
                 
             data = response.json()
+            
+            if data.get("status") == "low_confidence":
+                conf = data.get("confidence", 0.0)
+                if conf > 1.0:
+                    conf = conf / 100.0
+                return {
+                    "status": "low_confidence",
+                    "confidence": conf,
+                    "message": data.get("message", "Image unclear. Please take a closer photo of the affected leaf in good lighting.")
+                }
+
             
             # Clean and normalize fields
             disease = data.get("disease", "")
@@ -103,9 +117,14 @@ async def predict_disease(image_path: str) -> dict:
                 "similar_diseases": similar_diseases
             }
             
-    except httpx.RequestError:
+    except httpx.RequestError as e:
+        print("ML service request error:", str(e))
         raise HTTPException(status_code=503, detail="ML service unavailable")
     except Exception as e:
+        print("ML prediction exception:", str(e))
+        import traceback
+        traceback.print_exc()
         if isinstance(e, HTTPException):
             raise e
-        raise HTTPException(status_code=500, detail="ML prediction failed")
+        raise HTTPException(status_code=500, detail=f"ML prediction failed: {str(e)}")
+
