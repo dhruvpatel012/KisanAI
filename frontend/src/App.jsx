@@ -5,6 +5,7 @@ import DashboardPage from "./features/dashboard/DashboardPage";
 import ScanPage from "./features/scan/ScanPage";
 import HistoryPage from "./features/history/HistoryPage";
 import ProfilePage from "./features/profile/ProfilePage";
+import ResultPage from "./features/result/ResultPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
@@ -29,6 +30,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ScanPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/result/:uploadId"
+          element={
+            <ProtectedRoute>
+              <ResultPage />
             </ProtectedRoute>
           }
         />
@@ -58,3 +67,4 @@ function App() {
 }
 
 export default App;
+

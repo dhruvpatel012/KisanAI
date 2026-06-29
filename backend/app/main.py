@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from app.database import ping_database, database
 from app.config import settings
-from app.routers import auth, upload
+from app.routers import auth, upload, analyze
 
 async def monitor_database_connection():
     try:
@@ -50,6 +50,8 @@ app = FastAPI(
 
 app.include_router(auth.router)
 app.include_router(upload.router)
+app.include_router(analyze.router)
+
 
 # Mount the static uploads directory
 app.mount("/uploads", StaticFiles(directory=settings.upload_dir), name="uploads")

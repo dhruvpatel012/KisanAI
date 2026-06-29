@@ -1,16 +1,38 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Card from "../../../components/ui/Card";
 import Button from "../../../components/ui/Button";
 import Alert from "../../../components/ui/Alert";
+import { useAnalyze } from "../hooks/useAnalyze";
+import AnalyzingState from "./AnalyzingState";
 
 const ImagePreview = ({
   preview,
   uploading,
   uploadResult,
-  error,
+  error: uploadError,
   handleUpload,
   resetUpload,
 }) => {
+  const { analyzeImage, analyzing, error: analyzeError } = useAnalyze();
+
+  // Trigger analysis automatically once upload succeeds
+  useEffect(() => {
+    if (uploadResult?.upload_id) {
+      analyzeImage(uploadResult.upload_id);
+    }
+  }, [uploadResult]);
+
+  // Show AnalyzingState screen while analyzing
+  if (analyzing) {
+    return (
+      <Card className="max-w-md mx-auto overflow-hidden p-6">
+        <AnalyzingState previewImage={preview} onCancel={resetUpload} />
+      </Card>
+    );
+  }
+
+  const displayError = uploadError || analyzeError;
+
   return (
     <Card className="max-w-md mx-auto overflow-hidden p-6">
       <div className="flex flex-col gap-5">
@@ -30,24 +52,29 @@ const ImagePreview = ({
           />
         </div>
 
-        {/* Success Alert Display */}
-        {uploadResult && (
-          <Alert message={`Upload Successful! Scan ID: ${uploadResult.upload_id}`} type="success" />
-        )}
-
         {/* Error Alert Display */}
-        {error && <Alert message={error} type="error" />}
+        {displayError && <Alert message={displayError} type="error" />}
 
         {/* Action Buttons */}
         <div className="flex flex-col gap-2.5 mt-2">
-          <Button
-            onClick={handleUpload}
-            loading={uploading}
-            variant="primary"
-            fullWidth
-          >
-            Analyze This Crop →
-          </Button>
+          {analyzeError ? (
+            <Button
+              onClick={() => uploadResult?.upload_id ? analyzeImage(uploadResult.upload_id) : handleUpload()}
+              variant="primary"
+              fullWidth
+            >
+              Retry Analysis / दोबारा प्रयास करें
+            </Button>
+          ) : (
+            <Button
+              onClick={handleUpload}
+              loading={uploading}
+              variant="primary"
+              fullWidth
+            >
+              Analyze This Crop →
+            </Button>
+          )}
 
           <Button
             onClick={resetUpload}
@@ -64,3 +91,4 @@ const ImagePreview = ({
 };
 
 export default ImagePreview;
+
