@@ -64,11 +64,13 @@ app.add_middleware(
         "http://localhost:5175",
         "http://localhost:3000",
     ],
-    allow_origin_regex="https?://localhost(:\d+)?",
+    allow_origin_regex=r"https?://(localhost|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?",
+
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.get("/health")
 async def health_check():
