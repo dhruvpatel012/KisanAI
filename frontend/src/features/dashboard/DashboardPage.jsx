@@ -5,10 +5,12 @@ import Card from "../../components/ui/Card";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import api from "../../lib/axios";
+import { useLanguage } from "../../context/LanguageContext";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
-  const [greeting, setGreeting] = useState("Hello");
+  const { t } = useLanguage();
+  const [timeOfDay, setTimeOfDay] = useState("morning");
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [weather, setWeather] = useState(null);
@@ -17,11 +19,11 @@ const DashboardPage = () => {
   useEffect(() => {
     const hours = new Date().getHours();
     if (hours < 12) {
-      setGreeting("Good Morning");
+      setTimeOfDay("morning");
     } else if (hours < 17) {
-      setGreeting("Good Afternoon");
+      setTimeOfDay("afternoon");
     } else {
-      setGreeting("Good Evening");
+      setTimeOfDay("evening");
     }
 
     const fetchRecentScans = async () => {
@@ -97,19 +99,19 @@ const DashboardPage = () => {
   };
 
   const getSeverityLabel = (scan) => {
-    if (scan.status === "low_confidence") return "Unclear / अस्पष्ट";
-    if (scan.status === "uploaded") return "Analyzing / विश्लेषण...";
-    if (scan.is_healthy) return "Healthy / स्वस्थ";
+    if (scan.status === "low_confidence") return t("Unclear", "अस्पष्ट");
+    if (scan.status === "uploaded") return t("Analyzing...", "विश्लेषण...");
+    if (scan.is_healthy) return t("Healthy", "स्वस्थ");
 
     switch (scan.severity?.toLowerCase()) {
       case "high":
-        return "High Risk";
+        return t("High Risk", "उच्च जोखिम");
       case "medium":
-        return "Medium Risk";
+        return t("Medium Risk", "मध्यम जोखिम");
       case "low":
-        return "Low Risk";
+        return t("Low Risk", "कम जोखिम");
       default:
-        return "Unknown";
+        return t("Unknown", "अज्ञात");
     }
   };
 
@@ -131,6 +133,12 @@ const DashboardPage = () => {
       : `${backendUrl}${scan.image_url}`;
   };
 
+  const greeting = timeOfDay === "morning"
+    ? t("Good Morning", "सुप्रभात")
+    : timeOfDay === "afternoon"
+    ? t("Good Afternoon", "नमस्कार")
+    : t("Good Evening", "शुभ संध्या");
+
   return (
     <PageLayout>
       {/* SECTION 1 - Greeting */}
@@ -139,7 +147,7 @@ const DashboardPage = () => {
           {greeting} <span className="animate-bounce">👋</span>
         </h2>
         <p className="text-gray-500 text-sm mt-1">
-          How are your crops today? / आज आपकी फसलें कैसी हैं?
+          {t("How are your crops today?", "आज आपकी फसलें कैसी हैं?")}
         </p>
       </div>
 
@@ -151,7 +159,7 @@ const DashboardPage = () => {
           <div className="flex justify-between items-start mb-3">
             <div>
               <span className="text-xs uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
-                Local Weather / स्थानीय मौसम
+                {t("Local Weather", "स्थानीय मौसम")}
               </span>
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-3xl font-extrabold text-emerald-950">
@@ -159,12 +167,12 @@ const DashboardPage = () => {
                 </span>
                 <span className="text-2xl">{weather.current.emoji}</span>
                 <span className="text-sm font-bold text-emerald-800">
-                  {weather.current.description_hi} / {weather.current.description}
+                  {t(weather.current.description, weather.current.description_hi)}
                 </span>
               </div>
               <div className="flex gap-4 mt-2 text-xs font-semibold text-emerald-800">
-                <span>💧 Humidity: {weather.current.humidity}%</span>
-                <span>💨 Wind: {weather.current.wind_speed} km/h</span>
+                <span>💧 {t("Humidity", "आर्द्रता")}: {weather.current.humidity}%</span>
+                <span>💨 {t("Wind", "हवा")}: {weather.current.wind_speed} km/h</span>
               </div>
             </div>
           </div>
@@ -172,16 +180,19 @@ const DashboardPage = () => {
           {/* 3-Day Forecast */}
           <div className="border-t border-emerald-100/70 pt-2 mt-2">
             <p className="text-[10px] uppercase tracking-wider text-emerald-700 font-bold mb-1.5">
-              3-Day Forecast / 3-दिवसीय पूर्वानुमान
+              {t("3-Day Forecast", "3-दिवसीय पूर्वानुमान")}
             </p>
             <div className="grid grid-cols-3 gap-2">
               {weather.forecast.map((day, idx) => {
-                const dateLabel = idx === 0 ? "Today" : idx === 1 ? "Tomorrow" : formatDate(day.date).split(",")[0];
-                const dateLabelHi = idx === 0 ? "आज" : idx === 1 ? "कल" : "परसों";
+                const dateLabel = idx === 0 
+                  ? t("Today", "आज") 
+                  : idx === 1 
+                  ? t("Tomorrow", "कल") 
+                  : formatDate(day.date).split(",")[0];
                 return (
                   <div key={idx} className="bg-white/50 rounded-xl p-2 text-center border border-emerald-100/50">
                     <p className="text-[10px] font-bold text-emerald-900 leading-tight">
-                      {dateLabelHi} / {dateLabel}
+                      {dateLabel}
                     </p>
                     <p className="text-lg my-1">{day.emoji}</p>
                     <p className="text-[10px] font-bold text-emerald-955">
@@ -201,11 +212,13 @@ const DashboardPage = () => {
           <div className="flex justify-between items-start mb-4">
             <div>
               <span className="text-xs uppercase tracking-wider bg-brand-500/30 px-2.5 py-1 rounded-full font-semibold">
-                Crop Health Scan / फसल जाँच
+                {t("Crop Health Scan", "फसल जाँच")}
               </span>
-              <h3 className="text-xl font-bold mt-2">Scan Your Crop</h3>
+              <h3 className="text-xl font-bold mt-2">
+                {t("Scan Your Crop", "फसल की जाँच करें")}
+              </h3>
               <p className="text-brand-100 text-xs mt-1 max-w-[200px]">
-                Detect diseases instantly using your mobile camera.
+                {t("Detect diseases instantly using your mobile camera.", "अपने मोबाइल कैमरे से तुरंत रोगों का पता लगाएं।")}
               </p>
             </div>
             <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-4xl shadow-inner">
@@ -217,7 +230,7 @@ const DashboardPage = () => {
             onClick={() => navigate("/scan")}
             className="bg-white border-white text-brand-700 hover:bg-brand-50 font-bold"
           >
-            Start Scan / जाँच शुरू करें →
+            {t("Start Scan →", "जाँच शुरू करें →")}
           </Button>
         </div>
         {/* Background decorative crop shapes */}
@@ -229,13 +242,13 @@ const DashboardPage = () => {
       {/* SECTION 3 - Recent Scans */}
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-base font-bold text-gray-900">
-          Recent Scans / हालिया जाँच
+          {t("Recent Scans", "हालिया जाँच")}
         </h3>
         <Link
           to="/history"
           className="text-xs font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1"
         >
-          See All / सभी देखें <i className="ri-arrow-right-s-line text-sm"></i>
+          {t("See All", "सभी देखें")} <i className="ri-arrow-right-s-line text-sm"></i>
         </Link>
       </div>
 
@@ -251,7 +264,7 @@ const DashboardPage = () => {
       {/* EMPTY STATE */}
       {!loading && scans.length === 0 && (
         <div className="text-center py-6 text-sm text-gray-500 font-medium bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
-          No scans yet / कोई जाँच नहीं
+          {t("No scans yet", "कोई जाँच नहीं")}
         </div>
       )}
 
@@ -280,12 +293,12 @@ const DashboardPage = () => {
                   )}
                   <div>
                     <h4 className="font-bold text-gray-900 text-sm truncate max-w-[150px]">
-                      {scan.crop || "Unknown"}
+                      {scan.crop || t("Unknown", "अज्ञात")}
                     </h4>
                     <p className="text-xs text-gray-500 truncate max-w-[150px]">
                       {scan.status === "uploaded"
-                        ? "Analyzing..."
-                        : scan.disease || (scan.status === "low_confidence" ? "Unclear Image" : "Healthy")}
+                        ? t("Analyzing...", "विश्लेषण...")
+                        : scan.disease || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"))}
                     </p>
                     <p className="text-[10px] text-gray-400 mt-0.5">
                       {formatDate(scan.created_at)}

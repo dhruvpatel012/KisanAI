@@ -4,8 +4,10 @@ import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Alert from "../../components/ui/Alert";
 import api from "../../lib/axios";
+import { useLanguage } from "../../context/LanguageContext";
 
 const AdvisoryPage = () => {
+  const { t } = useLanguage();
   const [advisories, setAdvisories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,7 +23,7 @@ const AdvisoryPage = () => {
       setAdvisories(response.data);
     } catch (err) {
       console.error("Failed to load advisories:", err);
-      setError("Failed to load advisory documents. Please try again.");
+      setError(t("Failed to load advisory documents. Please try again.", "सलाह दस्तावेज लोड करने में विफल।"));
     } finally {
       setLoading(false);
     }
@@ -52,14 +54,14 @@ const AdvisoryPage = () => {
   });
 
   return (
-    <PageLayout title="Crop Advisory / फसल सलाह">
+    <PageLayout title={t("Crop Advisory", "फसल सलाह")}>
       <div className="max-w-md mx-auto flex flex-col gap-4 p-4 pb-20">
         
         {/* SEARCH BAR */}
         <div className="relative">
           <input
             type="text"
-            placeholder="Search crop or disease... / खोजें..."
+            placeholder={t("Search crop or disease...", "खोजें...")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full h-11 pl-10 pr-4 rounded-xl border border-gray-200 focus:outline-none focus:border-brand-500 text-sm font-medium"
@@ -70,10 +72,10 @@ const AdvisoryPage = () => {
         {/* CROP CHIPS */}
         <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
           {[
-            { id: "all", label: "All / सभी" },
-            { id: "tomato", label: "Tomato / टमाटर" },
-            { id: "potato", label: "Potato / आलू" },
-            { id: "wheat", label: "Wheat / गेहूं" },
+            { id: "all", label: t("All", "सभी") },
+            { id: "tomato", label: t("Tomato", "टमाटर") },
+            { id: "potato", label: t("Potato", "आलू") },
+            { id: "wheat", label: t("Wheat", "गेहूं") },
           ].map((chip) => (
             <button
               key={chip.id}
@@ -105,7 +107,7 @@ const AdvisoryPage = () => {
           <div className="flex flex-col gap-4">
             <Alert message={error} type="error" />
             <Button variant="primary" onClick={fetchAdvisories} fullWidth>
-              Retry
+              {t("Retry", "पुनः प्रयास करें")}
             </Button>
           </div>
         )}
@@ -115,7 +117,7 @@ const AdvisoryPage = () => {
           <div className="flex flex-col gap-3">
             {filteredAdvisories.length === 0 ? (
               <div className="text-center py-8 text-sm text-gray-500 font-medium">
-                No advisory found / कोई सलाह नहीं मिली
+                {t("No advisory found", "कोई सलाह नहीं मिली")}
               </div>
             ) : (
               filteredAdvisories.map((advisory) => (
@@ -130,10 +132,10 @@ const AdvisoryPage = () => {
                     </span>
                     <div>
                       <h4 className="font-extrabold text-emerald-950 text-sm">
-                        {advisory.crop_name_hi} / {advisory.crop_name}
+                        {t(advisory.crop_name, advisory.crop_name_hi)}
                       </h4>
                       <p className="text-xs text-gray-500 line-clamp-1 mt-0.5 max-w-[200px]">
-                        {advisory.soil_prep}
+                        {t(advisory.soil_prep, advisory.soil_prep_hi)}
                       </p>
                     </div>
                   </div>
@@ -155,10 +157,10 @@ const AdvisoryPage = () => {
                   <span className="text-4xl">{getCropEmoji(activeAdvisory.crop_id)}</span>
                   <div>
                     <h3 className="text-xl font-black text-emerald-950">
-                      {activeAdvisory.crop_name_hi}
+                      {t(activeAdvisory.crop_name, activeAdvisory.crop_name_hi)}
                     </h3>
                     <p className="text-xs text-emerald-700 font-bold">
-                      Agronomy Manual / फसल विवरण
+                      {t("Agronomy Manual", "फसल विवरण")}
                     </p>
                   </div>
                 </div>
@@ -176,52 +178,40 @@ const AdvisoryPage = () => {
                 {/* Soil Preparation */}
                 <div>
                   <h4 className="text-xs uppercase tracking-wider text-emerald-800 font-extrabold mb-1 flex items-center gap-1.5">
-                    🌱 Soil Preparation / मिट्टी की तैयारी
+                    {t("🌱 Soil Preparation", "🌱 मिट्टी की तैयारी")}
                   </h4>
-                  <p className="text-xs text-gray-600 font-medium leading-relaxed bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
-                    {activeAdvisory.soil_prep}<br />
-                    <span className="text-gray-500 font-medium block mt-1.5 border-t border-gray-200/50 pt-1">
-                      {activeAdvisory.soil_prep_hi}
-                    </span>
+                  <p className="text-xs text-gray-655 font-medium leading-relaxed bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
+                    {t(activeAdvisory.soil_prep, activeAdvisory.soil_prep_hi)}
                   </p>
                 </div>
 
                 {/* Planting Time */}
                 <div>
                   <h4 className="text-xs uppercase tracking-wider text-emerald-800 font-extrabold mb-1 flex items-center gap-1.5">
-                    📅 Planting Season / बोने का समय
+                    {t("📅 Planting Season", "📅 बोने का समय")}
                   </h4>
-                  <p className="text-xs text-gray-600 font-medium leading-relaxed bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
-                    {activeAdvisory.planting_time}<br />
-                    <span className="text-gray-500 font-medium block mt-1.5 border-t border-gray-200/50 pt-1">
-                      {activeAdvisory.planting_time_hi}
-                    </span>
+                  <p className="text-xs text-gray-655 font-medium leading-relaxed bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
+                    {t(activeAdvisory.planting_time, activeAdvisory.planting_time_hi)}
                   </p>
                 </div>
 
                 {/* Pest & Disease Prevention */}
                 <div>
                   <h4 className="text-xs uppercase tracking-wider text-emerald-800 font-extrabold mb-1 flex items-center gap-1.5">
-                    🛡️ Organic Pest Control / कीट और रोग नियंत्रण
+                    {t("🛡️ Organic Pest Control", "🛡️ कीट और रोग नियंत्रण")}
                   </h4>
-                  <p className="text-xs text-gray-600 font-medium leading-relaxed bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
-                    {activeAdvisory.pest_management}<br />
-                    <span className="text-gray-500 font-medium block mt-1.5 border-t border-gray-200/50 pt-1">
-                      {activeAdvisory.pest_management_hi}
-                    </span>
+                  <p className="text-xs text-gray-655 font-medium leading-relaxed bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
+                    {t(activeAdvisory.pest_management, activeAdvisory.pest_management_hi)}
                   </p>
                 </div>
 
                 {/* Irrigation */}
                 <div>
                   <h4 className="text-xs uppercase tracking-wider text-emerald-800 font-extrabold mb-1 flex items-center gap-1.5">
-                    💧 Irrigation / सिंचाई नियम
+                    {t("💧 Irrigation", "💧 सिंचाई नियम")}
                   </h4>
-                  <p className="text-xs text-gray-600 font-medium leading-relaxed bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
-                    {activeAdvisory.irrigation}<br />
-                    <span className="text-gray-500 font-medium block mt-1.5 border-t border-gray-200/50 pt-1">
-                      {activeAdvisory.irrigation_hi}
-                    </span>
+                  <p className="text-xs text-gray-655 font-medium leading-relaxed bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
+                    {t(activeAdvisory.irrigation, activeAdvisory.irrigation_hi)}
                   </p>
                 </div>
 
@@ -229,7 +219,7 @@ const AdvisoryPage = () => {
 
               <div className="mt-6 pt-2">
                 <Button variant="primary" onClick={() => setActiveAdvisory(null)} fullWidth>
-                  Dismiss / बंद करें
+                  {t("Dismiss", "बंद करें")}
                 </Button>
               </div>
 

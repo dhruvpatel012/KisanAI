@@ -4,6 +4,7 @@ import Button from "../../../components/ui/Button";
 import Alert from "../../../components/ui/Alert";
 import { useAnalyze } from "../hooks/useAnalyze";
 import AnalyzingState from "./AnalyzingState";
+import { useLanguage } from "../../../context/LanguageContext";
 
 const ImagePreview = ({
   preview,
@@ -13,6 +14,7 @@ const ImagePreview = ({
   handleUpload,
   resetUpload,
 }) => {
+  const { t } = useLanguage();
   const { analyzeImage, analyzing, error: analyzeError } = useAnalyze();
 
   // Trigger analysis automatically once upload succeeds
@@ -37,9 +39,14 @@ const ImagePreview = ({
     <Card className="max-w-md mx-auto overflow-hidden p-6">
       <div className="flex flex-col gap-5">
         <div className="text-center">
-          <h2 className="text-xl font-bold text-gray-800">Selected Photo</h2>
+          <h2 className="text-xl font-bold text-gray-800">
+            {t("Selected Photo", "चयनित फोटो")}
+          </h2>
           <p className="text-sm text-gray-500 mt-1">
-            Confirm the photo is clear before running the analysis.
+            {t(
+              "Confirm the photo is clear before running the analysis.",
+              "विश्लेषण शुरू करने से पहले सुनिश्चित करें कि फोटो साफ है।"
+            )}
           </p>
         </div>
 
@@ -63,7 +70,7 @@ const ImagePreview = ({
               variant="primary"
               fullWidth
             >
-              Retry Analysis / दोबारा प्रयास करें
+              {t("Retry Analysis", "दोबारा प्रयास करें")}
             </Button>
           ) : (
             <Button
@@ -72,7 +79,7 @@ const ImagePreview = ({
               variant="primary"
               fullWidth
             >
-              Analyze This Crop →
+              {t("Analyze This Crop →", "फसल की जाँच करें →")}
             </Button>
           )}
 
@@ -82,7 +89,7 @@ const ImagePreview = ({
             variant="ghost"
             fullWidth
           >
-            Cancel
+            {t("Cancel", "रद्द करें")}
           </Button>
         </div>
       </div>
@@ -91,4 +98,3 @@ const ImagePreview = ({
 };
 
 export default ImagePreview;
-

@@ -6,9 +6,11 @@ import Button from "../../components/ui/Button";
 import Alert from "../../components/ui/Alert";
 import Badge from "../../components/ui/Badge";
 import api from "../../lib/axios";
+import { useLanguage } from "../../context/LanguageContext";
 
 const HistoryPage = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +25,7 @@ const HistoryPage = () => {
     } catch (err) {
       console.error("Failed to fetch scans:", err);
       const backendError = err.response?.data?.detail;
-      setError(backendError || "Failed to load scan history. Please try again.");
+      setError(backendError || t("Failed to load scan history. Please try again.", "इतिहास लोड करने में विफल। पुनः प्रयास करें।"));
     } finally {
       setLoading(false);
     }
@@ -66,19 +68,19 @@ const HistoryPage = () => {
   };
 
   const getSeverityLabel = (scan) => {
-    if (scan.status === "low_confidence") return "Unclear / अस्पष्ट";
-    if (scan.status === "uploaded") return "Analyzing / विश्लेषण...";
-    if (scan.is_healthy) return "Healthy / स्वस्थ";
+    if (scan.status === "low_confidence") return t("Unclear", "अस्पष्ट");
+    if (scan.status === "uploaded") return t("Analyzing...", "विश्लेषण...");
+    if (scan.is_healthy) return t("Healthy", "स्वस्थ");
 
     switch (scan.severity?.toLowerCase()) {
       case "high":
-        return "High Risk / उच्च जोखिम";
+        return t("High Risk", "उच्च जोखिम");
       case "medium":
-        return "Medium Risk / मध्यम जोखिम";
+        return t("Medium Risk", "मध्यम जोखिम");
       case "low":
-        return "Low Risk / कम जोखिम";
+        return t("Low Risk", "कम जोखिम");
       default:
-        return "Unknown";
+        return t("Unknown", "अज्ञात");
     }
   };
 
@@ -92,7 +94,7 @@ const HistoryPage = () => {
   };
 
   return (
-    <PageLayout title="Scan History">
+    <PageLayout title={t("Scan History", "इतिहास")}>
       <div className="max-w-md mx-auto flex flex-col gap-4 p-4 pb-20">
         
         {/* LOADING STATE */}
@@ -109,7 +111,7 @@ const HistoryPage = () => {
           <div className="flex flex-col gap-4">
             <Alert message={error} type="error" />
             <Button variant="primary" onClick={fetchScans} fullWidth>
-              Retry
+              {t("Retry", "पुनः प्रयास करें")}
             </Button>
           </div>
         )}
@@ -121,14 +123,13 @@ const HistoryPage = () => {
               🌾
             </div>
             <h2 className="text-xl font-bold text-gray-950 mb-1">
-              No Scans Yet
+              {t("No Scans Yet", "कोई जाँच नहीं")}
             </h2>
             <p className="text-xs text-gray-600 mb-6 leading-relaxed">
-              Start by scanning your first crop to diagnose diseases.<br />
-              अपनी पहली फसल की जाँच शुरू करें।
+              {t("Start by scanning your first crop to diagnose diseases.", "अपनी पहली फसल की जाँच शुरू करें।")}
             </p>
             <Button variant="primary" onClick={() => navigate("/scan")} className="font-bold px-8">
-              Start Scan
+              {t("Start Scan", "जाँच शुरू करें")}
             </Button>
           </Card>
         )}
@@ -159,8 +160,8 @@ const HistoryPage = () => {
                     <div>
                       <h4 className="font-extrabold text-emerald-950 text-sm leading-tight">
                         {scan.status === "uploaded"
-                          ? "Analyzing..."
-                          : scan.disease || (scan.status === "low_confidence" ? "Unclear Image" : "Healthy")}
+                          ? t("Analyzing...", "विश्लेषण...")
+                          : scan.disease || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"))}
                       </h4>
                       {scan.crop && (
                         <p className="text-xs text-emerald-800 font-bold mt-0.5">

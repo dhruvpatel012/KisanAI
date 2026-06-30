@@ -1,6 +1,9 @@
 import { NavLink } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
 
 const BottomNav = () => {
+  const { t } = useLanguage();
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 w-full h-16 bg-white border-t border-gray-100 shadow-lg z-50 flex justify-center">
       <div className="w-full max-w-6xl h-full flex items-center justify-around px-4">
@@ -15,7 +18,7 @@ const BottomNav = () => {
           {({ isActive }) => (
             <>
               <i className={`text-xl mb-0.5 ${isActive ? "ri-home-5-fill" : "ri-home-5-line"}`}></i>
-              <span>Home</span>
+              <span>{t("Home", "होम")}</span>
             </>
           )}
         </NavLink>
@@ -31,7 +34,7 @@ const BottomNav = () => {
           {({ isActive }) => (
             <>
               <i className={`text-xl mb-0.5 ${isActive ? "ri-book-open-fill" : "ri-book-open-line"}`}></i>
-              <span>Advisory</span>
+              <span>{t("Advisory", "सलाह")}</span>
             </>
           )}
         </NavLink>
@@ -66,7 +69,7 @@ const BottomNav = () => {
           {({ isActive }) => (
             <>
               <i className={`text-xl mb-0.5 ${isActive ? "ri-history-fill" : "ri-history-line"}`}></i>
-              <span>History</span>
+              <span>{t("History", "इतिहास")}</span>
             </>
           )}
         </NavLink>
@@ -82,7 +85,7 @@ const BottomNav = () => {
           {({ isActive }) => (
             <>
               <i className={`text-xl mb-0.5 ${isActive ? "ri-user-3-fill" : "ri-user-3-line"}`}></i>
-              <span>Profile</span>
+              <span>{t("Profile", "प्रोफाइल")}</span>
             </>
           )}
         </NavLink>
@@ -92,3 +95,4 @@ const BottomNav = () => {
 };
 
 export default BottomNav;
+

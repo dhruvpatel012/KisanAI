@@ -8,10 +8,12 @@ import ProfilePage from "./features/profile/ProfilePage";
 import ResultPage from "./features/result/ResultPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdvisoryPage from "./features/advisory/AdvisoryPage";
+import { LanguageProvider } from "./context/LanguageContext";
 
 function App() {
   return (
-    <BrowserRouter>
+    <LanguageProvider>
+      <BrowserRouter>
       <Routes>
         {/* Auth routes */}
         <Route path="/login" element={<LoginPage />} />
@@ -72,6 +74,7 @@ function App() {
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
+    </LanguageProvider>
   );
 }
 

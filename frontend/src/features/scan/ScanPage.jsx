@@ -2,8 +2,10 @@ import PageLayout from "../../components/layout/PageLayout";
 import { useImageUpload } from "./hooks/useImageUpload";
 import ImagePicker from "./components/ImagePicker";
 import ImagePreview from "./components/ImagePreview";
+import { useLanguage } from "../../context/LanguageContext";
 
 const ScanPage = () => {
+  const { t } = useLanguage();
   const {
     selectedFile,
     preview,
@@ -16,7 +18,7 @@ const ScanPage = () => {
   } = useImageUpload();
 
   return (
-    <PageLayout title="Scan Crop / फसल जाँच">
+    <PageLayout title={t("Scan Crop", "फसल जाँच")}>
       {!selectedFile ? (
         <ImagePicker onFileSelect={handleFileSelect} error={error} />
       ) : (

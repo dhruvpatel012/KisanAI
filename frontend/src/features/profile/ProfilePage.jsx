@@ -5,8 +5,10 @@ import Button from "../../components/ui/Button";
 import Alert from "../../components/ui/Alert";
 import { logoutUser } from "../auth/authService";
 import api from "../../lib/axios";
+import { useLanguage } from "../../context/LanguageContext";
 
 const ProfilePage = () => {
+  const { language, setLanguage, t } = useLanguage();
   const [profile, setProfile] = useState({
     full_name: "",
     email: "",
@@ -38,7 +40,7 @@ const ProfilePage = () => {
       });
     } catch (err) {
       console.error("Failed to load profile:", err);
-      setProfileError("Could not retrieve profile information.");
+      setProfileError(t("Could not retrieve profile information.", "प्रोफ़ाइल जानकारी पुनर्प्राप्त नहीं की जा सकी।"));
     } finally {
       setLoading(false);
     }
@@ -48,6 +50,7 @@ const ProfilePage = () => {
     fetchProfile();
   }, []);
 
+  // Update backend profile settings
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     try {
@@ -69,16 +72,21 @@ const ProfilePage = () => {
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
       console.error("Failed to update profile:", err);
-      setProfileError(err.response?.data?.detail || "Failed to update profile.");
+      setProfileError(err.response?.data?.detail || t("Failed to update profile.", "प्रोफ़ाइल अपडेट करने में विफल।"));
     } finally {
       setSaving(false);
     }
   };
 
+  const handleLanguageChange = (lang) => {
+    setProfile((prev) => ({ ...prev, preferred_language: lang }));
+    setLanguage(lang); // Sync global context
+  };
+
   const handleChangePassword = async (e) => {
     e.preventDefault();
     if (!oldPassword || !newPassword) {
-      setPasswordError("Both password fields are required.");
+      setPasswordError(t("Both password fields are required.", "दोनों पासवर्ड फ़ील्ड आवश्यक हैं।"));
       return;
     }
     try {
@@ -98,16 +106,14 @@ const ProfilePage = () => {
       }, 2000);
     } catch (err) {
       console.error("Failed to change password:", err);
-      setPasswordError(err.response?.data?.detail || "Incorrect old password.");
+      setPasswordError(err.response?.data?.detail || t("Incorrect old password.", "गलत वर्तमान पासवर्ड।"));
     } finally {
       setPasswordLoading(false);
     }
   };
 
-  const isHindi = profile.preferred_language === "hi";
-
   return (
-    <PageLayout title={isHindi ? "प्रोफाइल" : "Profile"}>
+    <PageLayout title={t("Profile", "प्रोफाइल")}>
       <div className="max-w-md mx-auto flex flex-col gap-4 p-4 pb-20">
         
         {/* LOADING SHIMMER */}
@@ -145,12 +151,12 @@ const ProfilePage = () => {
               <Card className="p-5 flex flex-col gap-4">
                 <h3 className="text-sm font-black text-emerald-950 flex items-center gap-2 border-b border-gray-100 pb-2">
                   <i className="ri-user-settings-line text-brand-600 text-lg"></i>
-                  {isHindi ? "प्रोफ़ाइल संपादित करें" : "Edit Profile Settings"}
+                  {t("Edit Profile Settings", "प्रोफ़ाइल संपादित करें")}
                 </h3>
 
                 {saveSuccess && (
                   <Alert
-                    message={isHindi ? "प्रोफ़ाइल सफलतापूर्वक अपडेट हो गई!" : "Profile updated successfully!"}
+                    message={t("Profile updated successfully!", "प्रोफ़ाइल सफलतापूर्वक अपडेट हो गई!")}
                     type="success"
                   />
                 )}
@@ -159,7 +165,7 @@ const ProfilePage = () => {
                 {/* Name field */}
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-bold text-gray-700">
-                    {isHindi ? "पूरा नाम" : "Full Name"}
+                    {t("Full Name", "पूरा नाम")}
                   </label>
                   <input
                     type="text"
@@ -172,7 +178,7 @@ const ProfilePage = () => {
                 {/* Farm Location field */}
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-bold text-gray-700">
-                    {isHindi ? "खेत का स्थान / क्षेत्र" : "Farm Location / State"}
+                    {t("Farm Location / State", "खेत का स्थान / क्षेत्र")}
                   </label>
                   <input
                     type="text"
@@ -186,12 +192,12 @@ const ProfilePage = () => {
                 {/* Language Select */}
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-bold text-gray-700">
-                    {isHindi ? "ऐप की भाषा" : "App Language"}
+                    {t("App Language", "ऐप की भाषा")}
                   </label>
                   <div className="grid grid-cols-2 gap-3 mt-1">
                     <button
                       type="button"
-                      onClick={() => setProfile({ ...profile, preferred_language: "en" })}
+                      onClick={() => handleLanguageChange("en")}
                       className={`py-2 rounded-xl font-bold text-xs border-2 transition-all duration-150 ${
                         profile.preferred_language === "en"
                           ? "bg-brand-50 border-brand-600 text-brand-700"
@@ -202,7 +208,7 @@ const ProfilePage = () => {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setProfile({ ...profile, preferred_language: "hi" })}
+                      onClick={() => handleLanguageChange("hi")}
                       className={`py-2 rounded-xl font-bold text-xs border-2 transition-all duration-150 ${
                         profile.preferred_language === "hi"
                           ? "bg-brand-50 border-brand-600 text-brand-700"
@@ -215,7 +221,7 @@ const ProfilePage = () => {
                 </div>
 
                 <Button variant="primary" type="submit" loading={saving}>
-                  {isHindi ? "सहेजें" : "Save Preferences"}
+                  {t("Save Preferences", "सहेजें")}
                 </Button>
               </Card>
             </form>
@@ -224,7 +230,7 @@ const ProfilePage = () => {
             <Card className="p-5 flex flex-col gap-3">
               <h3 className="text-sm font-black text-emerald-950 flex items-center gap-2 border-b border-gray-100 pb-2">
                 <i className="ri-shield-keyhole-line text-brand-600 text-lg"></i>
-                {isHindi ? "सुरक्षा" : "Security"}
+                {t("Security", "सुरक्षा")}
               </h3>
               <Button
                 variant="secondary"
@@ -234,7 +240,7 @@ const ProfilePage = () => {
                   setShowPasswordModal(true);
                 }}
               >
-                🔑 {isHindi ? "पासवर्ड बदलें" : "Change Password"}
+                🔑 {t("Change Password", "पासवर्ड बदलें")}
               </Button>
             </Card>
           </>
@@ -244,7 +250,7 @@ const ProfilePage = () => {
         <div className="mt-2">
           <Button variant="danger" onClick={logoutUser} className="font-bold py-3">
             <i className="ri-logout-box-r-line text-lg mr-1"></i>
-            {isHindi ? "लॉग आउट करें" : "Sign Out"}
+            {t("Sign Out", "लॉग आउट करें")}
           </Button>
           <p className="text-center text-[10px] text-gray-400 mt-6 font-medium">
             KisanAI v1.1.0 • Made for farmers 🌱
@@ -258,7 +264,7 @@ const ProfilePage = () => {
               
               <div className="flex justify-between items-start mb-6">
                 <h3 className="text-lg font-black text-emerald-950">
-                  {isHindi ? "पासवर्ड बदलें" : "Change Password"}
+                  {t("Change Password", "पासवर्ड बदलें")}
                 </h3>
                 <button
                   onClick={() => setShowPasswordModal(false)}
@@ -271,7 +277,7 @@ const ProfilePage = () => {
               <form onSubmit={handleChangePassword} className="flex flex-col gap-4">
                 {passwordSuccess && (
                   <Alert
-                    message={isHindi ? "पासवर्ड सफलतापूर्वक बदला गया!" : "Password updated successfully!"}
+                    message={t("Password updated successfully!", "पासवर्ड सफलतापूर्वक बदला गया!")}
                     type="success"
                   />
                 )}
@@ -279,7 +285,7 @@ const ProfilePage = () => {
 
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-bold text-gray-700">
-                    {isHindi ? "वर्तमान पासवर्ड" : "Current Password"}
+                    {t("Current Password", "वर्तमान पासवर्ड")}
                   </label>
                   <input
                     type="password"
@@ -291,7 +297,7 @@ const ProfilePage = () => {
 
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-bold text-gray-700">
-                    {isHindi ? "नया पासवर्ड" : "New Password"}
+                    {t("New Password", "नया पासवर्ड")}
                   </label>
                   <input
                     type="password"
@@ -308,7 +314,7 @@ const ProfilePage = () => {
                     onClick={() => setShowPasswordModal(false)}
                     fullWidth
                   >
-                    {isHindi ? "रद्द करें" : "Cancel"}
+                    {t("Cancel", "रद्द करें")}
                   </Button>
                   <Button
                     variant="primary"
@@ -316,7 +322,7 @@ const ProfilePage = () => {
                     loading={passwordLoading}
                     fullWidth
                   >
-                    {isHindi ? "अपडेट करें" : "Update"}
+                    {t("Update", "अपडेट करें")}
                   </Button>
                 </div>
               </form>

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Button from "../../../components/ui/Button";
+import { useLanguage } from "../../../context/LanguageContext";
 
 const AnalyzingState = ({ previewImage, onCancel }) => {
+  const { t } = useLanguage();
   const [tipIndex, setTipIndex] = useState(0);
 
   const tips = [
-    "Checking for 38 disease types / 38 बीमारी प्रकारों की जाँच हो रही है...",
-    "Analyzing leaf patterns / पत्ती के पैटर्न का विश्लेषण हो रहा है...",
-    "Comparing with 54,000 samples / 54,000 नमूनों के साथ तुलना की जा रही है...",
-    "Generating treatment advice / उपचार सलाह तैयार की जा रही है...",
+    { en: "Checking for 38 disease types...", hi: "38 बीमारी प्रकारों की जाँच हो रही है..." },
+    { en: "Analyzing leaf patterns...", hi: "पत्ती के पैटर्न का विश्लेषण हो रहा है..." },
+    { en: "Comparing with 54,000 samples...", hi: "54,000 नमूनों के साथ तुलना की जा रही है..." },
+    { en: "Generating treatment advice...", hi: "उपचार सलाह तैयार की जा रही है..." },
   ];
 
   useEffect(() => {
@@ -65,16 +67,16 @@ const AnalyzingState = ({ previewImage, onCancel }) => {
 
       {/* Main text */}
       <h3 className="text-xl font-extrabold text-emerald-950 mb-2">
-        Analyzing crop health / फसल स्वास्थ्य का विश्लेषण...
+        {t("Analyzing crop health...", "फसल स्वास्थ्य का विश्लेषण...")}
       </h3>
       <p className="text-sm text-emerald-700/80 mb-8">
-        This will take just a few seconds. / इसमें कुछ ही सेकंड लगेंगे।
+        {t("This will take just a few seconds.", "इसमें कुछ ही सेकंड लगेंगे।")}
       </p>
 
       {/* Rotating tips */}
       <div className="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 w-full mb-8 min-h-[76px] flex items-center justify-center transition-all duration-300">
         <p className="text-sm font-semibold text-emerald-800 animate-pulse">
-          {tips[tipIndex]}
+          {t(tips[tipIndex].en, tips[tipIndex].hi)}
         </p>
       </div>
 
@@ -84,7 +86,7 @@ const AnalyzingState = ({ previewImage, onCancel }) => {
         onClick={onCancel}
         className="px-6 py-2 text-emerald-700 font-bold border-emerald-200 hover:bg-emerald-50"
       >
-        Cancel / रद्द करें
+        {t("Cancel", "रद्द करें")}
       </Button>
     </div>
   );

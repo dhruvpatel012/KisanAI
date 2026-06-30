@@ -6,10 +6,12 @@ import Button from "../../components/ui/Button";
 import Alert from "../../components/ui/Alert";
 import Badge from "../../components/ui/Badge";
 import api from "../../lib/axios";
+import { useLanguage } from "../../context/LanguageContext";
 
 const ResultPage = () => {
   const { uploadId } = useParams();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,7 +28,7 @@ const ResultPage = () => {
       } catch (err) {
         console.error("Fetch scan details error:", err);
         const backendError = err.response?.data?.detail;
-        setError(backendError || "Failed to load scan details. Please try again.");
+        setError(backendError || t("Failed to load scan details. Please try again.", "विवरण लोड करने में विफल।"));
       } finally {
         setLoading(false);
       }
@@ -39,7 +41,7 @@ const ResultPage = () => {
 
   if (loading) {
     return (
-      <PageLayout title="Analyzing Crop / फसल विश्लेषण" showBack={true}>
+      <PageLayout title={t("Analyzing Crop", "फसल विश्लेषण")} showBack={true}>
         <div className="max-w-md mx-auto flex flex-col gap-6 p-4">
           <div className="h-64 bg-gray-200 animate-pulse rounded-2xl" />
           <div className="h-8 bg-gray-200 animate-pulse rounded w-3/4 mx-auto" />
@@ -52,11 +54,11 @@ const ResultPage = () => {
 
   if (error) {
     return (
-      <PageLayout title="Error / त्रुटि" showBack={true}>
+      <PageLayout title={t("Error", "त्रुटि")} showBack={true}>
         <div className="max-w-md mx-auto p-4 flex flex-col gap-6">
           <Alert message={error} type="error" />
           <Button variant="primary" onClick={() => navigate("/scan")}>
-            Go Back / वापस जाएं
+            {t("Go Back", "वापस जाएं")}
           </Button>
         </div>
       </PageLayout>
@@ -65,11 +67,13 @@ const ResultPage = () => {
 
   if (!scanData) {
     return (
-      <PageLayout title="Not Found / नहीं मिला" showBack={true}>
+      <PageLayout title={t("Not Found", "नहीं मिला")} showBack={true}>
         <div className="max-w-md mx-auto p-4 text-center">
-          <p className="text-gray-600 mb-6">Scan details not found. / स्कैन विवरण नहीं मिला।</p>
+          <p className="text-gray-600 mb-6">
+            {t("Scan details not found.", "स्कैन विवरण नहीं मिला।")}
+          </p>
           <Button variant="primary" onClick={() => navigate("/scan")}>
-            Go Back / वापस जाएं
+            {t("Go Back", "वापस जाएं")}
           </Button>
         </div>
       </PageLayout>
@@ -85,7 +89,7 @@ const ResultPage = () => {
   // CASE 1: Low Confidence Response (Blurry/Non-plant photos)
   if (scanData.status === "low_confidence") {
     return (
-      <PageLayout title="Analysis Unclear / विश्लेषण अस्पष्ट" showBack={true}>
+      <PageLayout title={t("Analysis Unclear", "विश्लेषण अस्पष्ट")} showBack={true}>
         <Card className="max-w-md mx-auto p-6 flex flex-col items-center gap-6 text-center">
           <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center border border-amber-100 shadow-sm animate-pulse">
             <svg className="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,9 +98,11 @@ const ResultPage = () => {
           </div>
 
           <div>
-            <h2 className="text-xl font-bold text-gray-800">Image Unclear / छवि अस्पष्ट है</h2>
+            <h2 className="text-xl font-bold text-gray-800">
+              {t("Image Unclear", "छवि अस्पष्ट है")}
+            </h2>
             <p className="text-sm text-gray-500 mt-2 leading-relaxed">
-              {scanData.message || "The AI model could not detect a crop leaf. Please capture a clear, close-up photo of the leaf."}
+              {scanData.message || t("The AI model could not detect a crop leaf. Please capture a clear, close-up photo of the leaf.", "एआई मॉडल फसल की पत्ती का पता नहीं लगा सका। कृपया पत्ती की साफ फोटो लें।")}
             </p>
           </div>
 
@@ -106,10 +112,10 @@ const ResultPage = () => {
 
           <div className="flex flex-col gap-2.5 w-full">
             <Button variant="primary" onClick={() => navigate("/scan")} fullWidth className="font-bold">
-              Retake Photo / दोबारा फोटो लें
+              {t("Retake Photo", "दोबारा फोटो लें")}
             </Button>
             <Button variant="ghost" onClick={() => navigate("/dashboard")} fullWidth>
-              Go to Dashboard / डैशबोर्ड पर जाएं
+              {t("Go to Dashboard", "डैशबोर्ड पर जाएं")}
             </Button>
           </div>
         </Card>
@@ -120,7 +126,7 @@ const ResultPage = () => {
   // CASE 2: Healthy Crop Response
   if (scanData.is_healthy) {
     return (
-      <PageLayout title="Healthy Crop / स्वस्थ फसल" showBack={true}>
+      <PageLayout title={t("Healthy Crop", "स्वस्थ फसल")} showBack={true}>
         <Card className="max-w-md mx-auto p-6 flex flex-col items-center gap-6 text-center">
           <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center border border-emerald-100 shadow-sm animate-bounce" style={{ animationDuration: "3s" }}>
             <svg className="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,8 +135,12 @@ const ResultPage = () => {
           </div>
 
           <div>
-            <h2 className="text-2xl font-extrabold text-emerald-950">Crop is Healthy! / फसल स्वस्थ है!</h2>
-            <Badge variant="success" className="mt-2.5 font-bold uppercase text-xs">Healthy / स्वस्थ</Badge>
+            <h2 className="text-2xl font-extrabold text-emerald-950">
+              {t("Crop is Healthy!", "फसल स्वस्थ है!")}
+            </h2>
+            <Badge variant="success" className="mt-2.5 font-bold uppercase text-xs">
+              {t("Healthy", "स्वस्थ")}
+            </Badge>
           </div>
 
           <div className="w-full relative aspect-square overflow-hidden rounded-2xl border border-emerald-100 shadow-sm">
@@ -138,18 +148,20 @@ const ResultPage = () => {
           </div>
 
           <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-4 w-full text-left">
-            <h4 className="font-bold text-emerald-900 text-sm mb-1">Advisory / सलाह:</h4>
+            <h4 className="font-bold text-emerald-900 text-sm mb-1">
+              {t("Advisory", "सलाह")}:
+            </h4>
             <p className="text-xs text-emerald-700 leading-relaxed">
-              No disease symptoms detected. Keep maintaining standard balanced fertilizer, regular watering, and good crop rotation practices.
+              {t("No disease symptoms detected. Keep maintaining standard balanced fertilizer, regular watering, and good crop rotation practices.", "कोई बीमारी नहीं मिली। नियमित सिंचाई और खाद देते रहें।")}
             </p>
           </div>
 
           <div className="flex flex-col gap-2.5 w-full">
             <Button variant="primary" onClick={() => navigate("/scan")} fullWidth className="font-bold">
-              Scan Another Crop / अन्य फसल जाँचें
+              {t("Scan Another Crop", "अन्य फसल जाँचें")}
             </Button>
             <Button variant="ghost" onClick={() => navigate("/dashboard")} fullWidth>
-              Go to Dashboard / डैशबोर्ड पर जाएं
+              {t("Go to Dashboard", "डैशबोर्ड पर जाएं")}
             </Button>
           </div>
         </Card>
@@ -188,23 +200,38 @@ const ResultPage = () => {
     }
   };
 
+  const getSeverityLabel = (severity) => {
+    switch (severity?.toLowerCase()) {
+      case "high":
+        return t("HIGH RISK", "उच्च जोखिम");
+      case "medium":
+        return t("MEDIUM RISK", "मध्यम जोखिम");
+      default:
+        return t("LOW RISK", "कम जोखिम");
+    }
+  };
+
   return (
-    <PageLayout title="Diagnosis / रोग निदान" showBack={true}>
+    <PageLayout title={t("Diagnosis", "रोग निदान")} showBack={true}>
       <div className="max-w-md mx-auto flex flex-col gap-5 p-4 pb-20">
         
         {/* Main Details Card */}
         <Card className="p-5 flex flex-col gap-4">
           <div className="flex justify-between items-center gap-3">
             <div>
-              <span className="text-xs font-bold text-emerald-700/70 tracking-wide uppercase">Detected Disease / बीमारी</span>
+              <span className="text-xs font-bold text-emerald-700/70 tracking-wide uppercase">
+                {t("Detected Disease", "बीमारी")}
+              </span>
               <h2 className="text-xl font-extrabold text-emerald-950 mt-0.5 leading-snug">
                 {scanData.disease}
               </h2>
               <div className="flex items-center gap-2 mt-2">
-                <span className="text-xs font-semibold text-gray-500">Crop: {scanData.crop}</span>
+                <span className="text-xs font-semibold text-gray-500">
+                  {t("Crop:", "फसल:")} {scanData.crop}
+                </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
                 <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${getSeverityColor(scanData.severity)}`}>
-                  {scanData.severity?.toUpperCase()} RISK
+                  {getSeverityLabel(scanData.severity)}
                 </span>
               </div>
             </div>
@@ -217,7 +244,9 @@ const ResultPage = () => {
               </svg>
               <div className="absolute flex flex-col items-center justify-center text-center">
                 <span className="text-sm font-extrabold text-emerald-950">{confidencePercent}%</span>
-                <span className="text-[8px] font-bold text-emerald-700/60 uppercase">Accuracy</span>
+                <span className="text-[8px] font-bold text-emerald-700/60 uppercase">
+                  {t("Accuracy", "सटीकता")}
+                </span>
               </div>
             </div>
           </div>
@@ -240,7 +269,7 @@ const ResultPage = () => {
               }`}
               onClick={() => setActiveTab("organic")}
             >
-              Organic Care / जैविक उपचार
+              {t("Organic Care", "जैविक उपचार")}
             </button>
             <button
               className={`flex-1 py-3.5 text-xs font-extrabold text-center border-b-2 transition-all ${
@@ -250,7 +279,7 @@ const ResultPage = () => {
               }`}
               onClick={() => setActiveTab("chemical")}
             >
-              Chemical Care / रासायनिक उपचार
+              {t("Chemical Care", "रासायनिक उपचार")}
             </button>
           </div>
 
@@ -266,7 +295,9 @@ const ResultPage = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-xs text-gray-500 text-center py-4">No organic treatment steps listed.</p>
+                  <p className="text-xs text-gray-500 text-center py-4">
+                    {t("No organic treatment steps listed.", "कोई जैविक उपचार चरण सूचीबद्ध नहीं हैं।")}
+                  </p>
                 )}
               </div>
             ) : (
@@ -281,7 +312,7 @@ const ResultPage = () => {
                 ) : (
                   <div className="flex gap-3 items-start bg-emerald-50/30 border border-emerald-100/50 rounded-xl p-4 text-center justify-center">
                     <p className="text-xs text-emerald-800 font-medium">
-                      No chemical inputs required. Keep using standard organic preventions.
+                      {t("No chemical inputs required. Keep using standard organic preventions.", "किसी रासायनिक इनपुट की आवश्यकता नहीं है। जैविक निवारणों का उपयोग जारी रखें।")}
                     </p>
                   </div>
                 )}
@@ -294,19 +325,23 @@ const ResultPage = () => {
         {(scanData.fertilizer || scanData.prevention) && (
           <Card className="p-5 flex flex-col gap-4">
             <h3 className="text-sm font-extrabold text-emerald-950 tracking-wide uppercase border-b border-emerald-50 pb-2">
-              Soil & Prevention / मिट्टी और रोकथाम
+              {t("Soil & Prevention", "मिट्टी और रोकथाम")}
             </h3>
 
             {scanData.fertilizer && (
               <div className="bg-emerald-50/50 border border-emerald-100/50 rounded-xl p-3">
-                <span className="text-[10px] font-bold text-emerald-700 uppercase">Fertilizer Advisory / खाद सलाह</span>
+                <span className="text-[10px] font-bold text-emerald-700 uppercase">
+                  {t("Fertilizer Advisory", "खाद सलाह")}
+                </span>
                 <p className="text-xs text-emerald-950 font-medium mt-1 leading-relaxed">{scanData.fertilizer}</p>
               </div>
             )}
 
             {scanData.prevention && (
               <div className="bg-emerald-50/50 border border-emerald-100/50 rounded-xl p-3">
-                <span className="text-[10px] font-bold text-emerald-700 uppercase">Prevention Plan / बचाव योजना</span>
+                <span className="text-[10px] font-bold text-emerald-700 uppercase">
+                  {t("Prevention Plan", "बचाव योजना")}
+                </span>
                 <p className="text-xs text-emerald-950 font-medium mt-1 leading-relaxed">{scanData.prevention}</p>
               </div>
             )}
@@ -317,18 +352,18 @@ const ResultPage = () => {
         {scanData.similar_diseases && scanData.similar_diseases.length > 0 && (
           <div className="flex flex-col gap-2.5">
             <h3 className="text-xs font-bold text-emerald-800 tracking-wider uppercase pl-1">
-              Similar Matches / मिलते-जुलते रोग
+              {t("Similar Matches", "मिलते-जुलते रोग")}
             </h3>
             <div className="grid grid-cols-2 gap-3">
               {scanData.similar_diseases.map((disease, idx) => (
                 <Card key={idx} className="p-3.5 flex flex-col gap-1.5">
                   <span className="text-xs font-bold text-emerald-950 truncate">{disease.name}</span>
                   <div className="flex justify-between items-center text-[10px]">
-                    <span className="font-semibold text-gray-500">Match:</span>
+                    <span className="font-semibold text-gray-500">{t("Match:", "तुलना:")}</span>
                     <span className="font-extrabold text-emerald-700">{(disease.confidence * 100).toFixed(1)}%</span>
                   </div>
                   <div className="flex justify-between items-center text-[10px]">
-                    <span className="font-semibold text-gray-500">Risk:</span>
+                    <span className="font-semibold text-gray-500">{t("Risk:", "जोखिम:")}</span>
                     <span className="font-bold text-amber-700 uppercase">{disease.severity}</span>
                   </div>
                 </Card>
@@ -347,10 +382,10 @@ const ResultPage = () => {
         {/* Bottom Actions */}
         <div className="flex flex-col gap-2 w-full mt-4">
           <Button variant="primary" onClick={() => navigate("/scan")} fullWidth className="font-bold py-3.5">
-            Scan Another Crop / नई फसल जाँचें
+            {t("Scan Another Crop", "नई फसल जाँचें")}
           </Button>
           <Button variant="secondary" onClick={() => navigate("/dashboard")} fullWidth className="border-emerald-100 text-emerald-800 hover:bg-emerald-50 font-bold">
-            Back to Dashboard / वापस जाएं
+            {t("Back to Dashboard", "वापस जाएं")}
           </Button>
         </div>
 

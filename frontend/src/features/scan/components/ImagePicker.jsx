@@ -1,8 +1,10 @@
 import React, { useRef } from "react";
 import Card from "../../../components/ui/Card";
 import Button from "../../../components/ui/Button";
+import { useLanguage } from "../../../context/LanguageContext";
 
 const ImagePicker = ({ onFileSelect, error }) => {
+  const { t } = useLanguage();
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
 
@@ -59,11 +61,13 @@ const ImagePicker = ({ onFileSelect, error }) => {
         </div>
 
         <h2 className="text-xl font-bold text-gray-900 mb-1">
-          Take a Photo / फोटो लें
+          {t("Take a Photo", "फोटो लें")}
         </h2>
         <p className="text-sm text-gray-500 mb-6 max-w-[280px]">
-          Position the affected crop leaf clearly inside the camera frame.
-          / फसल की पत्ती को कैमरे के सामने रखें।
+          {t(
+            "Position the affected crop leaf clearly inside the camera frame.",
+            "फसल की पत्ती को कैमरे के सामने रखें।"
+          )}
         </p>
 
         {/* Client side selection error */}
@@ -80,13 +84,13 @@ const ImagePicker = ({ onFileSelect, error }) => {
             onClick={() => cameraInputRef.current?.click()}
           >
             <i className="ri-camera-fill text-lg"></i>
-            Open Camera / कैमरा खोलें
+            {t("Open Camera", "कैमरा खोलें")}
           </Button>
 
           <div className="flex items-center justify-between w-full my-1">
             <span className="h-[1px] bg-gray-200 flex-1"></span>
             <span className="text-xs text-gray-400 px-3 uppercase tracking-wider font-semibold">
-              OR / या
+              {t("OR", "या")}
             </span>
             <span className="h-[1px] bg-gray-200 flex-1"></span>
           </div>
@@ -97,7 +101,7 @@ const ImagePicker = ({ onFileSelect, error }) => {
             onClick={() => galleryInputRef.current?.click()}
           >
             <i className="ri-image-add-fill text-lg"></i>
-            Upload from Gallery / गैलरी से चुनें
+            {t("Upload from Gallery", "गैलरी से चुनें")}
           </Button>
         </div>
       </Card>
@@ -106,7 +110,7 @@ const ImagePicker = ({ onFileSelect, error }) => {
       <Card className="p-5 bg-white border border-gray-100">
         <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 mb-4">
           <i className="ri-pushpin-2-fill text-brand-600 text-lg"></i>
-          Tips for Accurate Scan / सही जाँच के सुझाव
+          {t("Tips for Accurate Scan", "सही जाँच के सुझाव")}
         </h3>
 
         <ul className="flex flex-col gap-3.5">
@@ -115,10 +119,7 @@ const ImagePicker = ({ onFileSelect, error }) => {
               <i className="ri-checkbox-circle-fill text-brand-600 text-lg mt-0.5 shrink-0"></i>
               <div>
                 <p className="text-sm font-semibold text-gray-900 leading-tight">
-                  {tip.en}
-                </p>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  {tip.hi}
+                  {t(tip.en, tip.hi)}
                 </p>
               </div>
             </li>
