@@ -82,3 +82,9 @@ cd frontend
 npm run dev -- --host 0.0.0.0
 ```
 
+### 🛠️ Troubleshooting: Port 8000/5173 already in use
+If you see an error like `[winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted`, it means the server is already running in another terminal window or background task. 
+
+Close the other terminal window or kill the running process to free the port, then try running the start commands again.
+
+
