@@ -1,36 +1,191 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../../components/layout/PageLayout";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
+import Alert from "../../components/ui/Alert";
+import Badge from "../../components/ui/Badge";
+import api from "../../lib/axios";
 
 const HistoryPage = () => {
   const navigate = useNavigate();
 
+  const [scans, setScans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchScans = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get("/api/scans");
+      setScans(response.data);
+    } catch (err) {
+      console.error("Failed to fetch scans:", err);
+      const backendError = err.response?.data?.detail;
+      setError(backendError || "Failed to load scan history. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchScans();
+  }, []);
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  // Severity color/variant mapping helper
+  const getSeverityVariant = (scan) => {
+    if (scan.status === "low_confidence") return "warning";
+    if (scan.status === "uploaded") return "info";
+    if (scan.is_healthy) return "success";
+    
+    switch (scan.severity?.toLowerCase()) {
+      case "high":
+        return "danger";
+      case "medium":
+        return "warning";
+      case "low":
+        return "success";
+      default:
+        return "gray";
+    }
+  };
+
+  const getSeverityLabel = (scan) => {
+    if (scan.status === "low_confidence") return "Unclear / अस्पष्ट";
+    if (scan.status === "uploaded") return "Analyzing / विश्लेषण...";
+    if (scan.is_healthy) return "Healthy / स्वस्थ";
+
+    switch (scan.severity?.toLowerCase()) {
+      case "high":
+        return "High Risk / उच्च जोखिम";
+      case "medium":
+        return "Medium Risk / मध्यम जोखिम";
+      case "low":
+        return "Low Risk / कम जोखिम";
+      default:
+        return "Unknown";
+    }
+  };
+
+  // Resolve Image URL
+  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const getImageUrl = (scan) => {
+    if (!scan.image_url) return null;
+    return scan.image_url.startsWith("http")
+      ? scan.image_url
+      : `${backendUrl}${scan.image_url}`;
+  };
+
   return (
-    <PageLayout title="Scan History / इतिहास">
-      <Card className="flex flex-col items-center text-center p-8 max-w-md mx-auto">
-        {/* Empty history icon */}
-        <div className="w-20 h-20 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center mb-6">
-          <i className="ri-history-line text-4xl text-gray-400"></i>
-        </div>
+    <PageLayout title="Scan History">
+      <div className="max-w-md mx-auto flex flex-col gap-4 p-4 pb-20">
+        
+        {/* LOADING STATE */}
+        {loading && (
+          <div className="flex flex-col gap-3">
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="h-20 bg-gray-100 animate-pulse rounded-2xl border border-gray-200" />
+            ))}
+          </div>
+        )}
 
-        <h2 className="text-xl font-bold text-gray-900 mb-2">
-          No Scans Yet / कोई जाँच नहीं
-        </h2>
-        <p className="text-sm text-gray-500 mb-6 max-w-[280px]">
-          Start by scanning your first crop to diagnose diseases.
-          / अपनी पहली फसल की जाँच शुरू करें।
-        </p>
+        {/* ERROR STATE */}
+        {!loading && error && (
+          <div className="flex flex-col gap-4">
+            <Alert message={error} type="error" />
+            <Button variant="primary" onClick={fetchScans} fullWidth>
+              Retry
+            </Button>
+          </div>
+        )}
 
-        <Button
-          variant="primary"
-          onClick={() => navigate("/scan")}
-          className="font-bold px-8"
-        >
-          Start Scan / जाँच शुरू करें
-        </Button>
-      </Card>
+        {/* EMPTY STATE */}
+        {!loading && !error && scans.length === 0 && (
+          <Card className="flex flex-col items-center text-center p-8">
+            <div className="w-20 h-20 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-6 text-3xl">
+              🌾
+            </div>
+            <h2 className="text-xl font-bold text-gray-950 mb-1">
+              No Scans Yet
+            </h2>
+            <p className="text-xs text-gray-600 mb-6 leading-relaxed">
+              Start by scanning your first crop to diagnose diseases.<br />
+              अपनी पहली फसल की जाँच शुरू करें।
+            </p>
+            <Button variant="primary" onClick={() => navigate("/scan")} className="font-bold px-8">
+              Start Scan
+            </Button>
+          </Card>
+        )}
+
+        {/* SCAN LIST STATE */}
+        {!loading && !error && scans.length > 0 && (
+          <div className="flex flex-col gap-3">
+            {scans.map((scan) => {
+              const imgUrl = getImageUrl(scan);
+              return (
+                <Card
+                  key={scan.upload_id}
+                  onClick={() => navigate(`/result/${scan.upload_id}`)}
+                  className="flex items-center justify-between p-4 hover:shadow-md transition-all duration-200 cursor-pointer border border-emerald-50"
+                >
+                  <div className="flex items-center gap-3">
+                    {imgUrl ? (
+                      <img
+                        src={imgUrl}
+                        alt="Crop Thumbnail"
+                        className="w-12 h-12 rounded-xl object-cover border border-emerald-100 flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-xl border border-emerald-100/50 flex-shrink-0">
+                        🌱
+                      </div>
+                    )}
+                    <div>
+                      <h4 className="font-extrabold text-emerald-950 text-sm leading-tight">
+                        {scan.status === "uploaded"
+                          ? "Analyzing..."
+                          : scan.disease || (scan.status === "low_confidence" ? "Unclear Image" : "Healthy")}
+                      </h4>
+                      {scan.crop && (
+                        <p className="text-xs text-emerald-800 font-bold mt-0.5">
+                          {scan.crop}
+                        </p>
+                      )}
+                      <p className="text-[10px] text-gray-400 font-medium mt-1">
+                        {formatDate(scan.created_at)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                    <Badge variant={getSeverityVariant(scan)}>
+                      {getSeverityLabel(scan)}
+                    </Badge>
+                    <svg className="w-4 h-4 text-emerald-700/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </PageLayout>
   );
 };

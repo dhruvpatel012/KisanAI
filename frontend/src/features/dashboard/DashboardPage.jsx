@@ -4,10 +4,13 @@ import PageLayout from "../../components/layout/PageLayout";
 import Card from "../../components/ui/Card";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
+import api from "../../lib/axios";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
   const [greeting, setGreeting] = useState("Hello");
+  const [scans, setScans] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const hours = new Date().getHours();
@@ -18,37 +21,87 @@ const DashboardPage = () => {
     } else {
       setGreeting("Good Evening");
     }
+
+    const fetchRecentScans = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get("/api/scans");
+        setScans(response.data.slice(0, 3));
+      } catch (err) {
+        console.error("Failed to fetch recent scans:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecentScans();
   }, []);
 
-  const mockScans = [
-    {
-      id: "1",
-      crop: "Tomato",
-      disease: "Early Blight",
-      severity: "warning",
-      severityLabel: "Medium Risk",
-      date: "Today",
-      emoji: "🍅",
-    },
-    {
-      id: "2",
-      crop: "Wheat",
-      disease: "Healthy",
-      severity: "success",
-      severityLabel: "Healthy",
-      date: "Yesterday",
-      emoji: "🌾",
-    },
-    {
-      id: "3",
-      crop: "Rice",
-      disease: "Leaf Blast",
-      severity: "danger",
-      severityLabel: "High Risk",
-      date: "2 days ago",
-      emoji: "🌾",
-    },
-  ];
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const getSeverityVariant = (scan) => {
+    if (scan.status === "low_confidence") return "warning";
+    if (scan.status === "uploaded") return "info";
+    if (scan.is_healthy) return "success";
+    
+    switch (scan.severity?.toLowerCase()) {
+      case "high":
+        return "danger";
+      case "medium":
+        return "warning";
+      case "low":
+        return "success";
+      default:
+        return "gray";
+    }
+  };
+
+  const getSeverityLabel = (scan) => {
+    if (scan.status === "low_confidence") return "Unclear / अस्पष्ट";
+    if (scan.status === "uploaded") return "Analyzing / विश्लेषण...";
+    if (scan.is_healthy) return "Healthy / स्वस्थ";
+
+    switch (scan.severity?.toLowerCase()) {
+      case "high":
+        return "High Risk";
+      case "medium":
+        return "Medium Risk";
+      case "low":
+        return "Low Risk";
+      default:
+        return "Unknown";
+    }
+  };
+
+  const getCropEmoji = (cropName) => {
+    if (!cropName) return "🌱";
+    const name = cropName.toLowerCase();
+    if (name.includes("potato")) return "🥔";
+    if (name.includes("tomato")) return "🍅";
+    if (name.includes("wheat") || name.includes("rice")) return "🌾";
+    return "🌱";
+  };
+
+  // Resolve Image URL
+  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const getImageUrl = (scan) => {
+    if (!scan.image_url) return null;
+    return scan.image_url.startsWith("http")
+      ? scan.image_url
+      : `${backendUrl}${scan.image_url}`;
+  };
 
   return (
     <PageLayout>
@@ -106,38 +159,70 @@ const DashboardPage = () => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {mockScans.map((scan) => (
-          <Card
-            key={scan.id}
-            onClick={() => navigate(`/history`)}
-            className="flex items-center justify-between hover:shadow-md transition-all duration-200"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center text-2xl border border-brand-100/50">
-                {scan.emoji}
-              </div>
-              <div>
-                <h4 className="font-bold text-gray-900 text-sm">
-                  {scan.crop}
-                </h4>
-                <p className="text-xs text-gray-500">
-                  {scan.disease}
-                </p>
-                <p className="text-[10px] text-gray-400 mt-0.5">
-                  {scan.date}
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-col items-end gap-1">
-              <Badge variant={scan.severity}>
-                {scan.severityLabel}
-              </Badge>
-              <i className="ri-arrow-right-s-line text-gray-400"></i>
-            </div>
-          </Card>
-        ))}
-      </div>
+      {/* LOADING STATE */}
+      {loading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {[1, 2, 3].map((item) => (
+            <div key={item} className="h-20 bg-gray-100 animate-pulse rounded-2xl border border-gray-200" />
+          ))}
+        </div>
+      )}
+
+      {/* EMPTY STATE */}
+      {!loading && scans.length === 0 && (
+        <div className="text-center py-6 text-sm text-gray-500 font-medium bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+          No scans yet / कोई जाँच नहीं
+        </div>
+      )}
+
+      {/* DYNAMIC SCANS FEED */}
+      {!loading && scans.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {scans.map((scan) => {
+            const imgUrl = getImageUrl(scan);
+            return (
+              <Card
+                key={scan.upload_id}
+                onClick={() => navigate(`/result/${scan.upload_id}`)}
+                className="flex items-center justify-between hover:shadow-md transition-all duration-200 cursor-pointer border border-emerald-50"
+              >
+                <div className="flex items-center gap-3">
+                  {imgUrl ? (
+                    <img
+                      src={imgUrl}
+                      alt="Crop Thumbnail"
+                      className="w-12 h-12 rounded-xl object-cover border border-emerald-100/50 flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center text-2xl border border-brand-100/50 flex-shrink-0">
+                      {getCropEmoji(scan.crop)}
+                    </div>
+                  )}
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-sm truncate max-w-[150px]">
+                      {scan.crop || "Unknown"}
+                    </h4>
+                    <p className="text-xs text-gray-500 truncate max-w-[150px]">
+                      {scan.status === "uploaded"
+                        ? "Analyzing..."
+                        : scan.disease || (scan.status === "low_confidence" ? "Unclear Image" : "Healthy")}
+                    </p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">
+                      {formatDate(scan.created_at)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                  <Badge variant={getSeverityVariant(scan)}>
+                    {getSeverityLabel(scan)}
+                  </Badge>
+                  <i className="ri-arrow-right-s-line text-gray-400"></i>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </PageLayout>
   );
 };

@@ -175,3 +175,33 @@ async def get_scan_details(
         "created_at": scan.get("created_at")
     }
 
+@router.get("/scans")
+async def get_scans_list(
+    current_user: dict = Depends(get_current_user)
+):
+    user_id = current_user.get("user_id")
+    cursor = database["scans"].find({"user_id": user_id}).sort("created_at", -1).limit(50)
+    scans_list = []
+    async for scan in cursor:
+        created_at = scan.get("created_at")
+        if created_at and isinstance(created_at, datetime):
+            created_at_str = created_at.isoformat()
+        elif created_at:
+            created_at_str = str(created_at)
+        else:
+            created_at_str = None
+            
+        scans_list.append({
+            "upload_id": str(scan["_id"]),
+            "crop": scan.get("crop"),
+            "disease": scan.get("disease"),
+            "confidence": scan.get("confidence"),
+            "severity": scan.get("severity"),
+            "is_healthy": scan.get("is_healthy"),
+            "status": scan.get("status"),
+            "image_url": f"/uploads/{scan.get('saved_filename')}" if scan.get('saved_filename') else None,
+            "created_at": created_at_str
+        })
+    return scans_list
+
+

@@ -56,6 +56,7 @@ Kisan_AI/
 - **Day 7**: Developed `ImagePicker` and `ImagePreview` frontend components with conditional rendering, and built a dedicated `HistoryPage` displaying bilingual empty states. Integrated a `ProtectedRoute` component to secure all dashboard and profile pages. Completed end-to-end flow verification tests, cleaned up files, and updated `.env.example`.
 - **Day 8**: Integrated backend ML prediction service supporting live HuggingFace Space API and local mock predictions. Added JWT bearer verification and upload ownership checking on `POST /api/analyze`. Implemented frontend geolocation coordinates capturing (`useAnalyze` hook) and created pulsing scanner loader animations (`AnalyzingState`) with rotating crop health tips.
 - **Day 9**: Implemented `GET /api/scans/{scan_id}` backend scan details route with ownership validation. Created a fully styled visual results dashboard (`ResultPage`) incorporating SVGs for circular accuracy meters, risk severity badges, interactive Organic vs Chemical treatment tabs, soil advisories, and similar matches matched cards list.
+- **Day 10**: Implemented `GET /api/scans` list endpoint on the backend with JWT authorization, sorted chronologically descending and limited to 50 results. Integrated frontend `HistoryPage.jsx` fetching and listing dynamic scans with loading skeletons, retry error handling, and tap redirects to diagnostic result pages. Updated `DashboardPage.jsx` to fetch and render real recent scans feed instead of static mock data.
 
 ## Quick Start (Run Project Every Time)
 
