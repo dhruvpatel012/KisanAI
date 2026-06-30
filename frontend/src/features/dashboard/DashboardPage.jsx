@@ -11,6 +11,8 @@ const DashboardPage = () => {
   const [greeting, setGreeting] = useState("Hello");
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [weather, setWeather] = useState(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
 
   useEffect(() => {
     const hours = new Date().getHours();
@@ -34,7 +36,33 @@ const DashboardPage = () => {
       }
     };
 
+    const fetchWeather = async (lat, lng) => {
+      try {
+        setWeatherLoading(true);
+        const response = await api.get(`/api/weather?lat=${lat}&lng=${lng}`);
+        setWeather(response.data);
+      } catch (err) {
+        console.error("Failed to fetch weather:", err);
+      } finally {
+        setWeatherLoading(false);
+      }
+    };
+
     fetchRecentScans();
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          fetchWeather(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          console.warn("Geolocation access denied or failed, using default (Delhi)");
+          fetchWeather(28.6139, 77.2090);
+        }
+      );
+    } else {
+      fetchWeather(28.6139, 77.2090);
+    }
   }, []);
 
   const formatDate = (dateStr) => {
@@ -114,6 +142,58 @@ const DashboardPage = () => {
           How are your crops today? / आज आपकी फसलें कैसी हैं?
         </p>
       </div>
+
+      {/* SECTION 1.5 - Weather Card */}
+      {weatherLoading ? (
+        <Card className="mb-6 h-36 bg-gray-100 animate-pulse border border-gray-200" />
+      ) : weather ? (
+        <Card className="mb-6 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 shadow-sm p-4 relative overflow-hidden">
+          <div className="flex justify-between items-start mb-3">
+            <div>
+              <span className="text-xs uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
+                Local Weather / स्थानीय मौसम
+              </span>
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-3xl font-extrabold text-emerald-950">
+                  {Math.round(weather.current.temperature)}°C
+                </span>
+                <span className="text-2xl">{weather.current.emoji}</span>
+                <span className="text-sm font-bold text-emerald-800">
+                  {weather.current.description_hi} / {weather.current.description}
+                </span>
+              </div>
+              <div className="flex gap-4 mt-2 text-xs font-semibold text-emerald-800">
+                <span>💧 Humidity: {weather.current.humidity}%</span>
+                <span>💨 Wind: {weather.current.wind_speed} km/h</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* 3-Day Forecast */}
+          <div className="border-t border-emerald-100/70 pt-2 mt-2">
+            <p className="text-[10px] uppercase tracking-wider text-emerald-700 font-bold mb-1.5">
+              3-Day Forecast / 3-दिवसीय पूर्वानुमान
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              {weather.forecast.map((day, idx) => {
+                const dateLabel = idx === 0 ? "Today" : idx === 1 ? "Tomorrow" : formatDate(day.date).split(",")[0];
+                const dateLabelHi = idx === 0 ? "आज" : idx === 1 ? "कल" : "परसों";
+                return (
+                  <div key={idx} className="bg-white/50 rounded-xl p-2 text-center border border-emerald-100/50">
+                    <p className="text-[10px] font-bold text-emerald-900 leading-tight">
+                      {dateLabelHi} / {dateLabel}
+                    </p>
+                    <p className="text-lg my-1">{day.emoji}</p>
+                    <p className="text-[10px] font-bold text-emerald-955">
+                      {Math.round(day.temp_max)}°/{Math.round(day.temp_min)}°
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Card>
+      ) : null}
 
       {/* SECTION 2 - Hero Scan Card */}
       <Card className="mb-6 bg-gradient-to-br from-brand-600 to-brand-800 text-white border-0 shadow-lg relative overflow-hidden">

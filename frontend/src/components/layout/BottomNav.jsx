@@ -21,6 +21,22 @@ const BottomNav = () => {
         </NavLink>
 
         <NavLink
+          to="/advisory"
+          className={({ isActive }) =>
+            `flex flex-col items-center justify-center flex-1 h-full text-[11px] font-medium ${
+              isActive ? "text-brand-600" : "text-gray-400"
+            }`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <i className={`text-xl mb-0.5 ${isActive ? "ri-book-open-fill" : "ri-book-open-line"}`}></i>
+              <span>Advisory</span>
+            </>
+          )}
+        </NavLink>
+
+        <NavLink
           to="/scan"
           className="flex flex-col items-center justify-center flex-1 h-full relative"
         >

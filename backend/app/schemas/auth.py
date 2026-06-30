@@ -19,3 +19,14 @@ class UserResponse(BaseModel):
     email: str
     full_name: Optional[str] = None
     is_active: bool
+    preferred_language: Optional[str] = "en"
+    farm_location: Optional[str] = ""
+
+class ProfileUpdateRequest(BaseModel):
+    full_name: str
+    preferred_language: str
+    farm_location: str
+
+class PasswordChangeRequest(BaseModel):
+    old_password: str
+    new_password: str

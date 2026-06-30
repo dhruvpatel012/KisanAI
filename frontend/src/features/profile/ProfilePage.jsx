@@ -1,134 +1,330 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PageLayout from "../../components/layout/PageLayout";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
+import Alert from "../../components/ui/Alert";
 import { logoutUser } from "../auth/authService";
+import api from "../../lib/axios";
 
 const ProfilePage = () => {
-  const [language, setLanguage] = useState("en");
+  const [profile, setProfile] = useState({
+    full_name: "",
+    email: "",
+    preferred_language: "en",
+    farm_location: ""
+  });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [profileError, setProfileError] = useState(null);
 
-  const menuItems = [
-    {
-      icon: "ri-history-line",
-      en: "My Scan History",
-      hi: "मेरी जाँच का इतिहास",
-      path: "/history",
-    },
-    {
-      icon: "ri-plant-line",
-      en: "My Crops",
-      hi: "मेरी फसलें",
-      path: "/dashboard",
-    },
-    {
-      icon: "ri-notification-3-line",
-      en: "Notifications",
-      hi: "सूचनाएं",
-      path: "/dashboard",
-    },
-    {
-      icon: "ri-question-line",
-      en: "Help and Support",
-      hi: "सहायता और संपर्क",
-      path: "/dashboard",
-    },
-  ];
+  // Password change states
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [passwordError, setPasswordError] = useState(null);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+
+  const fetchProfile = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("/auth/me");
+      setProfile({
+        full_name: response.data.full_name || "",
+        email: response.data.email || "",
+        preferred_language: response.data.preferred_language || "en",
+        farm_location: response.data.farm_location || ""
+      });
+    } catch (err) {
+      console.error("Failed to load profile:", err);
+      setProfileError("Could not retrieve profile information.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    try {
+      setSaving(true);
+      setSaveSuccess(false);
+      setProfileError(null);
+      const response = await api.put("/auth/profile", {
+        full_name: profile.full_name,
+        preferred_language: profile.preferred_language,
+        farm_location: profile.farm_location
+      });
+      setProfile({
+        full_name: response.data.full_name,
+        email: response.data.email,
+        preferred_language: response.data.preferred_language,
+        farm_location: response.data.farm_location
+      });
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err) {
+      console.error("Failed to update profile:", err);
+      setProfileError(err.response?.data?.detail || "Failed to update profile.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (!oldPassword || !newPassword) {
+      setPasswordError("Both password fields are required.");
+      return;
+    }
+    try {
+      setPasswordLoading(true);
+      setPasswordSuccess(false);
+      setPasswordError(null);
+      await api.put("/auth/change-password", {
+        old_password: oldPassword,
+        new_password: newPassword
+      });
+      setPasswordSuccess(true);
+      setOldPassword("");
+      setNewPassword("");
+      setTimeout(() => {
+        setPasswordSuccess(false);
+        setShowPasswordModal(false);
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to change password:", err);
+      setPasswordError(err.response?.data?.detail || "Incorrect old password.");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const isHindi = profile.preferred_language === "hi";
 
   return (
-    <PageLayout title="Profile / प्रोफाइल">
-      {/* GRID FOR USER & LANGUAGE CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {/* USER CARD */}
-        <Card className="flex items-center gap-4 p-5">
-          <div className="w-16 h-16 bg-brand-600 rounded-2xl flex items-center justify-center text-3xl shadow-md shrink-0">
-            👨‍🌾
+    <PageLayout title={isHindi ? "प्रोफाइल" : "Profile"}>
+      <div className="max-w-md mx-auto flex flex-col gap-4 p-4 pb-20">
+        
+        {/* LOADING SHIMMER */}
+        {loading && (
+          <div className="flex flex-col gap-3">
+            <div className="h-28 bg-gray-100 animate-pulse rounded-2xl border border-gray-200" />
+            <div className="h-64 bg-gray-100 animate-pulse rounded-2xl border border-gray-200" />
           </div>
-          <div className="overflow-hidden">
-            <h2 className="text-lg font-bold text-gray-900 truncate">
-              Dhruv Patel
-            </h2>
-            <p className="text-sm text-gray-500 truncate">
-              testfarmer2@kisanai.com
-            </p>
-            <div className="mt-2 inline-flex items-center gap-1 bg-brand-50 border border-brand-100 text-[10px] font-semibold text-brand-700 px-2 py-0.5 rounded-full">
-              <i className="ri-checkbox-circle-fill"></i>
-              12 scans this week / इस सप्ताह 12 जाँच
-            </div>
-          </div>
-        </Card>
+        )}
 
-        {/* LANGUAGE CARD */}
-        <Card className="p-5">
-          <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 mb-3">
-            <i className="ri-global-line text-brand-600 text-lg"></i>
-            App Language / ऐप की भाषा
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => setLanguage("en")}
-              className={`py-2.5 rounded-xl font-bold text-sm border-2 transition-all duration-150 ${
-                language === "en"
-                  ? "bg-brand-50 border-brand-600 text-brand-700"
-                  : "bg-gray-50 border-transparent text-gray-500 hover:bg-gray-100"
-              }`}
-            >
-              English
-            </button>
-            <button
-              onClick={() => setLanguage("hi")}
-              className={`py-2.5 rounded-xl font-bold text-sm border-2 transition-all duration-150 ${
-                language === "hi"
-                  ? "bg-brand-50 border-brand-600 text-brand-700"
-                  : "bg-gray-50 border-transparent text-gray-500 hover:bg-gray-100"
-              }`}
-            >
-              हिंदी
-            </button>
-          </div>
-        </Card>
-      </div>
-
-      {/* MENU CARD */}
-      <Card padding={false} className="mb-6 overflow-hidden">
-        <div className="flex flex-col">
-          {menuItems.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-4 border-b last:border-0 border-gray-100 hover:bg-gray-50 cursor-pointer active:bg-gray-100 transition-colors duration-150"
-              onClick={() => {}}
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100">
-                  <i className={`${item.icon} text-lg`}></i>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">
-                    {item.en}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    {item.hi}
-                  </p>
-                </div>
+        {/* PROFILE CARD */}
+        {!loading && (
+          <>
+            <Card className="flex items-center gap-4 p-5 border border-emerald-50 bg-gradient-to-br from-white to-emerald-50/20">
+              <div className="w-16 h-16 bg-brand-600 rounded-2xl flex items-center justify-center text-3xl shadow-md shrink-0">
+                👨‍🌾
               </div>
-              <i className="ri-arrow-right-s-line text-gray-400 text-lg"></i>
-            </div>
-          ))}
-        </div>
-      </Card>
+              <div className="overflow-hidden">
+                <h2 className="text-lg font-extrabold text-emerald-950 truncate leading-tight">
+                  {profile.full_name || "Kisan Farmer"}
+                </h2>
+                <p className="text-xs text-gray-500 truncate mt-0.5">
+                  {profile.email}
+                </p>
+                {profile.farm_location && (
+                  <p className="text-[10px] bg-emerald-100/60 border border-emerald-200 text-emerald-800 font-bold px-2 py-0.5 rounded-full inline-block mt-2">
+                    📍 {profile.farm_location}
+                  </p>
+                )}
+              </div>
+            </Card>
 
-      {/* LOGOUT */}
-      <div className="mb-4">
-        <Button
-          variant="danger"
-          onClick={logoutUser}
-          className="font-bold py-3"
-        >
-          <i className="ri-logout-box-r-line text-lg"></i>
-          Sign Out / लॉग आउट करें
-        </Button>
-        <p className="text-center text-[10px] text-gray-400 mt-4">
-          KisanAI v1.0.0 • Made for farmers 🌱
-        </p>
+            {/* EDIT PROFILE INPUTS */}
+            <form onSubmit={handleSaveProfile} className="flex flex-col gap-3">
+              <Card className="p-5 flex flex-col gap-4">
+                <h3 className="text-sm font-black text-emerald-950 flex items-center gap-2 border-b border-gray-100 pb-2">
+                  <i className="ri-user-settings-line text-brand-600 text-lg"></i>
+                  {isHindi ? "प्रोफ़ाइल संपादित करें" : "Edit Profile Settings"}
+                </h3>
+
+                {saveSuccess && (
+                  <Alert
+                    message={isHindi ? "प्रोफ़ाइल सफलतापूर्वक अपडेट हो गई!" : "Profile updated successfully!"}
+                    type="success"
+                  />
+                )}
+                {profileError && <Alert message={profileError} type="error" />}
+
+                {/* Name field */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-700">
+                    {isHindi ? "पूरा नाम" : "Full Name"}
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.full_name}
+                    onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
+                    className="h-10 px-3 rounded-xl border border-gray-200 focus:outline-none focus:border-brand-500 text-xs font-semibold"
+                  />
+                </div>
+
+                {/* Farm Location field */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-700">
+                    {isHindi ? "खेत का स्थान / क्षेत्र" : "Farm Location / State"}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Punjab, Gujarat"
+                    value={profile.farm_location}
+                    onChange={(e) => setProfile({ ...profile, farm_location: e.target.value })}
+                    className="h-10 px-3 rounded-xl border border-gray-200 focus:outline-none focus:border-brand-500 text-xs font-semibold"
+                  />
+                </div>
+
+                {/* Language Select */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-700">
+                    {isHindi ? "ऐप की भाषा" : "App Language"}
+                  </label>
+                  <div className="grid grid-cols-2 gap-3 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => setProfile({ ...profile, preferred_language: "en" })}
+                      className={`py-2 rounded-xl font-bold text-xs border-2 transition-all duration-150 ${
+                        profile.preferred_language === "en"
+                          ? "bg-brand-50 border-brand-600 text-brand-700"
+                          : "bg-gray-50 border-transparent text-gray-500 hover:bg-gray-100"
+                      }`}
+                    >
+                      English
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setProfile({ ...profile, preferred_language: "hi" })}
+                      className={`py-2 rounded-xl font-bold text-xs border-2 transition-all duration-150 ${
+                        profile.preferred_language === "hi"
+                          ? "bg-brand-50 border-brand-600 text-brand-700"
+                          : "bg-gray-50 border-transparent text-gray-500 hover:bg-gray-100"
+                      }`}
+                    >
+                      हिंदी
+                    </button>
+                  </div>
+                </div>
+
+                <Button variant="primary" type="submit" loading={saving}>
+                  {isHindi ? "सहेजें" : "Save Preferences"}
+                </Button>
+              </Card>
+            </form>
+
+            {/* SECURITY MANAGEMENT */}
+            <Card className="p-5 flex flex-col gap-3">
+              <h3 className="text-sm font-black text-emerald-950 flex items-center gap-2 border-b border-gray-100 pb-2">
+                <i className="ri-shield-keyhole-line text-brand-600 text-lg"></i>
+                {isHindi ? "सुरक्षा" : "Security"}
+              </h3>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setPasswordError(null);
+                  setPasswordSuccess(false);
+                  setShowPasswordModal(true);
+                }}
+              >
+                🔑 {isHindi ? "पासवर्ड बदलें" : "Change Password"}
+              </Button>
+            </Card>
+          </>
+        )}
+
+        {/* LOGOUT */}
+        <div className="mt-2">
+          <Button variant="danger" onClick={logoutUser} className="font-bold py-3">
+            <i className="ri-logout-box-r-line text-lg mr-1"></i>
+            {isHindi ? "लॉग आउट करें" : "Sign Out"}
+          </Button>
+          <p className="text-center text-[10px] text-gray-400 mt-6 font-medium">
+            KisanAI v1.1.0 • Made for farmers 🌱
+          </p>
+        </div>
+
+        {/* CHANGE PASSWORD MODAL OVERLAY */}
+        {showPasswordModal && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center p-4">
+            <div className="bg-white rounded-3xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto shadow-2xl relative animate-in slide-in-from-bottom duration-250">
+              
+              <div className="flex justify-between items-start mb-6">
+                <h3 className="text-lg font-black text-emerald-950">
+                  {isHindi ? "पासवर्ड बदलें" : "Change Password"}
+                </h3>
+                <button
+                  onClick={() => setShowPasswordModal(false)}
+                  className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={handleChangePassword} className="flex flex-col gap-4">
+                {passwordSuccess && (
+                  <Alert
+                    message={isHindi ? "पासवर्ड सफलतापूर्वक बदला गया!" : "Password updated successfully!"}
+                    type="success"
+                  />
+                )}
+                {passwordError && <Alert message={passwordError} type="error" />}
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-700">
+                    {isHindi ? "वर्तमान पासवर्ड" : "Current Password"}
+                  </label>
+                  <input
+                    type="password"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    className="h-10 px-3 rounded-xl border border-gray-200 focus:outline-none focus:border-brand-500 text-xs font-semibold"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-700">
+                    {isHindi ? "नया पासवर्ड" : "New Password"}
+                  </label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="h-10 px-3 rounded-xl border border-gray-200 focus:outline-none focus:border-brand-500 text-xs font-semibold"
+                  />
+                </div>
+
+                <div className="flex gap-3 mt-2">
+                  <Button
+                    variant="secondary"
+                    type="button"
+                    onClick={() => setShowPasswordModal(false)}
+                    fullWidth
+                  >
+                    {isHindi ? "रद्द करें" : "Cancel"}
+                  </Button>
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    loading={passwordLoading}
+                    fullWidth
+                  >
+                    {isHindi ? "अपडेट करें" : "Update"}
+                  </Button>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        )}
+
       </div>
     </PageLayout>
   );

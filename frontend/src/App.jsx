@@ -7,6 +7,7 @@ import HistoryPage from "./features/history/HistoryPage";
 import ProfilePage from "./features/profile/ProfilePage";
 import ResultPage from "./features/result/ResultPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import AdvisoryPage from "./features/advisory/AdvisoryPage";
 
 function App() {
   return (
@@ -46,6 +47,14 @@ function App() {
           element={
             <ProtectedRoute>
               <HistoryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/advisory"
+          element={
+            <ProtectedRoute>
+              <AdvisoryPage />
             </ProtectedRoute>
           }
         />
