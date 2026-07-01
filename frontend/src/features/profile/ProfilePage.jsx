@@ -94,38 +94,71 @@ const ProfilePage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate size (limit to 1MB to prevent bloated base64 storage)
-    if (file.size > 1024 * 1024) {
-      setProfileError(t("Profile picture size must be less than 1MB.", "प्रोफ़ाइल चित्र का आकार 1MB से कम होना चाहिए।"));
-      return;
-    }
+    setSaving(true);
+    setProfileError(null);
 
     const reader = new FileReader();
-    reader.onload = async () => {
-      const base64Data = reader.result;
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = async () => {
+        // Target dimensions for profile avatar
+        const targetWidth = 200;
+        const targetHeight = 200;
+        
+        const canvas = document.createElement("canvas");
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          setProfileError(t("Failed to process image.", "छवि संसाधित करने में विफल।"));
+          setSaving(false);
+          return;
+        }
+
+        // Draw crop-centered image onto square canvas
+        const minSide = Math.min(img.width, img.height);
+        const sx = (img.width - minSide) / 2;
+        const sy = (img.height - minSide) / 2;
+        ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, targetWidth, targetHeight);
+        
+        // Export to low-overhead compressed Base64 JPEG
+        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.8);
+        
+        // Update local state
+        setProfile(prev => ({ ...prev, avatar_url: compressedBase64 }));
+        
+        // Save directly to the backend
+        try {
+          const response = await api.put("/auth/profile", {
+            full_name: profile.full_name,
+            preferred_language: profile.preferred_language,
+            farm_location: profile.farm_location,
+            avatar_url: compressedBase64
+          });
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 2000);
+        } catch (err) {
+          console.error("Failed to upload avatar:", err);
+          setProfileError(t("Failed to update profile picture.", "प्रोफ़ाइल चित्र अपडेट करने में विफल।"));
+        } finally {
+          setSaving(false);
+        }
+      };
       
-      // Update local state
-      setProfile(prev => ({ ...prev, avatar_url: base64Data }));
-      
-      // Save directly to the backend
-      try {
-        setSaving(true);
-        setProfileError(null);
-        const response = await api.put("/auth/profile", {
-          full_name: profile.full_name,
-          preferred_language: profile.preferred_language,
-          farm_location: profile.farm_location,
-          avatar_url: base64Data
-        });
-        setSaveSuccess(true);
-        setTimeout(() => setSaveSuccess(false), 2000);
-      } catch (err) {
-        console.error("Failed to upload avatar:", err);
-        setProfileError(t("Failed to update profile picture.", "प्रोफ़ाइल चित्र अपडेट करने में विफल।"));
-      } finally {
+      img.onerror = () => {
+        setProfileError(t("Invalid image file.", "अमान्य छवि फ़ाइल।"));
         setSaving(false);
-      }
+      };
+      
+      img.src = event.target.result;
     };
+    
+    reader.onerror = () => {
+      setProfileError(t("Failed to read file.", "फ़ाइल पढ़ने में विफल।"));
+      setSaving(false);
+    };
+    
     reader.readAsDataURL(file);
   };
 
