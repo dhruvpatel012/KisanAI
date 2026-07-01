@@ -15,6 +15,9 @@ const HistoryPage = () => {
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchScans = async () => {
     try {
@@ -28,6 +31,50 @@ const HistoryPage = () => {
       setError(backendError || t("Failed to load scan history. Please try again.", "इतिहास लोड करने में विफल। पुनः प्रयास करें।"));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleSelect = (id) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter((item) => item !== id));
+    } else {
+      setSelectedIds([...selectedIds, id]);
+    }
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === scans.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(scans.map((scan) => scan.upload_id));
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditMode(false);
+    setSelectedIds([]);
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedIds.length === 0) return;
+    
+    const confirmMessage = selectedIds.length === 1
+      ? t("Are you sure you want to delete this scan?", "क्या आप वाकई इस जाँच को हटाना चाहते हैं?")
+      : t(`Are you sure you want to delete these ${selectedIds.length} scans?`, `क्या आप वाकई इन ${selectedIds.length} जाँचों को हटाना चाहते हैं?`);
+      
+    if (!window.confirm(confirmMessage)) return;
+
+    try {
+      setIsDeleting(true);
+      await api.post("/api/scans/delete-bulk", { scan_ids: selectedIds });
+      setScans(scans.filter((scan) => !selectedIds.includes(scan.upload_id)));
+      setSelectedIds([]);
+      setEditMode(false);
+    } catch (err) {
+      console.error("Failed to delete scans:", err);
+      alert(t("Failed to delete scans. Please try again.", "हटाने में विफल। कृपया पुनः प्रयास करें।"));
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -134,18 +181,96 @@ const HistoryPage = () => {
           </Card>
         )}
 
+        {/* ACTION BAR */}
+        {!loading && !error && scans.length > 0 && (
+          <div className="flex items-center justify-between bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100/60 mb-2">
+            {editMode ? (
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={scans.length > 0 && selectedIds.length === scans.length}
+                    onChange={toggleSelectAll}
+                    className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
+                    id="select-all-checkbox"
+                  />
+                  <label htmlFor="select-all-checkbox" className="text-xs font-bold text-emerald-950 cursor-pointer select-none">
+                    {t("Select All", "सभी चुनें")} ({selectedIds.length}/{scans.length})
+                  </label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={handleDeleteSelected}
+                    disabled={selectedIds.length === 0 || isDeleting}
+                    className="font-bold py-1 px-3 text-xs"
+                  >
+                    {isDeleting ? t("Deleting...", "हटाया जा रहा है...") : t("Delete", "हटाएं")}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleCancelEdit}
+                    disabled={isDeleting}
+                    className="font-bold py-1 px-3 text-xs"
+                  >
+                    {t("Cancel", "रद्द करें")}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between w-full">
+                <span className="text-xs font-bold text-emerald-950">
+                  {t(`${scans.length} scans saved`, `${scans.length} जाँचें सहेजी गईं`)}
+                </span>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setEditMode(true)}
+                  className="font-bold py-1 px-3 text-xs"
+                >
+                  {t("Edit", "संपादित करें")}
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* SCAN LIST STATE */}
         {!loading && !error && scans.length > 0 && (
           <div className="flex flex-col gap-3">
             {scans.map((scan) => {
               const imgUrl = getImageUrl(scan);
+              const isSelected = selectedIds.includes(scan.upload_id);
+              
+              const handleCardClick = () => {
+                if (editMode) {
+                  toggleSelect(scan.upload_id);
+                } else {
+                  navigate(`/result/${scan.upload_id}`);
+                }
+              };
+
               return (
                 <Card
                   key={scan.upload_id}
-                  onClick={() => navigate(`/result/${scan.upload_id}`)}
-                  className="flex items-center justify-between p-4 hover:shadow-md transition-all duration-200 cursor-pointer border border-emerald-50"
+                  onClick={handleCardClick}
+                  className={`flex items-center justify-between p-4 hover:shadow-md transition-all duration-200 cursor-pointer border ${
+                    isSelected ? "border-emerald-500 bg-emerald-50/10" : "border-emerald-50"
+                  }`}
                 >
                   <div className="flex items-center gap-3">
+                    {editMode && (
+                      <div className="flex items-center mr-1" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleSelect(scan.upload_id)}
+                          className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
+                        />
+                      </div>
+                    )}
                     {imgUrl ? (
                       <img
                         src={imgUrl}
@@ -177,9 +302,11 @@ const HistoryPage = () => {
                     <Badge variant={getSeverityVariant(scan)}>
                       {getSeverityLabel(scan)}
                     </Badge>
-                    <svg className="w-4 h-4 text-emerald-700/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                    </svg>
+                    {!editMode && (
+                      <svg className="w-4 h-4 text-emerald-700/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                      </svg>
+                    )}
                   </div>
                 </Card>
               );

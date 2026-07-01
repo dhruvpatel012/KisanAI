@@ -232,3 +232,50 @@ async def get_scans_list(
     return scans_list
 
 
+class BulkDeleteRequest(BaseModel):
+    scan_ids: list[str]
+
+
+@router.delete("/scans/{scan_id}")
+async def delete_single_scan(
+    scan_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    if not ObjectId.is_valid(scan_id):
+        raise HTTPException(status_code=400, detail="Invalid scan ID format")
+    
+    scan = await database["scans"].find_one({"_id": ObjectId(scan_id)})
+    if not scan:
+        raise HTTPException(status_code=404, detail="Scan not found")
+        
+    if scan.get("user_id") != current_user.get("user_id"):
+        raise HTTPException(status_code=403, detail="Forbidden: You do not own this scan")
+        
+    await database["scans"].delete_one({"_id": ObjectId(scan_id)})
+    return {"status": "success", "message": "Scan deleted successfully"}
+
+
+@router.post("/scans/delete-bulk")
+async def delete_scans_bulk(
+    request_data: BulkDeleteRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    user_id = current_user.get("user_id")
+    object_ids = []
+    for s_id in request_data.scan_ids:
+        if ObjectId.is_valid(s_id):
+            object_ids.append(ObjectId(s_id))
+            
+    if not object_ids:
+        return {"status": "success", "deleted_count": 0}
+        
+    # Delete only those scans belonging to the current user
+    res = await database["scans"].delete_many({
+        "_id": {"$in": object_ids},
+        "user_id": user_id
+    })
+    
+    return {"status": "success", "deleted_count": res.deleted_count}
+
+
+
