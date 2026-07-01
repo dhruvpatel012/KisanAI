@@ -66,13 +66,40 @@ async def analyze_crop(
             "message": scan.get("message") if scan.get("status") == "low_confidence" else "Analysis complete"
         }
 
-    # Verify image exists on disk
-    file_path = scan.get("file_path")
-    if not file_path or not os.path.exists(file_path):
-        raise HTTPException(status_code=500, detail="Image file not found on server disk")
+    # Verify image exists on disk or is Base64
+    saved_filename = scan.get("saved_filename")
+    temp_file_path = None
+    
+    if saved_filename and saved_filename.startswith("data:"):
+        import base64
+        import tempfile
+        try:
+            # Parse header data:image/png;base64,
+            header, encoded = saved_filename.split(",", 1)
+            file_bytes = base64.b64decode(encoded)
+            # Create a temporary file
+            temp_fd, temp_file_path = tempfile.mkstemp(suffix=".jpg")
+            with os.fdopen(temp_fd, 'wb') as tmp:
+                tmp.write(file_bytes)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to decode Base64 image: {str(e)}")
+    else:
+        # Standard file path on disk
+        file_path = scan.get("file_path")
+        if not file_path or not os.path.exists(file_path):
+            raise HTTPException(status_code=500, detail="Image file not found on server disk")
+        temp_file_path = file_path
 
     # Call ML prediction
-    ml_result = await predict_disease(file_path)
+    try:
+        ml_result = await predict_disease(temp_file_path)
+    finally:
+        # Clean up temporary file if we created one
+        if saved_filename and saved_filename.startswith("data:") and temp_file_path and os.path.exists(temp_file_path):
+            try:
+                os.remove(temp_file_path)
+            except Exception as e:
+                print("Failed to remove temp file:", e)
     
     # Update MongoDB scan record
     if ml_result.get("status") == "low_confidence":
@@ -171,7 +198,7 @@ async def get_scan_details(
         "similar_diseases": scan.get("similar_diseases", []),
         "disclaimer": scan.get("disclaimer"),
         "message": scan.get("message") if scan.get("status") == "low_confidence" else "Analysis complete",
-        "image_url": f"/uploads/{scan.get('saved_filename')}",
+        "image_url": scan.get('saved_filename') if (scan.get('saved_filename') and scan.get('saved_filename').startswith("data:")) else (f"/uploads/{scan.get('saved_filename')}" if scan.get('saved_filename') else None),
         "created_at": scan.get("created_at")
     }
 
@@ -199,7 +226,7 @@ async def get_scans_list(
             "severity": scan.get("severity"),
             "is_healthy": scan.get("is_healthy"),
             "status": scan.get("status"),
-            "image_url": f"/uploads/{scan.get('saved_filename')}" if scan.get('saved_filename') else None,
+            "image_url": scan.get('saved_filename') if (scan.get('saved_filename') and scan.get('saved_filename').startswith("data:")) else (f"/uploads/{scan.get('saved_filename')}" if scan.get('saved_filename') else None),
             "created_at": created_at_str
         })
     return scans_list

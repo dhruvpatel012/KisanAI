@@ -50,20 +50,16 @@ async def upload_image(
             detail=f"File size exceeds the limit of {settings.max_file_size / (1024 * 1024):.1f}MB."
         )
 
-    # Save file with unique name
-    unique_id = str(uuid.uuid4())
-    saved_filename = f"{unique_id}.{ext}"
-    os.makedirs(settings.upload_dir, exist_ok=True)
-    file_path = os.path.join(settings.upload_dir, saved_filename)
-
+    # Convert file content to Base64
+    import base64
     try:
-        with open(file_path, "wb") as f:
-            while content := await file.read(1024 * 1024):
-                f.write(content)
+        file_bytes = await file.read()
+        base64_str = base64.b64encode(file_bytes).decode("utf-8")
+        image_url = f"data:{file.content_type};base64,{base64_str}"
     except Exception as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to save file: {str(e)}"
+            detail=f"Failed to process file upload: {str(e)}"
         )
 
     # MongoDB record
@@ -71,15 +67,14 @@ async def upload_image(
     scan_doc = {
         "user_id": current_user["user_id"],
         "original_filename": filename,
-        "saved_filename": saved_filename,
-        "file_path": file_path,
+        "saved_filename": image_url,  # Store the Base64 URL here
+        "file_path": "",              # No path on disk
         "file_size": file_size,
         "status": "uploaded",
         "created_at": datetime.now(timezone.utc)
     }
     
     result = await scans.insert_one(scan_doc)
-    image_url = f"/uploads/{saved_filename}"
 
     return {
         "upload_id": str(result.inserted_id),

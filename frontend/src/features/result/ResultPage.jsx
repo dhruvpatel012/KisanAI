@@ -82,7 +82,7 @@ const ResultPage = () => {
 
   // Resolve Image URL
   const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
-  const imageUrl = scanData.image_url.startsWith("http")
+  const imageUrl = (scanData.image_url.startsWith("http") || scanData.image_url.startsWith("data:"))
     ? scanData.image_url
     : `${backendUrl}${scanData.image_url}`;
 

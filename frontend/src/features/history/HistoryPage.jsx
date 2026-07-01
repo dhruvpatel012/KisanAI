@@ -88,7 +88,7 @@ const HistoryPage = () => {
   const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
   const getImageUrl = (scan) => {
     if (!scan.image_url) return null;
-    return scan.image_url.startsWith("http")
+    return (scan.image_url.startsWith("http") || scan.image_url.startsWith("data:"))
       ? scan.image_url
       : `${backendUrl}${scan.image_url}`;
   };
