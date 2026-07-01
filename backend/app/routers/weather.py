@@ -113,13 +113,46 @@ async def get_weather(lat: float = 28.6139, lng: float = 77.2090):
             
         return result
         
-    except urllib.error.URLError as e:
-        raise HTTPException(
-            status_code=502,
-            detail=f"Weather provider unreachable: {str(e)}"
-        )
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to fetch weather data: {str(e)}"
-        )
+        print(f"Weather API error: {str(e)}. Returning fallback weather data.")
+        fallback_result = {
+            "current": {
+                "temperature": 28.0,
+                "humidity": 65,
+                "wind_speed": 12.0,
+                "description": "Partly cloudy",
+                "description_hi": "आंशिक रूप से बादल",
+                "emoji": "⛅"
+            },
+            "forecast": [
+                {
+                    "date": "Today",
+                    "temp_max": 30.0,
+                    "temp_min": 24.0,
+                    "description": "Partly cloudy",
+                    "description_hi": "आंशिक रूप से बादल",
+                    "emoji": "⛅"
+                },
+                {
+                    "date": "Tomorrow",
+                    "temp_max": 31.0,
+                    "temp_min": 25.0,
+                    "description": "Slight rain showers",
+                    "description_hi": "हल्की बौछारें",
+                    "emoji": "🌦️"
+                },
+                {
+                    "date": "Day After",
+                    "temp_max": 29.0,
+                    "temp_min": 24.0,
+                    "description": "Clear sky",
+                    "description_hi": "साफ़ आसमान",
+                    "emoji": "☀️"
+                }
+            ],
+            "is_fallback": True
+        }
+        with _cache_lock:
+            _weather_cache[cache_key] = (now + CACHE_DURATION, fallback_result)
+            
+        return fallback_result
