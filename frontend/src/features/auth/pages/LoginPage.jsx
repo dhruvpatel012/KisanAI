@@ -2,7 +2,7 @@ import LoginForm from "../components/LoginForm";
 
 const LoginPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-950 to-green-50 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-green-950 via-green-900 to-green-50 flex items-center justify-center p-4 relative overflow-hidden">
       
       {/* Background Floating Leaves */}
       <div className="absolute top-10 left-8 text-7xl opacity-10 select-none pointer-events-none animate-[floatLeaf_12s_ease-in-out_infinite]">
@@ -15,12 +15,24 @@ const LoginPage = () => {
         🌿
       </div>
 
+      {/* Gradient mesh overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(at 30% 20%, rgba(34,197,94,0.15) 0, transparent 50%), radial-gradient(at 70% 80%, rgba(251,191,36,0.08) 0, transparent 50%)",
+        }}
+      />
+
       <div className="w-full max-w-md relative z-10 animate-[slideInUp_0.8s_ease-out]">
 
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-600 to-green-500 rounded-3xl mb-4 shadow-2xl shadow-green-500/40 animate-[pulse_3s_ease-in-out_infinite]">
-            <span className="text-white text-3xl font-bold">🌱</span>
-          </div>
+        {/* Hero Illustration + Logo */}
+        <div className="text-center mb-6">
+          <img
+            src="/farmer-hero.png"
+            alt="KisanAI Farmer"
+            className="w-36 h-36 mx-auto mb-4 object-contain drop-shadow-2xl animate-floatLeaf"
+          />
           <h1 className="text-4xl font-extrabold text-white tracking-wide drop-shadow-sm">
             KisanAI
           </h1>
@@ -29,7 +41,7 @@ const LoginPage = () => {
           </p>
         </div>
 
-        <div className="bg-white/85 backdrop-blur-lg rounded-[32px] p-8 border border-white/40 shadow-2xl shadow-green-950/40">
+        <div className="bg-white/85 backdrop-blur-xl rounded-[32px] p-8 border border-white/40 shadow-2xl shadow-green-950/40">
           <h2 className="text-2xl font-extrabold text-green-950 mb-6 tracking-tight">
             Sign In
           </h2>

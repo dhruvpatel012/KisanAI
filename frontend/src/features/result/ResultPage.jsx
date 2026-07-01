@@ -331,14 +331,21 @@ const ResultPage = () => {
             </div>
 
             {/* Circular Accuracy Progress Gauge */}
-            <div className="relative flex items-center justify-center flex-shrink-0">
+            <div className="relative flex items-center justify-center flex-shrink-0" style={{ filter: "drop-shadow(0 0 8px rgba(34,197,94,0.3))" }}>
               <svg className="w-20 h-20 transform -rotate-90">
-                <circle className="text-emerald-50" strokeWidth="5" stroke="currentColor" fill="transparent" r={radius} cx="40" cy="40" />
-                <circle className="text-emerald-600 transition-all duration-700 ease-out" strokeWidth="5" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" stroke="currentColor" fill="transparent" r={radius} cx="40" cy="40" />
+                <defs>
+                  <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#22c55e" />
+                    <stop offset="50%" stopColor="#eab308" />
+                    <stop offset="100%" stopColor="#ef4444" />
+                  </linearGradient>
+                </defs>
+                <circle className="text-emerald-50 dark:text-emerald-950" strokeWidth="5" stroke="currentColor" fill="transparent" r={radius} cx="40" cy="40" />
+                <circle strokeWidth="5" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" stroke="url(#gaugeGradient)" fill="transparent" r={radius} cx="40" cy="40" className="transition-all duration-700 ease-out" />
               </svg>
               <div className="absolute flex flex-col items-center justify-center text-center">
-                <span className="text-sm font-extrabold text-emerald-950">{confidencePercent}%</span>
-                <span className="text-[8px] font-bold text-emerald-700/60 uppercase">
+                <span className="text-sm font-extrabold text-emerald-950 dark:text-emerald-100">{confidencePercent}%</span>
+                <span className="text-[8px] font-bold text-emerald-700/60 dark:text-emerald-400/60 uppercase">
                   {t("Accuracy", "सटीकता")}
                 </span>
               </div>
