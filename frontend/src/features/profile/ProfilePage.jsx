@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PageLayout from "../../components/layout/PageLayout";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
@@ -12,11 +12,14 @@ import { UserCircle, Settings, ShieldCheck, KeyRound, Globe, LogOut, User, MapPi
 const ProfilePage = () => {
   const { language, setLanguage, t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
+  const avatarInputRef = useRef(null);
+  
   const [profile, setProfile] = useState({
     full_name: "",
     email: "",
     preferred_language: "en",
-    farm_location: ""
+    farm_location: "",
+    avatar_url: ""
   });
   const [scanCount, setScanCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -40,7 +43,8 @@ const ProfilePage = () => {
         full_name: response.data.full_name || "",
         email: response.data.email || "",
         preferred_language: response.data.preferred_language || "en",
-        farm_location: response.data.farm_location || ""
+        farm_location: response.data.farm_location || "",
+        avatar_url: response.data.avatar_url || ""
       });
       const scansResponse = await api.get("/api/scans");
       setScanCount(scansResponse.data.length);
@@ -66,13 +70,15 @@ const ProfilePage = () => {
       const response = await api.put("/auth/profile", {
         full_name: profile.full_name,
         preferred_language: profile.preferred_language,
-        farm_location: profile.farm_location
+        farm_location: profile.farm_location,
+        avatar_url: profile.avatar_url
       });
       setProfile({
         full_name: response.data.full_name,
         email: response.data.email,
         preferred_language: response.data.preferred_language,
-        farm_location: response.data.farm_location
+        farm_location: response.data.farm_location,
+        avatar_url: response.data.avatar_url || ""
       });
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
@@ -82,6 +88,45 @@ const ProfilePage = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate size (limit to 1MB to prevent bloated base64 storage)
+    if (file.size > 1024 * 1024) {
+      setProfileError(t("Profile picture size must be less than 1MB.", "प्रोफ़ाइल चित्र का आकार 1MB से कम होना चाहिए।"));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Data = reader.result;
+      
+      // Update local state
+      setProfile(prev => ({ ...prev, avatar_url: base64Data }));
+      
+      // Save directly to the backend
+      try {
+        setSaving(true);
+        setProfileError(null);
+        const response = await api.put("/auth/profile", {
+          full_name: profile.full_name,
+          preferred_language: profile.preferred_language,
+          farm_location: profile.farm_location,
+          avatar_url: base64Data
+        });
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 2000);
+      } catch (err) {
+        console.error("Failed to upload avatar:", err);
+        setProfileError(t("Failed to update profile picture.", "प्रोफ़ाइल चित्र अपडेट करने में विफल।"));
+      } finally {
+        setSaving(false);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleLanguageChange = (lang) => {
@@ -133,9 +178,30 @@ const ProfilePage = () => {
         {/* PROFILE CARD */}
         {!loading && (
           <>
+            <input
+              type="file"
+              accept="image/*"
+              ref={avatarInputRef}
+              onChange={handleAvatarChange}
+              className="hidden"
+            />
             <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-2xl p-5 flex items-center gap-4">
-              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
-                <UserCircle size={40} className="text-white" />
+              <div 
+                className="relative shrink-0 cursor-pointer group active:scale-95 transition-transform" 
+                onClick={() => avatarInputRef.current?.click()}
+                title={t("Upload Profile Photo", "प्रोफ़ाइल फ़ोटो अपलोड करें")}
+              >
+                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center overflow-hidden border border-white/30">
+                  {profile.avatar_url ? (
+                    <img src={profile.avatar_url} alt="Profile Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <UserCircle size={40} className="text-white" />
+                  )}
+                </div>
+                {/* Plus Icon Overlay */}
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full flex items-center justify-center shadow-md group-hover:bg-green-600 transition-colors">
+                  <span className="text-white text-xs font-black leading-none">+</span>
+                </div>
               </div>
               <div className="overflow-hidden">
                 <h2 className="text-xl font-bold text-white truncate leading-tight">

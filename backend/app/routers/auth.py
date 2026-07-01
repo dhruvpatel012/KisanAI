@@ -100,7 +100,8 @@ async def get_current_user(
         full_name=user.get("full_name"),
         is_active=user["is_active"],
         preferred_language=user.get("preferred_language", "en"),
-        farm_location=user.get("farm_location", "")
+        farm_location=user.get("farm_location", ""),
+        avatar_url=user.get("avatar_url")
     )
 
 @router.put("/profile", response_model=UserResponse)
@@ -123,7 +124,8 @@ async def update_profile(
         {"$set": {
             "full_name": request.full_name,
             "preferred_language": request.preferred_language,
-            "farm_location": request.farm_location
+            "farm_location": request.farm_location,
+            "avatar_url": request.avatar_url
         }}
     )
     
@@ -134,7 +136,8 @@ async def update_profile(
         full_name=updated_user.get("full_name"),
         is_active=updated_user["is_active"],
         preferred_language=updated_user.get("preferred_language", "en"),
-        farm_location=updated_user.get("farm_location", "")
+        farm_location=updated_user.get("farm_location", ""),
+        avatar_url=updated_user.get("avatar_url")
     )
 
 @router.put("/change-password")

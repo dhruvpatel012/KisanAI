@@ -21,11 +21,13 @@ class UserResponse(BaseModel):
     is_active: bool
     preferred_language: Optional[str] = "en"
     farm_location: Optional[str] = ""
+    avatar_url: Optional[str] = None
 
 class ProfileUpdateRequest(BaseModel):
     full_name: str
     preferred_language: str
     farm_location: str
+    avatar_url: Optional[str] = None
 
 class PasswordChangeRequest(BaseModel):
     old_password: str
