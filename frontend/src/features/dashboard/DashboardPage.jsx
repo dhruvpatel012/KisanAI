@@ -6,6 +6,29 @@ import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import api from "../../lib/axios";
 import { useLanguage } from "../../context/LanguageContext";
+const WEATHER_CODE_MAPPING = {
+  0: { desc: "Clear sky", desc_hi: "साफ़ आसमान", emoji: "☀️" },
+  1: { desc: "Mainly clear", desc_hi: "मुख्यतः साफ़", emoji: "🌤️" },
+  2: { desc: "Partly cloudy", desc_hi: "आंशिक रूप से बादल", emoji: "⛅" },
+  3: { desc: "Overcast", desc_hi: "बादलों से घिरा", emoji: "☁️" },
+  45: { desc: "Foggy", desc_hi: "कोहरा", emoji: "🌫️" },
+  48: { desc: "Dense fog", desc_hi: "घना कोहरा", emoji: "🌫️" },
+  51: { desc: "Light drizzle", desc_hi: "हल्की बूंदाबांदी", emoji: "🌦️" },
+  53: { desc: "Moderate drizzle", desc_hi: "मध्यम बूंदाबांदी", emoji: "🌦️" },
+  55: { desc: "Dense drizzle", desc_hi: "तेज़ बूंदाबांदी", emoji: "🌦️" },
+  61: { desc: "Slight rain", desc_hi: "हल्की बारिश", emoji: "🌧️" },
+  63: { desc: "Moderate rain", desc_hi: "मध्यम बारिश", emoji: "🌧️" },
+  65: { desc: "Heavy rain", desc_hi: "तेज़ बारिश", emoji: "🌧️" },
+  71: { desc: "Light snow", desc_hi: "हल्की बर्फबारी", emoji: "❄️" },
+  73: { desc: "Moderate snow", desc_hi: "मध्यम बर्फबारी", emoji: "❄️" },
+  75: { desc: "Heavy snow", desc_hi: "तेज़ बर्फबारी", emoji: "❄️" },
+  80: { desc: "Slight rain showers", desc_hi: "हल्की बौछारें", emoji: "🌦️" },
+  81: { desc: "Moderate rain showers", desc_hi: "मध्यम बौछारें", emoji: "🌦️" },
+  82: { desc: "Violent rain showers", desc_hi: "तेज़ बौछारें", emoji: "🌦️" },
+  95: { desc: "Thunderstorm", desc_hi: "आंधी-तूफान", emoji: "⛈️" },
+  96: { desc: "Thunderstorm with slight hail", desc_hi: "ओलावृष्टि के साथ तूफान", emoji: "⛈️" },
+  99: { desc: "Thunderstorm with heavy hail", desc_hi: "भारी ओलावृष्टि के साथ तूफान", emoji: "⛈️" },
+};
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -42,9 +65,51 @@ const DashboardPage = () => {
     const fetchWeather = async (lat, lng, cityName = "") => {
       try {
         setWeatherLoading(true);
-        const response = await api.get(`/api/weather?lat=${lat}&lng=${lng}`);
-        setWeather(response.data);
         
+        // Fetch weather directly from Open-Meteo on browser client to bypass Cloud IP 429 rate limit
+        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`;
+        const weatherResp = await fetch(weatherUrl);
+        const data = await weatherResp.json();
+        
+        const current = data.current || {};
+        const daily = data.daily || {};
+        
+        const getMappedWeather = (code) => {
+          return WEATHER_CODE_MAPPING[code] || { desc: "Overcast", desc_hi: "बादल", emoji: "☁️" };
+        };
+        
+        const currentMapped = getMappedWeather(current.weather_code || 0);
+        
+        const parsedForecast = [];
+        const times = daily.time || [];
+        const tempMaxs = daily.temperature_2m_max || [];
+        const tempMins = daily.temperature_2m_min || [];
+        const codes = daily.weather_code || [];
+        
+        for (let i = 0; i < Math.min(3, times.length); i++) {
+          const dayMapped = getMappedWeather(codes[i] || 0);
+          parsedForecast.push({
+            date: times[i],
+            temp_max: tempMaxs[i],
+            temp_min: tempMins[i],
+            description: dayMapped.desc,
+            description_hi: dayMapped.desc_hi,
+            emoji: dayMapped.emoji
+          });
+        }
+
+        setWeather({
+          current: {
+            temperature: current.temperature_2m,
+            humidity: current.relative_humidity_2m,
+            wind_speed: current.wind_speed_10m,
+            description: currentMapped.desc,
+            description_hi: currentMapped.desc_hi,
+            emoji: currentMapped.emoji
+          },
+          forecast: parsedForecast
+        });
+
         if (cityName) {
           setLocationName(cityName);
         } else {
@@ -63,7 +128,14 @@ const DashboardPage = () => {
           }
         }
       } catch (err) {
-        console.error("Failed to fetch weather:", err);
+        console.warn("Direct weather fetch failed, trying backend fallback:", err);
+        try {
+          const response = await api.get(`/api/weather?lat=${lat}&lng=${lng}`);
+          setWeather(response.data);
+          if (cityName) setLocationName(cityName);
+        } catch (backendErr) {
+          console.error("Backend weather fallback failed:", backendErr);
+        }
       } finally {
         setWeatherLoading(false);
       }
