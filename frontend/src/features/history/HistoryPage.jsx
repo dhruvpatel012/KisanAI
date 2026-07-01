@@ -56,7 +56,7 @@ const HistoryPage = () => {
     try {
       setIsDeleting(true);
       setError(null);
-      await api.post("/api/scans/bulk-delete", { upload_ids: selectedIds });
+      await api.post("/api/scans/delete-bulk", { scan_ids: selectedIds });
       setScans(scans.filter((scan) => !selectedIds.includes(scan.upload_id)));
       setSelectedIds([]);
       setEditMode(false);
