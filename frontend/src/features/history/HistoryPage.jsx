@@ -235,8 +235,8 @@ const HistoryPage = () => {
                     disabled={selectedIds.length === 0 || isDeleting}
                     className="font-bold py-1 px-3 text-xs"
                   >
-                    <Trash2 size={16} className="mr-1 inline-block align-middle" />
-                    <span className="inline-block align-middle">{isDeleting ? t("Deleting...", "हटाया जा रहा है...") : t("Delete", "हटाएं")}</span>
+                    <Trash2 size={15} className="shrink-0" />
+                    <span>{isDeleting ? t("Deleting...", "हटाया जा रहा है...") : t("Delete", "हटाएं")}</span>
                   </Button>
                   <Button
                     variant="secondary"
@@ -260,8 +260,8 @@ const HistoryPage = () => {
                   onClick={() => setEditMode(true)}
                   className="font-bold py-1 px-3 text-xs"
                 >
-                  <Pencil size={16} className="mr-1 inline-block align-middle" />
-                  <span className="inline-block align-middle">{t("Edit", "संपादित करें")}</span>
+                  <Pencil size={15} className="shrink-0" />
+                  <span>{t("Edit", "संपादित करें")}</span>
                 </Button>
               </div>
             )}
