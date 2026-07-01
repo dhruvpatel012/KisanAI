@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../lib/axios";
+import { useLanguage } from "../../../context/LanguageContext";
 
 export const useAnalyze = () => {
+  const { t } = useLanguage();
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [error, setError] = useState(null);
@@ -32,7 +34,7 @@ export const useAnalyze = () => {
 
   const analyzeImage = async (uploadId) => {
     if (!uploadId) {
-      setError("Invalid upload ID.");
+      setError(t("Invalid upload ID.", "अमान्य अपलोड आईडी।"));
       return;
     }
 
@@ -53,7 +55,7 @@ export const useAnalyze = () => {
     } catch (err) {
       console.error("Analysis error details:", err);
       const backendError = err.response?.data?.detail;
-      setError(backendError || "Failed to analyze image. Please try again.");
+      setError(backendError || t("Failed to analyze image. Please try again.", "छवि का विश्लेषण करने में विफल। कृपया पुनः प्रयास करें।"));
     } finally {
       setAnalyzing(false);
     }

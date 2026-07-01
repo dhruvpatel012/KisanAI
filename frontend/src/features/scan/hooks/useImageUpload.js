@@ -1,7 +1,9 @@
 import { useState } from "react";
 import api from "../../../lib/axios";
+import { useLanguage } from "../../../context/LanguageContext";
 
 export const useImageUpload = () => {
+  const { t } = useLanguage();
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -20,7 +22,7 @@ export const useImageUpload = () => {
     const allowedExtensions = ["jpg", "jpeg", "png", "webp"];
 
     if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
-      setError("Invalid file type. Please select a JPG, JPEG, PNG, or WEBP image.");
+      setError(t("Invalid file type. Please select a JPG, JPEG, PNG, or WEBP image.", "अमान्य फ़ाइल प्रकार। कृपया JPG, JPEG, PNG, या WEBP छवि चुनें।"));
       setSelectedFile(null);
       if (preview) {
         URL.revokeObjectURL(preview);
@@ -40,7 +42,7 @@ export const useImageUpload = () => {
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      setError("No file selected.");
+      setError(t("No file selected.", "कोई फ़ाइल नहीं चुनी गई।"));
       return;
     }
 
@@ -61,7 +63,7 @@ export const useImageUpload = () => {
     } catch (err) {
       console.error("Upload error details:", err);
       const backendError = err.response?.data?.detail;
-      setError(backendError || "Failed to upload image. Please try again.");
+      setError(backendError || t("Failed to upload image. Please try again.", "छवि अपलोड करने में विफल। कृपया पुन: प्रयास करें।"));
     } finally {
       setUploading(false);
     }
