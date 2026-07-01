@@ -56,14 +56,14 @@ const AdvisoryPage = () => {
   return (
     <PageLayout title={t("Crop Advisory", "फसल सलाह")}>
         {/* SEARCH BAR */}
-        <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-sm flex items-center gap-3">
+        <div className="bg-white dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 shadow-sm flex items-center gap-3">
           <i className="ri-search-line text-gray-400 text-lg"></i>
           <input
             type="text"
             placeholder={t("Search crop or disease...", "खोजें...")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 outline-none text-sm bg-transparent placeholder-gray-400"
+            className="flex-1 outline-none text-sm bg-transparent placeholder-gray-400 dark:text-white dark:placeholder-gray-500"
           />
         </div>
 
@@ -83,7 +83,7 @@ const AdvisoryPage = () => {
                 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer
                 ${selectedCrop === chip.id
                   ? "bg-green-600 text-white shadow-md shadow-green-500/20 border-transparent"
-                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                  : "bg-white dark:bg-gray-900/60 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                 }
               `}
             >
@@ -123,7 +123,7 @@ const AdvisoryPage = () => {
                 <div
                   key={advisory.crop_id}
                   onClick={() => setActiveAdvisory(advisory)}
-                  className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-4 active:scale-[0.99] transition-all cursor-pointer hover:shadow-md"
+                  className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl shadow-sm border border-white/60 dark:border-gray-700/40 p-4 flex items-center gap-4 active:scale-[0.99] transition-all cursor-pointer hover:shadow-md hover:-translate-y-0.5"
                 >
                   <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center text-2xl flex-shrink-0">
                     {getCropEmoji(advisory.crop_id)}

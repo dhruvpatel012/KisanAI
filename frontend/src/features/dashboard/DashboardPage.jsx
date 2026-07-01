@@ -261,10 +261,10 @@ const DashboardPage = () => {
         
         {/* SECTION 1 - Greeting */}
         <div className="pt-3 px-1">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             {greeting} <span className="animate-bounce">👋</span>
           </h2>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
             {t("How are your crops today?", "आज आपकी फसलें कैसी हैं?")}
           </p>
         </div>
@@ -273,14 +273,14 @@ const DashboardPage = () => {
         {weatherLoading ? (
           <div className="h-36 bg-gray-150 animate-pulse rounded-2xl border border-gray-100" />
         ) : weather ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 relative overflow-hidden">
+          <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl shadow-sm border border-white/60 dark:border-gray-700/40 p-4 relative overflow-hidden">
             <div className="flex justify-between items-start">
               <div>
-                <span className="text-xs font-bold tracking-widest text-green-600 uppercase">
+                <span className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase">
                   {t("Local Weather", "स्थानीय मौसम")}{displayLocation ? ` — ${displayLocation}` : ""}
                 </span>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="text-4xl font-black text-gray-900">
+                  <span className="text-4xl font-black text-gray-900 dark:text-white">
                     {Math.round(weather.current.temperature)}°C
                   </span>
                   <span className="text-2xl">{weather.current.emoji}</span>
@@ -321,7 +321,25 @@ const DashboardPage = () => {
           </div>
         ) : null}
 
-        {/* SECTION 2 - Hero Scan Card */}
+        {/* SECTION 2 - Quick Stats */}
+        {!loading && scans.length > 0 && (
+          <div className="grid grid-cols-3 gap-2.5">
+            <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/60 dark:border-gray-700/40 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-3 text-center">
+              <p className="text-2xl font-black text-brand-700">{scans.length}</p>
+              <p className="text-[10px] font-semibold text-gray-500 mt-0.5">{t("Total Scans", "कुल जाँच")}</p>
+            </div>
+            <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/60 dark:border-gray-700/40 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-3 text-center">
+              <p className="text-2xl font-black text-red-500">{scans.filter(s => !s.is_healthy && s.disease).length}</p>
+              <p className="text-[10px] font-semibold text-gray-500 mt-0.5">{t("Diseases", "रोग")}</p>
+            </div>
+            <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/60 dark:border-gray-700/40 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-3 text-center">
+              <p className="text-2xl font-black text-green-600">{scans.filter(s => s.is_healthy).length}</p>
+              <p className="text-[10px] font-semibold text-gray-500 mt-0.5">{t("Healthy", "स्वस्थ")}</p>
+            </div>
+          </div>
+        )}
+
+        {/* SECTION 3 - Hero Scan Card */}
         <Card
           className="relative overflow-hidden rounded-2xl p-5"
           style={{

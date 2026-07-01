@@ -9,13 +9,19 @@ const Button = ({
   onClick,
   className = "",
 }) => {
-  const baseStyles = "inline-flex items-center justify-center font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 rounded-[12px] min-h-[44px]";
+  const baseStyles = `
+    inline-flex items-center justify-center font-semibold
+    transition-all duration-200 ease-out
+    active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
+    gap-2 rounded-[14px] min-h-[44px]
+    relative overflow-hidden
+  `;
   
   const variants = {
-    primary: "bg-brand-600 hover:bg-brand-700 text-white shadow-lg shadow-brand-600/20",
-    secondary: "bg-white border-2 border-brand-600 text-brand-600 hover:bg-brand-50",
+    primary: "bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white shadow-lg shadow-brand-600/25 hover:shadow-brand-600/40 hover:-translate-y-0.5",
+    secondary: "bg-white border-2 border-brand-600 text-brand-600 hover:bg-brand-50 hover:shadow-md hover:-translate-y-0.5",
     ghost: "bg-transparent text-brand-600 hover:bg-brand-50",
-    danger: "bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/20",
+    danger: "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg shadow-red-600/25 hover:shadow-red-600/40 hover:-translate-y-0.5",
   };
 
   const sizes = {

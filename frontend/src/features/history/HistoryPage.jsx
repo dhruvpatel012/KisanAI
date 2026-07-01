@@ -275,8 +275,8 @@ const HistoryPage = () => {
                   style={{
                     animationDelay: `${idx * 80}ms`
                   }}
-                  className={`animate-fadeSlideUp opacity-0 flex items-center justify-between p-4 bg-white rounded-2xl shadow-sm overflow-hidden active:scale-[0.99] transition-all cursor-pointer ${
-                    isSelected ? "bg-emerald-50/20" : ""
+                  className={`animate-fadeSlideUp opacity-0 flex items-center justify-between p-4 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl shadow-sm overflow-hidden active:scale-[0.99] transition-all cursor-pointer ${
+                    isSelected ? "bg-emerald-50/20 dark:bg-emerald-900/20" : ""
                   } ${getLeftBorderColor(scan)}`}
                 >
                   <div className="flex items-center gap-3">

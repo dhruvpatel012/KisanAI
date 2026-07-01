@@ -7,6 +7,7 @@ import Alert from "../../components/ui/Alert";
 import Badge from "../../components/ui/Badge";
 import api from "../../lib/axios";
 import { useLanguage } from "../../context/LanguageContext";
+import confetti from "canvas-confetti";
 
 const ResultPage = () => {
   const { uploadId } = useParams();
@@ -44,6 +45,31 @@ const ResultPage = () => {
     }, frameRate);
 
     return () => clearInterval(timer);
+  }, [scanData]);
+
+  // Confetti celebration for healthy crops
+  useEffect(() => {
+    if (scanData?.is_healthy) {
+      const end = Date.now() + 1500;
+      const burst = () => {
+        confetti({
+          particleCount: 3,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0, y: 0.7 },
+          colors: ["#22c55e", "#16a34a", "#86efac"],
+        });
+        confetti({
+          particleCount: 3,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1, y: 0.7 },
+          colors: ["#22c55e", "#16a34a", "#86efac"],
+        });
+        if (Date.now() < end) requestAnimationFrame(burst);
+      };
+      burst();
+    }
   }, [scanData]);
 
   useEffect(() => {

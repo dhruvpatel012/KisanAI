@@ -4,19 +4,19 @@ import { useLanguage } from "../../context/LanguageContext";
 const BottomNav = () => {
   const { t } = useLanguage();
 
+  const navItemClass = ({ isActive }) =>
+    `flex flex-col items-center gap-0.5 flex-1 py-2 rounded-xl transition-colors duration-150 min-h-[44px] justify-center ${
+      isActive
+        ? "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/40"
+        : "text-gray-400 dark:text-gray-500"
+    }`;
+
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-950/95 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.4)] z-50 transition-colors duration-300">
       <div className="max-w-md mx-auto h-16 flex items-center justify-around px-2">
         
-        {/* HOME LINK */}
-        <NavLink
-          to="/dashboard"
-          className={({ isActive }) =>
-            `flex flex-col items-center gap-0.5 flex-1 py-2 rounded-xl transition-colors duration-150 min-h-[44px] justify-center ${
-              isActive ? "text-green-600 bg-green-50" : "text-gray-400"
-            }`
-          }
-        >
+        {/* HOME */}
+        <NavLink to="/dashboard" className={navItemClass}>
           {({ isActive }) => (
             <>
               <i className={`text-xl ${isActive ? "ri-home-5-fill" : "ri-home-5-line"}`}></i>
@@ -25,15 +25,8 @@ const BottomNav = () => {
           )}
         </NavLink>
 
-        {/* ADVISORY LINK */}
-        <NavLink
-          to="/advisory"
-          className={({ isActive }) =>
-            `flex flex-col items-center gap-0.5 flex-1 py-2 rounded-xl transition-colors duration-150 min-h-[44px] justify-center ${
-              isActive ? "text-green-600 bg-green-50" : "text-gray-400"
-            }`
-          }
-        >
+        {/* ADVISORY */}
+        <NavLink to="/advisory" className={navItemClass}>
           {({ isActive }) => (
             <>
               <i className={`text-xl ${isActive ? "ri-book-open-fill" : "ri-book-open-line"}`}></i>
@@ -42,7 +35,7 @@ const BottomNav = () => {
           )}
         </NavLink>
 
-        {/* SCAN LINK (CENTER BUTTON) */}
+        {/* SCAN (CENTER) */}
         <NavLink
           to="/scan"
           className="flex flex-col items-center justify-center flex-1 -mt-5"
@@ -56,20 +49,13 @@ const BottomNav = () => {
           >
             <i className="ri-camera-fill text-2xl text-white"></i>
           </div>
-          <span className="text-[10px] font-semibold text-green-600 mt-1">
+          <span className="text-[10px] font-semibold text-green-600 dark:text-green-400 mt-1">
             {t("Scan", "जाँच")}
           </span>
         </NavLink>
 
-        {/* HISTORY LINK */}
-        <NavLink
-          to="/history"
-          className={({ isActive }) =>
-            `flex flex-col items-center gap-0.5 flex-1 py-2 rounded-xl transition-colors duration-150 min-h-[44px] justify-center ${
-              isActive ? "text-green-600 bg-green-50" : "text-gray-400"
-            }`
-          }
-        >
+        {/* HISTORY */}
+        <NavLink to="/history" className={navItemClass}>
           {({ isActive }) => (
             <>
               <i className={`text-xl ${isActive ? "ri-history-fill" : "ri-history-line"}`}></i>
@@ -78,15 +64,8 @@ const BottomNav = () => {
           )}
         </NavLink>
 
-        {/* PROFILE LINK */}
-        <NavLink
-          to="/profile"
-          className={({ isActive }) =>
-            `flex flex-col items-center gap-0.5 flex-1 py-2 rounded-xl transition-colors duration-150 min-h-[44px] justify-center ${
-              isActive ? "text-green-600 bg-green-50" : "text-gray-400"
-            }`
-          }
-        >
+        {/* PROFILE */}
+        <NavLink to="/profile" className={navItemClass}>
           {({ isActive }) => (
             <>
               <i className={`text-xl ${isActive ? "ri-user-3-fill" : "ri-user-3-line"}`}></i>
@@ -101,4 +80,3 @@ const BottomNav = () => {
 };
 
 export default BottomNav;
-

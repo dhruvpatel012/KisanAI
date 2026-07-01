@@ -6,9 +6,11 @@ import Alert from "../../components/ui/Alert";
 import { logoutUser } from "../auth/authService";
 import api from "../../lib/axios";
 import { useLanguage } from "../../context/LanguageContext";
+import { useTheme } from "../../context/ThemeContext";
 
 const ProfilePage = () => {
   const { language, setLanguage, t } = useLanguage();
+  const { isDark, toggleTheme } = useTheme();
   const [profile, setProfile] = useState({
     full_name: "",
     email: "",
@@ -149,8 +151,8 @@ const ProfilePage = () => {
 
             {/* EDIT PROFILE INPUTS */}
             <form onSubmit={handleSaveProfile} className="flex flex-col gap-3">
-              <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 flex flex-col gap-4">
-                <h3 className="text-sm font-black text-emerald-950 flex items-center gap-2 border-b border-gray-100 pb-2">
+              <div className="bg-white dark:bg-gray-900/60 rounded-2xl shadow-sm p-4 border border-gray-100 dark:border-gray-800 flex flex-col gap-4">
+                <h3 className="text-sm font-black text-emerald-950 dark:text-emerald-200 flex items-center gap-2 border-b border-gray-100 dark:border-gray-800 pb-2">
                   <i className="ri-user-settings-line text-brand-600 text-lg"></i>
                   {t("Edit Profile Settings", "प्रोफ़ाइल संपादित करें")}
                 </h3>
@@ -165,14 +167,14 @@ const ProfilePage = () => {
 
                 {/* Name field */}
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-bold text-gray-700">
+                  <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
                     {t("Full Name", "पूरा नाम")}
                   </label>
                   <input
                     type="text"
                     value={profile.full_name}
                     onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-                    className="border border-gray-200 rounded-xl px-4 py-3 text-sm w-full focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
+                    className="border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-xl px-4 py-3 text-sm w-full focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
                   />
                 </div>
 
@@ -186,7 +188,7 @@ const ProfilePage = () => {
                     placeholder="e.g. Punjab, Gujarat"
                     value={profile.farm_location}
                     onChange={(e) => setProfile({ ...profile, farm_location: e.target.value })}
-                    className="border border-gray-200 rounded-xl px-4 py-3 text-sm w-full focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
+                    className="border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-xl px-4 py-3 text-sm w-full focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
                   />
                 </div>
 
@@ -217,6 +219,37 @@ const ProfilePage = () => {
                       }`}
                     >
                       हिंदी
+                    </button>
+                  </div>
+                </div>
+
+                {/* Dark Mode Toggle */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                    {t("Theme", "थीम")}
+                  </label>
+                  <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-1 flex gap-1 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => isDark && toggleTheme()}
+                      className={`py-2 flex-1 rounded-lg font-semibold text-sm transition-all duration-150 flex items-center justify-center gap-1.5 ${
+                        !isDark
+                          ? "bg-white dark:bg-gray-700 text-amber-600 shadow-sm"
+                          : "text-gray-500 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-700/50"
+                      }`}
+                    >
+                      <i className="ri-sun-line"></i> {t("Light", "लाइट")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => !isDark && toggleTheme()}
+                      className={`py-2 flex-1 rounded-lg font-semibold text-sm transition-all duration-150 flex items-center justify-center gap-1.5 ${
+                        isDark
+                          ? "bg-white dark:bg-gray-700 text-indigo-500 shadow-sm"
+                          : "text-gray-500 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-700/50"
+                      }`}
+                    >
+                      <i className="ri-moon-line"></i> {t("Dark", "डार्क")}
                     </button>
                   </div>
                 </div>
