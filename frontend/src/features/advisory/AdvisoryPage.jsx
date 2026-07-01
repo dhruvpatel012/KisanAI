@@ -151,24 +151,24 @@ const AdvisoryPage = () => {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Handle bar at top */}
-              <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+              <div className="w-10 h-1 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-4" />
 
               {/* Header */}
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-3">
                   <span className="text-4xl">{getCropEmoji(activeAdvisory.crop_id)}</span>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                       {t(activeAdvisory.crop_name, activeAdvisory.crop_name_hi)}
                     </h3>
-                    <p className="text-xs text-green-600 font-bold">
+                    <p className="text-xs text-green-600 dark:text-green-400 font-bold">
                       {t("Agronomy Manual", "फसल विवरण")}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setActiveAdvisory(null)}
-                  className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 font-bold"
+                  className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 font-bold"
                 >
                   ✕
                 </button>
@@ -179,40 +179,40 @@ const AdvisoryPage = () => {
                 
                 {/* Soil Preparation */}
                 <div>
-                  <h4 className="text-xs font-bold tracking-widest text-green-600 uppercase mb-2">
+                  <h4 className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase mb-2">
                     {t("🌱 Soil Preparation", "🌱 मिट्टी की तैयारी")}
                   </h4>
-                  <div className="bg-green-50 rounded-xl p-3 text-sm text-gray-700 leading-relaxed">
+                  <div className="bg-green-50/80 dark:bg-green-950/20 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
                     {t(activeAdvisory.soil_prep, activeAdvisory.soil_prep_hi)}
                   </div>
                 </div>
 
                 {/* Planting Time */}
                 <div>
-                  <h4 className="text-xs font-bold tracking-widest text-green-600 uppercase mb-2">
+                  <h4 className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase mb-2">
                     {t("📅 Planting Season", "📅 बोने का समय")}
                   </h4>
-                  <div className="bg-green-50 rounded-xl p-3 text-sm text-gray-700 leading-relaxed">
+                  <div className="bg-green-50/80 dark:bg-green-950/20 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
                     {t(activeAdvisory.planting_time, activeAdvisory.planting_time_hi)}
                   </div>
                 </div>
 
                 {/* Pest & Disease Prevention */}
                 <div>
-                  <h4 className="text-xs font-bold tracking-widest text-green-600 uppercase mb-2">
+                  <h4 className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase mb-2">
                     {t("🛡️ Organic Pest Control", "🛡️ कीट और रोग नियंत्रण")}
                   </h4>
-                  <div className="bg-green-50 rounded-xl p-3 text-sm text-gray-700 leading-relaxed">
+                  <div className="bg-green-50/80 dark:bg-green-950/20 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
                     {t(activeAdvisory.pest_management, activeAdvisory.pest_management_hi)}
                   </div>
                 </div>
 
                 {/* Irrigation */}
                 <div>
-                  <h4 className="text-xs font-bold tracking-widest text-green-600 uppercase mb-2">
+                  <h4 className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase mb-2">
                     {t("💧 Irrigation", "💧 सिंचाई नियम")}
                   </h4>
-                  <div className="bg-green-50 rounded-xl p-3 text-sm text-gray-700 leading-relaxed">
+                  <div className="bg-green-50/80 dark:bg-green-950/20 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
                     {t(activeAdvisory.irrigation, activeAdvisory.irrigation_hi)}
                   </div>
                 </div>
