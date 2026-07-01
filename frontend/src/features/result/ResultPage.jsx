@@ -13,7 +13,7 @@ import { AlertTriangle, CheckCircle, Leaf, Pill, ShieldCheck, ScanLine, Home } f
 const ResultPage = () => {
   const { uploadId } = useParams();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, dt } = useLanguage();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -187,7 +187,7 @@ const ResultPage = () => {
 
           <div>
             <h2 className="text-2xl font-extrabold text-emerald-950">
-              {t("Crop is Healthy!", "फसल स्वस्थ है!")}
+              {dt(scanData.crop)} {t("is Healthy!", "स्वस्थ है!")}
             </h2>
             <Badge variant="success" className="mt-2.5 font-bold uppercase text-xs">
               {t("Healthy", "स्वस्वस्थ")}
@@ -203,7 +203,7 @@ const ResultPage = () => {
               {t("Advisory", "सलाह")}:
             </h4>
             <p className="text-xs text-emerald-700 leading-relaxed">
-              {t("No disease symptoms detected. Keep maintaining standard balanced fertilizer, regular watering, and good crop rotation practices.", "कोई बीमारी नहीं मिली। नियमित सिंचाई और खाद देते रहें।")}
+              {dt("No disease symptoms detected. Keep maintaining standard balanced fertilizer, regular watering, and good crop rotation practices.")}
             </p>
           </div>
 
@@ -305,11 +305,11 @@ const ResultPage = () => {
                 {t("Detected Disease", "बीमारी")}
               </span>
               <h2 className="text-xl font-extrabold text-emerald-950 mt-0.5 leading-snug">
-                {scanData.disease}
+                {dt(scanData.disease)}
               </h2>
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-xs font-semibold text-gray-500">
-                  {t("Crop:", "फसल:")} {scanData.crop}
+                  {t("Crop:", "फसल:")} {dt(scanData.crop)}
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
                 <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${getSeverityColor(scanData.severity)}`}>
@@ -399,7 +399,7 @@ const ResultPage = () => {
                       className="flex gap-3 items-start bg-emerald-50/30 border border-emerald-100/50 rounded-xl p-3 animate-[slideInUp_0.3s_ease_both]"
                     >
                       <span className="text-emerald-600 mt-0.5 text-sm font-extrabold">✓</span>
-                      <p className="text-xs text-emerald-900 font-medium leading-relaxed">{step}</p>
+                      <p className="text-xs text-emerald-900 font-medium leading-relaxed">{dt(step)}</p>
                     </div>
                   ))
                 ) : (
@@ -421,7 +421,7 @@ const ResultPage = () => {
                       className="flex gap-3 items-start bg-rose-50/20 border border-rose-100/40 rounded-xl p-3 animate-[slideInUp_0.3s_ease_both]"
                     >
                       <span className="text-rose-500 mt-0.5 text-sm font-extrabold">⚠</span>
-                      <p className="text-xs text-rose-950 font-medium leading-relaxed">{step}</p>
+                      <p className="text-xs text-rose-950 font-medium leading-relaxed">{dt(step)}</p>
                     </div>
                   ))
                 ) : (
@@ -449,7 +449,7 @@ const ResultPage = () => {
                 <span className="text-[10px] font-bold text-emerald-700 uppercase">
                   {t("Fertilizer Advisory", "खाद सलाह")}
                 </span>
-                <p className="text-xs text-emerald-950 font-medium mt-1 leading-relaxed">{scanData.fertilizer}</p>
+                <p className="text-xs text-emerald-950 font-medium mt-1 leading-relaxed">{dt(scanData.fertilizer)}</p>
               </div>
             )}
 
@@ -458,7 +458,7 @@ const ResultPage = () => {
                 <span className="text-[10px] font-bold text-emerald-700 uppercase">
                   {t("Prevention Plan", "बचाव योजना")}
                 </span>
-                <p className="text-xs text-emerald-950 font-medium mt-1 leading-relaxed">{scanData.prevention}</p>
+                <p className="text-xs text-emerald-950 font-medium mt-1 leading-relaxed">{dt(scanData.prevention)}</p>
               </div>
             )}
           </Card>
@@ -473,7 +473,7 @@ const ResultPage = () => {
             <div className="grid grid-cols-2 gap-3">
               {scanData.similar_diseases.map((disease, idx) => (
                 <Card key={idx} className="p-3.5 flex flex-col gap-1.5">
-                  <span className="text-xs font-bold text-emerald-950 truncate">{disease.name}</span>
+                  <span className="text-xs font-bold text-emerald-950 truncate">{dt(disease.name)}</span>
                   <div className="flex justify-between items-center text-[10px]">
                     <span className="font-semibold text-gray-500">{t("Match:", "तुलना:")}</span>
                     <span className="font-extrabold text-emerald-700">{(disease.confidence * 100).toFixed(1)}%</span>

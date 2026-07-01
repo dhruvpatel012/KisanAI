@@ -34,7 +34,7 @@ const WEATHER_CODE_MAPPING = {
 
 const DashboardPage = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, dt } = useLanguage();
   const [timeOfDay, setTimeOfDay] = useState("morning");
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -432,12 +432,12 @@ const DashboardPage = () => {
                     )}
                     <div className="min-w-0">
                       <h4 className="font-bold text-gray-900 text-sm truncate">
-                        {scan.crop || t("Unknown", "अज्ञात")}
+                        {dt(scan.crop) || t("Unknown", "अज्ञात")}
                       </h4>
                       <p className="text-xs text-gray-500 truncate">
                         {scan.status === "uploaded"
                           ? t("Analyzing...", "विश्लेषण...")
-                          : scan.disease || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"))}
+                          : dt(scan.disease) || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"))}
                       </p>
                       <p className="text-[10px] text-gray-400 mt-0.5">
                         {formatDate(scan.created_at)}

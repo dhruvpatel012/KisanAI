@@ -11,7 +11,7 @@ import { ChevronRight, Trash2, Pencil, Clock, AlertCircle, CheckCircle2 } from "
 
 const HistoryPage = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, dt } = useLanguage();
 
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -320,11 +320,11 @@ const HistoryPage = () => {
                       <h4 className="font-extrabold text-emerald-950 dark:text-emerald-100 text-sm leading-tight">
                         {scan.status === "uploaded"
                           ? t("Analyzing...", "विश्लेषण...")
-                          : scan.disease || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"))}
+                          : dt(scan.disease) || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"))}
                       </h4>
                       {scan.crop && (
                         <p className="text-xs text-emerald-800 dark:text-emerald-400 font-bold mt-0.5">
-                          {scan.crop}
+                          {dt(scan.crop)}
                         </p>
                       )}
                       <p className="text-[10px] text-gray-400 font-medium mt-1">
