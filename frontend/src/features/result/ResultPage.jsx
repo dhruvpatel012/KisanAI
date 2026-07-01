@@ -359,12 +359,12 @@ const ResultPage = () => {
         {/* Treatment Recommendations Tabs Card */}
         <Card className="overflow-hidden animate-fadeSlideUp" style={{ animationDelay: "100ms" }}>
           {/* Tabs header */}
-          <div className="flex border-b border-emerald-50 bg-emerald-50/20">
+          <div className="flex border-b border-emerald-50 dark:border-emerald-800/60 bg-emerald-50/20 dark:bg-emerald-950/10">
             <button
               className={`flex-1 py-3.5 text-xs font-extrabold text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === "organic"
-                  ? "border-emerald-600 text-emerald-900 bg-emerald-50/40"
-                  : "border-transparent text-emerald-800/60 hover:text-emerald-700"
+                  ? "border-emerald-600 dark:border-emerald-500 text-emerald-900 dark:text-emerald-100 bg-emerald-50/40 dark:bg-emerald-950/20"
+                  : "border-transparent text-emerald-800/60 dark:text-emerald-400/60 hover:text-emerald-700 dark:hover:text-emerald-300"
               }`}
               onClick={() => setActiveTab("organic")}
             >
@@ -374,8 +374,8 @@ const ResultPage = () => {
             <button
               className={`flex-1 py-3.5 text-xs font-extrabold text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === "chemical"
-                  ? "border-emerald-600 text-emerald-900 bg-emerald-50/40"
-                  : "border-transparent text-emerald-800/60 hover:text-emerald-700"
+                  ? "border-emerald-600 dark:border-emerald-500 text-emerald-900 dark:text-emerald-100 bg-emerald-50/40 dark:bg-emerald-950/20"
+                  : "border-transparent text-emerald-800/60 dark:text-emerald-400/60 hover:text-emerald-700 dark:hover:text-emerald-300"
               }`}
               onClick={() => setActiveTab("chemical")}
             >
@@ -396,10 +396,10 @@ const ResultPage = () => {
                         animation: "slideInUp 0.3s ease both",
                         animationDelay: `${idx * 150}ms`
                       }}
-                      className="flex gap-3 items-start bg-emerald-50/30 border border-emerald-100/50 rounded-xl p-3 animate-[slideInUp_0.3s_ease_both]"
+                      className="flex gap-3 items-start bg-emerald-50/30 dark:bg-emerald-950/10 border border-emerald-100/50 dark:border-emerald-900/30 rounded-xl p-3 animate-[slideInUp_0.3s_ease_both]"
                     >
                       <span className="text-emerald-600 mt-0.5 text-sm font-extrabold">✓</span>
-                      <p className="text-xs text-emerald-900 font-medium leading-relaxed">{dt(step)}</p>
+                      <p className="text-xs text-emerald-900 dark:text-emerald-200 font-medium leading-relaxed">{dt(step)}</p>
                     </div>
                   ))
                 ) : (
@@ -418,15 +418,15 @@ const ResultPage = () => {
                         animation: "slideInUp 0.3s ease both",
                         animationDelay: `${idx * 150}ms`
                       }}
-                      className="flex gap-3 items-start bg-rose-50/20 border border-rose-100/40 rounded-xl p-3 animate-[slideInUp_0.3s_ease_both]"
+                      className="flex gap-3 items-start bg-rose-50/20 dark:bg-rose-950/10 border border-rose-100/40 dark:border-rose-900/20 rounded-xl p-3 animate-[slideInUp_0.3s_ease_both]"
                     >
                       <span className="text-rose-500 mt-0.5 text-sm font-extrabold">⚠</span>
-                      <p className="text-xs text-rose-950 font-medium leading-relaxed">{dt(step)}</p>
+                      <p className="text-xs text-rose-950 dark:text-rose-200 font-medium leading-relaxed">{dt(step)}</p>
                     </div>
                   ))
                 ) : (
-                  <div className="flex gap-3 items-start bg-emerald-50/30 border border-emerald-100/50 rounded-xl p-4 text-center justify-center">
-                    <p className="text-xs text-emerald-800 font-medium">
+                  <div className="flex gap-3 items-start bg-emerald-50/30 dark:bg-emerald-950/10 border border-emerald-100/50 dark:border-emerald-900/30 rounded-xl p-4 text-center justify-center">
+                    <p className="text-xs text-emerald-800 dark:text-emerald-300 font-medium">
                       {t("No chemical inputs required. Keep using standard organic preventions.", "किसी रासायनिक इनपुट की आवश्यकता नहीं है। जैविक निवारणों का उपयोग जारी रखें।")}
                     </p>
                   </div>
@@ -439,26 +439,26 @@ const ResultPage = () => {
         {/* Fertilizer & Prevention Card */}
         {(scanData.fertilizer || scanData.prevention) && (
           <Card className="p-5 flex flex-col gap-4 animate-fadeSlideUp" style={{ animationDelay: "200ms" }}>
-            <h3 className="text-sm font-extrabold text-emerald-950 dark:text-emerald-100 tracking-wide uppercase border-b border-emerald-50 pb-2 flex items-center gap-2">
+            <h3 className="text-sm font-extrabold text-emerald-950 dark:text-emerald-100 tracking-wide uppercase border-b border-emerald-50 dark:border-emerald-800/60 pb-2 flex items-center gap-2">
               <ShieldCheck size={16} className="text-green-600" />
               {t("Soil & Prevention", "मिट्टी और रोकथाम")}
             </h3>
 
             {scanData.fertilizer && (
-              <div className="bg-emerald-50/50 border border-emerald-100/50 rounded-xl p-3">
-                <span className="text-[10px] font-bold text-emerald-700 uppercase">
+              <div className="bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100/50 dark:border-emerald-900/20 rounded-xl p-3">
+                <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase">
                   {t("Fertilizer Advisory", "खाद सलाह")}
                 </span>
-                <p className="text-xs text-emerald-950 font-medium mt-1 leading-relaxed">{dt(scanData.fertilizer)}</p>
+                <p className="text-xs text-emerald-950 dark:text-emerald-200 font-medium mt-1 leading-relaxed">{dt(scanData.fertilizer)}</p>
               </div>
             )}
 
             {scanData.prevention && (
-              <div className="bg-emerald-50/50 border border-emerald-100/50 rounded-xl p-3">
-                <span className="text-[10px] font-bold text-emerald-700 uppercase">
+              <div className="bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100/50 dark:border-emerald-900/20 rounded-xl p-3">
+                <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase">
                   {t("Prevention Plan", "बचाव योजना")}
                 </span>
-                <p className="text-xs text-emerald-950 font-medium mt-1 leading-relaxed">{dt(scanData.prevention)}</p>
+                <p className="text-xs text-emerald-950 dark:text-emerald-200 font-medium mt-1 leading-relaxed">{dt(scanData.prevention)}</p>
               </div>
             )}
           </Card>

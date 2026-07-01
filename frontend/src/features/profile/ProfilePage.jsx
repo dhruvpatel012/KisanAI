@@ -315,7 +315,7 @@ const ProfilePage = () => {
                       className={`py-2 flex-1 rounded-lg font-semibold text-sm transition-all duration-150 ${
                         profile.preferred_language === "en"
                           ? "bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 shadow-sm"
-                          : "text-gray-500 hover:bg-gray-200/50"
+                          : "text-gray-500 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-700/50"
                       }`}
                     >
                       English
@@ -326,7 +326,7 @@ const ProfilePage = () => {
                       className={`py-2 flex-1 rounded-lg font-semibold text-sm transition-all duration-150 ${
                         profile.preferred_language === "hi"
                           ? "bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 shadow-sm"
-                          : "text-gray-500 hover:bg-gray-200/50"
+                          : "text-gray-500 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-700/50"
                       }`}
                     >
                       हिंदी

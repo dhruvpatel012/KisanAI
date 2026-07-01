@@ -286,7 +286,7 @@ const DashboardPage = () => {
                     {Math.round(weather.current.temperature)}°C
                   </span>
                   <span className="text-2xl">{weather.current.emoji}</span>
-                  <span className="text-sm font-semibold text-gray-600">
+                  <span className="text-sm font-semibold text-gray-600 dark:text-gray-300">
                     {t(weather.current.description, weather.current.description_hi)}
                   </span>
                 </div>
@@ -304,7 +304,7 @@ const DashboardPage = () => {
             </div>
             
             {/* 3-Day Forecast */}
-            <div className="border-t border-gray-100 pt-3 mt-3">
+            <div className="border-t border-gray-100 dark:border-gray-800 pt-3 mt-3">
               <div className="flex gap-2 mt-3">
                 {weather.forecast.map((day, idx) => {
                   const dateLabel = idx === 0 
@@ -313,12 +313,12 @@ const DashboardPage = () => {
                     ? t("Tomorrow", "कल") 
                     : formatDate(day.date).split(",")[0];
                   return (
-                    <div key={idx} className="flex-1 bg-gray-50 rounded-xl p-2 text-center text-xs">
-                      <p className="font-bold text-gray-700 leading-tight">
+                    <div key={idx} className="flex-1 bg-gray-50 dark:bg-gray-800/60 border border-transparent dark:border-gray-800/40 rounded-xl p-2 text-center text-xs">
+                      <p className="font-bold text-gray-700 dark:text-gray-300 leading-tight">
                         {dateLabel}
                       </p>
                       <p className="text-lg my-1">{day.emoji}</p>
-                      <p className="font-extrabold text-gray-900">
+                      <p className="font-extrabold text-gray-900 dark:text-white">
                         {Math.round(day.temp_max)}°/{Math.round(day.temp_min)}°
                       </p>
                     </div>
@@ -380,7 +380,7 @@ const DashboardPage = () => {
 
         {/* SECTION 4 - Recent Scans heading */}
         <div className="flex items-center justify-between px-1">
-          <h3 className="font-bold text-gray-900 text-base">
+          <h3 className="font-bold text-gray-900 dark:text-white text-base">
             {t("Recent Scans", "हालिया जाँच")}
           </h3>
           <Link
@@ -416,7 +416,7 @@ const DashboardPage = () => {
                 <div
                   key={scan.upload_id}
                   onClick={() => navigate(`/result/${scan.upload_id}`)}
-                  className={`flex-shrink-0 w-64 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl shadow-sm border border-gray-100 p-3 flex items-center justify-between hover:shadow-md transition-all duration-200 cursor-pointer ${getLeftBorderColor(scan)}`}
+                  className={`flex-shrink-0 w-64 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/40 p-3 flex items-center justify-between hover:shadow-md transition-all duration-200 cursor-pointer ${getLeftBorderColor(scan)}`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     {imgUrl ? (
@@ -431,15 +431,15 @@ const DashboardPage = () => {
                       </div>
                     )}
                     <div className="min-w-0">
-                      <h4 className="font-bold text-gray-900 text-sm truncate">
+                      <h4 className="font-bold text-gray-900 dark:text-white text-sm truncate">
                         {dt(scan.crop) || t("Unknown", "अज्ञात")}
                       </h4>
-                      <p className="text-xs text-gray-500 truncate">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                         {scan.status === "uploaded"
                           ? t("Analyzing...", "विश्लेषण...")
                           : dt(scan.disease) || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"))}
                       </p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">
+                      <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">
                         {formatDate(scan.created_at)}
                       </p>
                     </div>
