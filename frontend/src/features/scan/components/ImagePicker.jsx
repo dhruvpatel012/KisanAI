@@ -54,10 +54,17 @@ const ImagePicker = ({ onFileSelect, error }) => {
       />
 
       {/* UPLOAD CARD */}
-      <Card className="flex flex-col items-center text-center p-6">
-        {/* Dashed green border box */}
-        <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-brand-400 bg-brand-50 flex items-center justify-center mb-4">
-          <i className="ri-camera-lens-line text-4xl text-brand-600"></i>
+      <Card className="flex flex-col items-center text-center p-6 bg-gradient-to-b from-white to-green-50/30 border border-green-100/60 shadow-sm rounded-3xl">
+        {/* Viewfinder corner brackets container */}
+        <div className="relative w-28 h-28 flex items-center justify-center mb-5 mt-2 animate-pulse">
+          {/* Corner Brackets */}
+          <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-green-600 rounded-tl-lg"></div>
+          <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-green-600 rounded-tr-lg"></div>
+          <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-green-600 rounded-bl-lg"></div>
+          <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-green-600 rounded-br-lg"></div>
+          
+          {/* Center camera icon */}
+          <i className="ri-camera-lens-line text-5xl text-green-700"></i>
         </div>
 
         <h2 className="text-xl font-bold text-gray-900 mb-1">
@@ -80,10 +87,10 @@ const ImagePicker = ({ onFileSelect, error }) => {
         <div className="w-full flex flex-col gap-3">
           <Button
             variant="primary"
-            className="font-bold py-3"
+            className="group font-bold py-3.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 shadow-lg shadow-green-500/30 hover:shadow-green-500/50 active:scale-95 transition-all border-none text-white text-base rounded-xl"
             onClick={() => cameraInputRef.current?.click()}
           >
-            <i className="ri-camera-fill text-lg"></i>
+            <i className="ri-camera-fill text-xl group-hover:animate-[shake_0.3s_ease-in-out_infinite] transition-transform duration-200"></i>
             {t("Open Camera", "कैमरा खोलें")}
           </Button>
 
@@ -97,7 +104,7 @@ const ImagePicker = ({ onFileSelect, error }) => {
 
           <Button
             variant="secondary"
-            className="font-bold py-3"
+            className="font-bold py-3 hover:bg-green-50/50 active:scale-[0.98] transition-all rounded-xl"
             onClick={() => galleryInputRef.current?.click()}
           >
             <i className="ri-image-add-fill text-lg"></i>

@@ -17,6 +17,34 @@ const ResultPage = () => {
   const [error, setError] = useState(null);
   const [scanData, setScanData] = useState(null);
   const [activeTab, setActiveTab] = useState("organic");
+  const [animatedConfidence, setAnimatedConfidence] = useState(0);
+
+  useEffect(() => {
+    if (!scanData) return;
+    const target = (scanData.confidence || 0) * 100;
+    setAnimatedConfidence(0);
+
+    const duration = 1500;
+    const frameRate = 1000 / 60;
+    const totalFrames = duration / frameRate;
+    let frame = 0;
+
+    const timer = setInterval(() => {
+      frame++;
+      const progress = frame / totalFrames;
+      const easedProgress = progress * (2 - progress);
+      const currentValue = easedProgress * target;
+
+      if (frame >= totalFrames) {
+        setAnimatedConfidence(target);
+        clearInterval(timer);
+      } else {
+        setAnimatedConfidence(currentValue);
+      }
+    }, frameRate);
+
+    return () => clearInterval(timer);
+  }, [scanData]);
 
   useEffect(() => {
     const fetchScanData = async () => {
@@ -170,10 +198,10 @@ const ResultPage = () => {
   }
 
   // CASE 3: Diseased Crop Dashboard
-  const confidencePercent = (scanData.confidence * 100).toFixed(1);
+  const confidencePercent = animatedConfidence.toFixed(1);
   const radius = 35;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (confidencePercent / 100) * circumference;
+  const strokeDashoffset = circumference - (animatedConfidence / 100) * circumference;
 
   // Filter organic vs chemical treatment steps
   const organicSteps = scanData.treatment_steps.filter(
@@ -211,6 +239,36 @@ const ResultPage = () => {
     }
   };
 
+  const getUrgencyBannerClass = (urgency) => {
+    switch (urgency?.toLowerCase()) {
+      case "immediate":
+        return "bg-red-50 text-red-700 border-red-100";
+      case "high":
+        return "bg-orange-50 text-orange-700 border-orange-100";
+      case "medium":
+        return "bg-amber-50 text-amber-700 border-amber-100";
+      case "low":
+        return "bg-green-50 text-green-700 border-green-100";
+      default:
+        return "bg-green-50 text-green-700 border-green-100";
+    }
+  };
+
+  const getUrgencyLabel = (urgency) => {
+    switch (urgency?.toLowerCase()) {
+      case "immediate":
+        return t("ATTENTION REQUIRED IMMEDIATELY", "तुरंत ध्यान देने की आवश्यकता है");
+      case "high":
+        return t("HIGH PRIORITY TREATMENT REQUIRED", "उच्च प्राथमिकता उपचार की आवश्यकता है");
+      case "medium":
+        return t("MODERATE ACTION ADVISED", "मध्यम कार्रवाई की सलाह दी जाती है");
+      case "low":
+        return t("ROUTINE CARE RECOMMENDED", "नियमित देखभाल की सिफारिश की जाती है");
+      default:
+        return t("ACTION ADVISED", "कार्रवाई की सलाह");
+    }
+  };
+
   return (
     <PageLayout title={t("Diagnosis", "रोग निदान")} showBack={true}>
       <div className="max-w-md mx-auto flex flex-col gap-5 p-4 pb-20">
@@ -234,6 +292,16 @@ const ResultPage = () => {
                   {getSeverityLabel(scanData.severity)}
                 </span>
               </div>
+              
+              {scanData.urgency && (
+                <div className={`mt-3 px-3 py-2 rounded-xl border text-[11px] font-bold flex items-center gap-2 shadow-sm ${getUrgencyBannerClass(scanData.urgency)}`}>
+                  <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-current"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-current"></span>
+                  </span>
+                  {getUrgencyLabel(scanData.urgency)}
+                </div>
+              )}
             </div>
 
             {/* Circular Accuracy Progress Gauge */}
@@ -289,7 +357,14 @@ const ResultPage = () => {
               <div className="flex flex-col gap-3">
                 {organicSteps.length > 0 ? (
                   organicSteps.map((step, idx) => (
-                    <div key={idx} className="flex gap-3 items-start bg-emerald-50/30 border border-emerald-100/50 rounded-xl p-3">
+                    <div
+                      key={idx}
+                      style={{
+                        animation: "slideInUp 0.3s ease both",
+                        animationDelay: `${idx * 150}ms`
+                      }}
+                      className="flex gap-3 items-start bg-emerald-50/30 border border-emerald-100/50 rounded-xl p-3 animate-[slideInUp_0.3s_ease_both]"
+                    >
                       <span className="text-emerald-600 mt-0.5 text-sm font-extrabold">✓</span>
                       <p className="text-xs text-emerald-900 font-medium leading-relaxed">{step}</p>
                     </div>
@@ -304,7 +379,14 @@ const ResultPage = () => {
               <div className="flex flex-col gap-3">
                 {chemicalSteps.length > 0 ? (
                   chemicalSteps.map((step, idx) => (
-                    <div key={idx} className="flex gap-3 items-start bg-rose-50/20 border border-rose-100/40 rounded-xl p-3">
+                    <div
+                      key={idx}
+                      style={{
+                        animation: "slideInUp 0.3s ease both",
+                        animationDelay: `${idx * 150}ms`
+                      }}
+                      className="flex gap-3 items-start bg-rose-50/20 border border-rose-100/40 rounded-xl p-3 animate-[slideInUp_0.3s_ease_both]"
+                    >
                       <span className="text-rose-500 mt-0.5 text-sm font-extrabold">⚠</span>
                       <p className="text-xs text-rose-950 font-medium leading-relaxed">{step}</p>
                     </div>

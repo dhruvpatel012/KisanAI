@@ -139,6 +139,23 @@ const HistoryPage = () => {
       ? scan.image_url
       : `${backendUrl}${scan.image_url}`;
   };
+  const getLeftBorderColor = (scan) => {
+    if (scan.status === "low_confidence") return "border-l-4 border-amber-400";
+    if (scan.status === "uploaded") return "border-l-4 border-blue-500";
+    if (scan.is_healthy) return "border-l-4 border-green-500";
+    
+    switch (scan.severity?.toLowerCase()) {
+      case "high":
+        return "border-l-4 border-red-500";
+      case "medium":
+        return "border-l-4 border-amber-400";
+      case "low":
+      case "none":
+        return "border-l-4 border-green-500";
+      default:
+        return "border-l-4 border-gray-300";
+    }
+  };
 
   return (
     <PageLayout title={t("Scan History", "इतिहास")}>
@@ -240,7 +257,7 @@ const HistoryPage = () => {
         {/* SCAN LIST STATE */}
         {!loading && !error && scans.length > 0 && (
           <div className="flex flex-col gap-3">
-            {scans.map((scan) => {
+            {scans.map((scan, idx) => {
               const imgUrl = getImageUrl(scan);
               const isSelected = selectedIds.includes(scan.upload_id);
               
@@ -256,9 +273,13 @@ const HistoryPage = () => {
                 <Card
                   key={scan.upload_id}
                   onClick={handleCardClick}
-                  className={`flex items-center justify-between p-4 hover:shadow-md transition-all duration-200 cursor-pointer border ${
+                  style={{
+                    animation: "slideInUp 0.3s ease both",
+                    animationDelay: `${idx * 100}ms`
+                  }}
+                  className={`flex items-center justify-between p-4 hover:shadow-md transition-all duration-200 cursor-pointer border active:scale-[0.99] ${
                     isSelected ? "border-emerald-500 bg-emerald-50/10" : "border-emerald-50"
-                  }`}
+                  } ${getLeftBorderColor(scan)}`}
                 >
                   <div className="flex items-center gap-3">
                     {editMode && (

@@ -237,6 +237,24 @@ const DashboardPage = () => {
     ? t("My Location", "मेरा स्थान")
     : locationName;
 
+  const getLeftBorderColor = (scan) => {
+    if (scan.status === "low_confidence") return "border-l-4 border-amber-500";
+    if (scan.status === "uploaded") return "border-l-4 border-blue-500";
+    if (scan.is_healthy) return "border-l-4 border-green-500";
+    
+    switch (scan.severity?.toLowerCase()) {
+      case "high":
+        return "border-l-4 border-red-500";
+      case "medium":
+        return "border-l-4 border-amber-500";
+      case "low":
+      case "none":
+        return "border-l-4 border-green-500";
+      default:
+        return "border-l-4 border-green-500";
+    }
+  };
+
   return (
     <PageLayout>
       {/* SECTION 1 - Greeting */}
@@ -253,7 +271,7 @@ const DashboardPage = () => {
       {weatherLoading ? (
         <Card className="mb-6 h-36 bg-gray-100 animate-pulse border border-gray-200" />
       ) : weather ? (
-        <Card className="mb-6 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 shadow-sm p-4 relative overflow-hidden">
+        <Card className="mb-6 bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm p-4 relative overflow-hidden rounded-2xl">
           <div className="flex justify-between items-start mb-3">
             <div>
               <span className="text-xs uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
@@ -305,33 +323,44 @@ const DashboardPage = () => {
       ) : null}
 
       {/* SECTION 2 - Hero Scan Card */}
-      <Card className="mb-6 bg-gradient-to-br from-brand-600 to-brand-800 text-white border-0 shadow-lg relative overflow-hidden">
+      <Card
+        className="mb-6 text-white border-0 shadow-lg relative overflow-hidden rounded-2xl"
+        style={{
+          backgroundImage: "radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px), linear-gradient(135deg, #15803d, #16a34a, #10b981)",
+          backgroundSize: "16px 16px, 100% 100%"
+        }}
+      >
         <div className="relative z-10 py-2">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <span className="text-xs uppercase tracking-wider bg-brand-500/30 px-2.5 py-1 rounded-full font-semibold">
+              <span className="text-xs uppercase tracking-wider bg-white/20 px-2.5 py-1 rounded-full font-semibold">
                 {t("Crop Health Scan", "फसल जाँच")}
               </span>
               <h3 className="text-xl font-bold mt-2">
                 {t("Scan Your Crop", "फसल की जाँच करें")}
               </h3>
-              <p className="text-brand-100 text-xs mt-1 max-w-[200px]">
+              <p className="text-green-50 text-xs mt-1 max-w-[200px]">
                 {t("Detect diseases instantly using your mobile camera.", "अपने मोबाइल कैमरे से तुरंत रोगों का पता लगाएं।")}
               </p>
             </div>
-            <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-4xl shadow-inner">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-4xl shadow-inner">
               📸
             </div>
           </div>
           <Button
             variant="secondary"
             onClick={() => navigate("/scan")}
-            className="bg-white border-white text-brand-700 hover:bg-brand-50 font-bold"
+            className="bg-white border-white text-green-800 hover:bg-green-50 font-bold"
           >
             {t("Start Scan →", "जाँच शुरू करें →")}
           </Button>
         </div>
-        {/* Background decorative crop shapes */}
+        
+        {/* Background decorative leaf shape */}
+        <div className="absolute -top-4 -right-4 opacity-20 text-8xl rotate-12 select-none pointer-events-none font-bold">
+          🍃
+        </div>
+        
         <div className="absolute right-[-20px] bottom-[-20px] text-white/5 text-[150px] pointer-events-none select-none font-bold">
           🌾
         </div>
@@ -375,7 +404,7 @@ const DashboardPage = () => {
               <Card
                 key={scan.upload_id}
                 onClick={() => navigate(`/result/${scan.upload_id}`)}
-                className="flex items-center justify-between hover:shadow-md transition-all duration-200 cursor-pointer border border-emerald-50"
+                className={`flex items-center justify-between hover:shadow-md transition-all duration-200 cursor-pointer border border-emerald-50 ${getLeftBorderColor(scan)}`}
               >
                 <div className="flex items-center gap-3">
                   {imgUrl ? (

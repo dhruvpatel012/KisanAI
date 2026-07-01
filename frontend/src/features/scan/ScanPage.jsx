@@ -19,18 +19,26 @@ const ScanPage = () => {
 
   return (
     <PageLayout title={t("Scan Crop", "फसल जाँच")}>
-      {!selectedFile ? (
-        <ImagePicker onFileSelect={handleFileSelect} error={error} />
-      ) : (
-        <ImagePreview
-          preview={preview}
-          uploading={uploading}
-          uploadResult={uploadResult}
-          error={error}
-          handleUpload={handleUpload}
-          resetUpload={resetUpload}
-        />
-      )}
+      <div 
+        className="min-h-[calc(100vh-140px)] p-4 relative rounded-3xl"
+        style={{
+          backgroundImage: "radial-gradient(circle, rgba(22, 163, 74, 0.1) 1.5px, transparent 1.5px)",
+          backgroundSize: "20px 20px"
+        }}
+      >
+        {!selectedFile ? (
+          <ImagePicker onFileSelect={handleFileSelect} error={error} />
+        ) : (
+          <ImagePreview
+            preview={preview}
+            uploading={uploading}
+            uploadResult={uploadResult}
+            error={error}
+            handleUpload={handleUpload}
+            resetUpload={resetUpload}
+          />
+        )}
+      </div>
     </PageLayout>
   );
 };
