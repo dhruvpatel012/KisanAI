@@ -234,6 +234,7 @@ const HistoryPage = () => {
                     onClick={handleDeleteSelected}
                     disabled={selectedIds.length === 0 || isDeleting}
                     className="font-bold py-1 px-3 text-xs"
+                    fullWidth={false}
                   >
                     <Trash2 size={15} className="shrink-0" />
                     <span>{isDeleting ? t("Deleting...", "हटाया जा रहा है...") : t("Delete", "हटाएं")}</span>
@@ -244,6 +245,7 @@ const HistoryPage = () => {
                     onClick={handleCancelEdit}
                     disabled={isDeleting}
                     className="font-bold py-1 px-3 text-xs"
+                    fullWidth={false}
                   >
                     {t("Cancel", "रद्द करें")}
                   </Button>
@@ -251,7 +253,7 @@ const HistoryPage = () => {
               </div>
             ) : (
               <div className="flex items-center justify-between w-full">
-                <span className="text-xs font-bold text-emerald-950">
+                <span className="text-xs font-bold text-emerald-950 pr-4">
                   {t(`${scans.length} scans saved`, `${scans.length} जाँचें सहेजी गईं`)}
                 </span>
                 <Button
@@ -259,6 +261,7 @@ const HistoryPage = () => {
                   size="sm"
                   onClick={() => setEditMode(true)}
                   className="font-bold py-1 px-3 text-xs"
+                  fullWidth={false}
                 >
                   <Pencil size={15} className="shrink-0" />
                   <span>{t("Edit", "संपादित करें")}</span>
