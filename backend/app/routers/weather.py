@@ -2,8 +2,17 @@ from fastapi import APIRouter, HTTPException
 import urllib.request
 import json
 import urllib.error
+import time
+import threading
 
 router = APIRouter(prefix="/api", tags=["Weather"])
+
+# In-memory cache for weather data
+# Cache key: (round(lat, 2), round(lng, 2))
+# Cache value: (expiry_timestamp, weather_data)
+_weather_cache = {}
+_cache_lock = threading.Lock()
+CACHE_DURATION = 900  # 15 minutes in seconds
 
 # Mapping weather code to description, emoji, and translation
 WEATHER_CODE_MAPPING = {
@@ -35,6 +44,18 @@ def get_weather_info(code: int) -> dict:
 
 @router.get("/weather")
 async def get_weather(lat: float = 28.6139, lng: float = 77.2090):
+    lat_key = round(lat, 2)
+    lng_key = round(lng, 2)
+    cache_key = (lat_key, lng_key)
+    now = time.time()
+    
+    # Check cache first
+    with _cache_lock:
+        if cache_key in _weather_cache:
+            expiry, cached_data = _weather_cache[cache_key]
+            if now < expiry:
+                return cached_data
+
     url = (
         f"https://api.open-meteo.com/v1/forecast?"
         f"latitude={lat}&longitude={lng}"
@@ -74,7 +95,7 @@ async def get_weather(lat: float = 28.6139, lng: float = 77.2090):
                 "emoji": day_mapped["emoji"]
             })
             
-        return {
+        result = {
             "current": {
                 "temperature": current.get("temperature_2m"),
                 "humidity": current.get("relative_humidity_2m"),
@@ -85,6 +106,12 @@ async def get_weather(lat: float = 28.6139, lng: float = 77.2090):
             },
             "forecast": forecast
         }
+        
+        # Save to cache
+        with _cache_lock:
+            _weather_cache[cache_key] = (now + CACHE_DURATION, result)
+            
+        return result
         
     except urllib.error.URLError as e:
         raise HTTPException(

@@ -60,7 +60,8 @@ const DashboardPage = () => {
         (error) => {
           console.warn("Geolocation access denied or failed, using default (Delhi)");
           fetchWeather(28.6139, 77.2090);
-        }
+        },
+        { timeout: 3000, enableHighAccuracy: false, maximumAge: 600000 }
       );
     } else {
       fetchWeather(28.6139, 77.2090);
