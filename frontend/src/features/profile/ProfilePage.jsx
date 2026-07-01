@@ -300,8 +300,8 @@ const ProfilePage = () => {
 
         {/* CHANGE PASSWORD MODAL OVERLAY */}
         {showPasswordModal && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center p-4">
-            <div className="bg-white rounded-3xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto shadow-2xl relative animate-in slide-in-from-bottom duration-250">
+          <div className="fixed inset-0 bg-black/50 z-[60] flex items-end justify-center p-4">
+            <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md p-6 pb-8 mb-4 max-h-[85vh] overflow-y-auto shadow-2xl relative animate-in slide-in-from-bottom duration-250">
               
               <div className="flex justify-between items-start mb-6">
                 <h3 className="text-lg font-black text-emerald-950">

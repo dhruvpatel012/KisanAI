@@ -145,9 +145,9 @@ const AdvisoryPage = () => {
 
         {/* ARTICLE DETAIL MODAL */}
         {activeAdvisory && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center" onClick={() => setActiveAdvisory(null)}>
+          <div className="fixed inset-0 bg-black/50 z-[60] flex items-end justify-center" onClick={() => setActiveAdvisory(null)}>
             <div 
-              className="w-full max-w-md bg-white rounded-t-3xl shadow-2xl z-50 p-5 pb-8 max-h-[85vh] overflow-y-auto animate-in slide-in-from-bottom duration-250"
+              className="w-full max-w-md bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl p-5 pb-10 mb-0 max-h-[85vh] overflow-y-auto animate-in slide-in-from-bottom duration-250"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Handle bar at top */}
