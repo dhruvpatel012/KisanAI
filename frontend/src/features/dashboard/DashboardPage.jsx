@@ -15,6 +15,7 @@ const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [weather, setWeather] = useState(null);
   const [weatherLoading, setWeatherLoading] = useState(true);
+  const [locationName, setLocationName] = useState("");
 
   useEffect(() => {
     const hours = new Date().getHours();
@@ -38,11 +39,29 @@ const DashboardPage = () => {
       }
     };
 
-    const fetchWeather = async (lat, lng) => {
+    const fetchWeather = async (lat, lng, cityName = "") => {
       try {
         setWeatherLoading(true);
         const response = await api.get(`/api/weather?lat=${lat}&lng=${lng}`);
         setWeather(response.data);
+        
+        if (cityName) {
+          setLocationName(cityName);
+        } else {
+          try {
+            const geoResp = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=en`,
+              { headers: { "User-Agent": "KisanAI-App/1.0" } }
+            );
+            const geoData = await geoResp.json();
+            const addr = geoData.address || {};
+            const city = addr.city || addr.town || addr.village || addr.suburb || addr.state || "My Location";
+            setLocationName(city);
+          } catch (geoErr) {
+            console.error("Failed to reverse geocode:", geoErr);
+            setLocationName("My Location");
+          }
+        }
       } catch (err) {
         console.error("Failed to fetch weather:", err);
       } finally {
@@ -59,12 +78,12 @@ const DashboardPage = () => {
         },
         (error) => {
           console.warn("Geolocation access denied or failed, using default (Delhi)");
-          fetchWeather(28.6139, 77.2090);
+          fetchWeather(28.6139, 77.2090, "Delhi");
         },
         { timeout: 3000, enableHighAccuracy: false, maximumAge: 600000 }
       );
     } else {
-      fetchWeather(28.6139, 77.2090);
+      fetchWeather(28.6139, 77.2090, "Delhi");
     }
   }, []);
 
@@ -140,6 +159,12 @@ const DashboardPage = () => {
     ? t("Good Afternoon", "नमस्कार")
     : t("Good Evening", "शुभ संध्या");
 
+  const displayLocation = locationName === "Delhi"
+    ? t("Delhi", "दिल्ली")
+    : locationName === "My Location"
+    ? t("My Location", "मेरा स्थान")
+    : locationName;
+
   return (
     <PageLayout>
       {/* SECTION 1 - Greeting */}
@@ -160,7 +185,7 @@ const DashboardPage = () => {
           <div className="flex justify-between items-start mb-3">
             <div>
               <span className="text-xs uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
-                {t("Local Weather", "स्थानीय मौसम")}
+                {t("Local Weather", "स्थानीय मौसम")}{displayLocation ? ` — ${displayLocation}` : ""}
               </span>
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-3xl font-extrabold text-emerald-950">
