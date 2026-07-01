@@ -6,6 +6,8 @@ import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import api from "../../lib/axios";
 import { useLanguage } from "../../context/LanguageContext";
+import { Droplets, Wind, ScanLine, ChevronRight } from "lucide-react";
+
 const WEATHER_CODE_MAPPING = {
   0: { desc: "Clear sky", desc_hi: "साफ़ आसमान", emoji: "☀️" },
   1: { desc: "Mainly clear", desc_hi: "मुख्यतः साफ़", emoji: "🌤️" },
@@ -289,8 +291,14 @@ const DashboardPage = () => {
                   </span>
                 </div>
                 <div className="flex gap-4 mt-2 text-xs font-medium text-gray-500">
-                  <span>💧 {t("Humidity", "आर्द्रता")}: {weather.current.humidity}%</span>
-                  <span>💨 {t("Wind", "हवा")}: {weather.current.wind_speed} km/h</span>
+                  <span className="flex items-center gap-1">
+                    <Droplets size={14} className="text-blue-400" />
+                    {t("Humidity", "आर्द्रता")}: {weather.current.humidity}%
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Wind size={14} className="text-gray-400" />
+                    {t("Wind", "हवा")}: {weather.current.wind_speed} km/h
+                  </span>
                 </div>
               </div>
             </div>
@@ -365,8 +373,8 @@ const DashboardPage = () => {
           </div>
           
           {/* Decorative element top right */}
-          <div className="absolute top-4 right-4 text-6xl opacity-20 select-none pointer-events-none">
-            🌿
+          <div className="absolute top-4 right-4 select-none pointer-events-none">
+            <ScanLine size={28} className="text-white opacity-80" />
           </div>
         </Card>
 
@@ -379,7 +387,7 @@ const DashboardPage = () => {
             to="/history"
             className="text-sm text-green-600 font-semibold flex items-center gap-1"
           >
-            {t("See All", "सभी देखें")} <i className="ri-arrow-right-s-line text-sm"></i>
+            {t("See All", "सभी देखें")} <ChevronRight size={16} />
           </Link>
         </div>
 
@@ -408,7 +416,7 @@ const DashboardPage = () => {
                 <div
                   key={scan.upload_id}
                   onClick={() => navigate(`/result/${scan.upload_id}`)}
-                  className={`flex-shrink-0 w-64 bg-white rounded-2xl shadow-sm border border-gray-100 p-3 flex items-center justify-between hover:shadow-md transition-all duration-200 cursor-pointer ${getLeftBorderColor(scan)}`}
+                  className={`flex-shrink-0 w-64 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl shadow-sm border border-gray-100 p-3 flex items-center justify-between hover:shadow-md transition-all duration-200 cursor-pointer ${getLeftBorderColor(scan)}`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     {imgUrl ? (
@@ -440,7 +448,7 @@ const DashboardPage = () => {
                     <Badge variant={getSeverityVariant(scan)}>
                       {getSeverityLabel(scan)}
                     </Badge>
-                    <i className="ri-arrow-right-s-line text-gray-400"></i>
+                    <ChevronRight size={16} className="text-gray-300" />
                   </div>
                 </div>
               );

@@ -1,4 +1,5 @@
 import LoginForm from "../components/LoginForm";
+import { Leaf } from "lucide-react";
 
 const LoginPage = () => {
   return (
@@ -26,13 +27,11 @@ const LoginPage = () => {
 
       <div className="w-full max-w-md relative z-10 animate-[slideInUp_0.8s_ease-out]">
 
-        {/* Hero Illustration + Logo */}
-        <div className="text-center mb-6">
-          <img
-            src="/farmer-hero.png"
-            alt="KisanAI Farmer"
-            className="w-36 h-36 mx-auto mb-4 object-contain drop-shadow-2xl animate-floatLeaf"
-          />
+        {/* Hero Logo with Lucide Leaf */}
+        <div className="text-center mb-6 flex flex-col items-center">
+          <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/30 mb-4 animate-[pulse_3s_ease-in-out_infinite]">
+            <Leaf size={32} className="text-white" />
+          </div>
           <h1 className="text-4xl font-extrabold text-white tracking-wide drop-shadow-sm">
             KisanAI
           </h1>

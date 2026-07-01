@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -6,6 +7,7 @@ import { useAuth } from "../hooks/useAuth";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 import Alert from "../../../components/ui/Alert";
+import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 const registerSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
@@ -15,6 +17,7 @@ const registerSchema = z.object({
 
 const RegisterForm = () => {
   const { register: registerUser, loading, error } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -42,6 +45,7 @@ const RegisterForm = () => {
         register={register("full_name")}
         error={errors.full_name?.message}
         variant="line"
+        icon={<User size={16} />}
       />
 
       <Input
@@ -51,15 +55,26 @@ const RegisterForm = () => {
         register={register("email")}
         error={errors.email?.message}
         variant="line"
+        icon={<Mail size={16} />}
       />
 
       <Input
         label="Password"
-        type="password"
+        type={showPassword ? "text" : "password"}
         placeholder="Create a password (min 6 chars)"
         register={register("password")}
         error={errors.password?.message}
         variant="line"
+        icon={<Lock size={16} />}
+        rightElement={
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="text-gray-400 hover:text-gray-600 focus:outline-none"
+          >
+            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        }
       />
 
       <Button

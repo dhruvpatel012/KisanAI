@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
+import { Home, BookOpen, Camera, Clock, User } from "lucide-react";
 
 const BottomNav = () => {
   const { t } = useLanguage();
@@ -19,7 +20,7 @@ const BottomNav = () => {
         <NavLink to="/dashboard" className={navItemClass}>
           {({ isActive }) => (
             <>
-              <i className={`text-xl ${isActive ? "ri-home-5-fill" : "ri-home-5-line"}`}></i>
+              <Home size={20} />
               <span className="text-[10px] font-semibold">{t("Home", "होम")}</span>
             </>
           )}
@@ -29,7 +30,7 @@ const BottomNav = () => {
         <NavLink to="/advisory" className={navItemClass}>
           {({ isActive }) => (
             <>
-              <i className={`text-xl ${isActive ? "ri-book-open-fill" : "ri-book-open-line"}`}></i>
+              <BookOpen size={20} />
               <span className="text-[10px] font-semibold">{t("Advisory", "सलाह")}</span>
             </>
           )}
@@ -47,7 +48,7 @@ const BottomNav = () => {
               boxShadow: "0 4px 20px rgba(34,197,94,0.4)"
             }}
           >
-            <i className="ri-camera-fill text-2xl text-white"></i>
+            <Camera size={24} className="text-white" />
           </div>
           <span className="text-[10px] font-semibold text-green-600 dark:text-green-400 mt-1">
             {t("Scan", "जाँच")}
@@ -58,7 +59,7 @@ const BottomNav = () => {
         <NavLink to="/history" className={navItemClass}>
           {({ isActive }) => (
             <>
-              <i className={`text-xl ${isActive ? "ri-history-fill" : "ri-history-line"}`}></i>
+              <Clock size={20} />
               <span className="text-[10px] font-semibold">{t("History", "इतिहास")}</span>
             </>
           )}
@@ -68,7 +69,7 @@ const BottomNav = () => {
         <NavLink to="/profile" className={navItemClass}>
           {({ isActive }) => (
             <>
-              <i className={`text-xl ${isActive ? "ri-user-3-fill" : "ri-user-3-line"}`}></i>
+              <User size={20} />
               <span className="text-[10px] font-semibold">{t("Profile", "प्रोफाइल")}</span>
             </>
           )}

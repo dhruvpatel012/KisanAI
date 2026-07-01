@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import BottomNav from "./BottomNav";
+import { ChevronLeft } from "lucide-react";
 
 const PageLayout = ({
   children,
@@ -21,7 +22,7 @@ const PageLayout = ({
                   onClick={() => navigate(-1)}
                   className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-95 transition-all text-gray-600 dark:text-gray-300"
                 >
-                  <i className="ri-arrow-left-s-line text-xl"></i>
+                  <ChevronLeft size={20} />
                 </button>
               )}
               <h1 className="text-lg font-bold text-gray-900 dark:text-white">

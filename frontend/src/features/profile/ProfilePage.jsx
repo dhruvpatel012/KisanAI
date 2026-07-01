@@ -7,6 +7,7 @@ import { logoutUser } from "../auth/authService";
 import api from "../../lib/axios";
 import { useLanguage } from "../../context/LanguageContext";
 import { useTheme } from "../../context/ThemeContext";
+import { UserCircle, Settings, ShieldCheck, KeyRound, Globe, LogOut, User, MapPin, X } from "lucide-react";
 
 const ProfilePage = () => {
   const { language, setLanguage, t } = useLanguage();
@@ -133,8 +134,8 @@ const ProfilePage = () => {
         {!loading && (
           <>
             <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-2xl p-5 flex items-center gap-4">
-              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl shrink-0">
-                👨‍🌾
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
+                <UserCircle size={40} className="text-white" />
               </div>
               <div className="overflow-hidden">
                 <h2 className="text-xl font-bold text-white truncate leading-tight">
@@ -152,8 +153,8 @@ const ProfilePage = () => {
             {/* EDIT PROFILE INPUTS */}
             <form onSubmit={handleSaveProfile} className="flex flex-col gap-3">
               <div className="bg-white dark:bg-gray-900/60 rounded-2xl shadow-sm p-4 border border-gray-100 dark:border-gray-800 flex flex-col gap-4">
-                <h3 className="text-sm font-black text-emerald-950 dark:text-emerald-200 flex items-center gap-2 border-b border-gray-100 dark:border-gray-800 pb-2">
-                  <i className="ri-user-settings-line text-brand-600 text-lg"></i>
+                <h3 className="text-sm font-black text-emerald-950 dark:text-emerald-200 flex items-center border-b border-gray-100 dark:border-gray-800 pb-2">
+                  <Settings size={16} className="text-green-600 dark:text-green-400 mr-2" />
                   {t("Edit Profile Settings", "प्रोफ़ाइल संपादित करें")}
                 </h3>
 
@@ -170,40 +171,51 @@ const ProfilePage = () => {
                   <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
                     {t("Full Name", "पूरा नाम")}
                   </label>
-                  <input
-                    type="text"
-                    value={profile.full_name}
-                    onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-                    className="border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-xl px-4 py-3 text-sm w-full focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
-                  />
+                  <div className="relative flex items-center">
+                    <div className="absolute left-3 text-gray-400">
+                      <User size={16} />
+                    </div>
+                    <input
+                      type="text"
+                      value={profile.full_name}
+                      onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
+                      className="border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-xl pl-10 pr-4 py-3 text-sm w-full focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
+                    />
+                  </div>
                 </div>
 
                 {/* Farm Location field */}
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-bold text-gray-700">
+                  <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
                     {t("Farm Location / State", "खेत का स्थान / क्षेत्र")}
                   </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Punjab, Gujarat"
-                    value={profile.farm_location}
-                    onChange={(e) => setProfile({ ...profile, farm_location: e.target.value })}
-                    className="border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-xl px-4 py-3 text-sm w-full focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
-                  />
+                  <div className="relative flex items-center">
+                    <div className="absolute left-3 text-gray-400">
+                      <MapPin size={16} className="text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. Punjab, Gujarat"
+                      value={profile.farm_location}
+                      onChange={(e) => setProfile({ ...profile, farm_location: e.target.value })}
+                      className="border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-xl pl-10 pr-4 py-3 text-sm w-full focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
+                    />
+                  </div>
                 </div>
 
                 {/* Language Select */}
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-bold text-gray-700">
+                  <label className="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center">
+                    <Globe size={16} className="text-gray-600 dark:text-gray-400 mr-2" />
                     {t("App Language", "ऐप की भाषा")}
                   </label>
-                  <div className="bg-gray-100 rounded-xl p-1 flex gap-1 mt-1">
+                  <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-1 flex gap-1 mt-1">
                     <button
                       type="button"
                       onClick={() => handleLanguageChange("en")}
                       className={`py-2 flex-1 rounded-lg font-semibold text-sm transition-all duration-150 ${
                         profile.preferred_language === "en"
-                          ? "bg-white text-green-700 shadow-sm"
+                          ? "bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 shadow-sm"
                           : "text-gray-500 hover:bg-gray-200/50"
                       }`}
                     >
@@ -214,7 +226,7 @@ const ProfilePage = () => {
                       onClick={() => handleLanguageChange("hi")}
                       className={`py-2 flex-1 rounded-lg font-semibold text-sm transition-all duration-150 ${
                         profile.preferred_language === "hi"
-                          ? "bg-white text-green-700 shadow-sm"
+                          ? "bg-white dark:bg-gray-700 text-green-700 dark:text-green-300 shadow-sm"
                           : "text-gray-500 hover:bg-gray-200/50"
                       }`}
                     >
@@ -265,9 +277,9 @@ const ProfilePage = () => {
             </form>
 
             {/* SECURITY MANAGEMENT */}
-            <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 flex flex-col gap-3">
-              <h3 className="text-sm font-black text-emerald-950 flex items-center gap-2 border-b border-gray-100 pb-2">
-                <i className="ri-shield-keyhole-line text-brand-600 text-lg"></i>
+            <div className="bg-white dark:bg-gray-900/60 rounded-2xl shadow-sm p-4 border border-gray-100 dark:border-gray-800 flex flex-col gap-3">
+              <h3 className="text-sm font-black text-emerald-950 dark:text-emerald-200 flex items-center border-b border-gray-100 dark:border-gray-800 pb-2">
+                <ShieldCheck size={16} className="text-green-600 dark:text-green-400 mr-2" />
                 {t("Security", "सुरक्षा")}
               </h3>
               <button
@@ -276,9 +288,10 @@ const ProfilePage = () => {
                   setPasswordSuccess(false);
                   setShowPasswordModal(true);
                 }}
-                className="border-2 border-green-600 text-green-600 font-semibold py-3 rounded-xl w-full hover:bg-green-50 transition-colors"
+                className="border-2 border-green-600 dark:border-green-500 text-green-600 dark:text-green-500 font-semibold py-3 rounded-xl w-full hover:bg-green-50 dark:hover:bg-gray-800/40 transition-colors flex items-center justify-center"
               >
-                🔑 {t("Change Password", "पासवर्ड बदलें")}
+                <KeyRound size={16} className="text-green-600 dark:text-green-400 mr-2" />
+                {t("Change Password", "पासवर्ड बदलें")}
               </button>
             </div>
           </>
@@ -288,10 +301,10 @@ const ProfilePage = () => {
         <div className="mt-2">
           <button
             onClick={logoutUser}
-            className="bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-3 rounded-xl w-full shadow-md shadow-red-500/20 active:scale-98 transition-all"
+            className="bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-3 rounded-xl w-full shadow-md shadow-red-500/20 active:scale-98 transition-all flex items-center justify-center"
           >
-            <i className="ri-logout-box-r-line text-lg mr-1 inline-block align-middle"></i>
-            <span className="inline-block align-middle">{t("Sign Out", "लॉग आउट करें")}</span>
+            <LogOut size={16} className="text-white mr-2" />
+            <span>{t("Sign Out", "लॉग आउट करें")}</span>
           </button>
           <p className="text-center text-[10px] text-gray-400 mt-6 font-medium">
             KisanAI v1.1.0 • Made for farmers 🌱
@@ -304,14 +317,14 @@ const ProfilePage = () => {
             <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md p-6 pb-8 mb-4 max-h-[85vh] overflow-y-auto shadow-2xl relative animate-in slide-in-from-bottom duration-250">
               
               <div className="flex justify-between items-start mb-6">
-                <h3 className="text-lg font-black text-emerald-950">
+                <h3 className="text-lg font-black text-emerald-950 dark:text-emerald-200">
                   {t("Change Password", "पासवर्ड बदलें")}
                 </h3>
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 font-bold"
+                  className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400"
                 >
-                  ✕
+                  <X size={20} />
                 </button>
               </div>
 
@@ -325,26 +338,26 @@ const ProfilePage = () => {
                 {passwordError && <Alert message={passwordError} type="error" />}
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-bold text-gray-700">
+                  <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
                     {t("Current Password", "वर्तमान पासवर्ड")}
                   </label>
                   <input
                     type="password"
                     value={oldPassword}
                     onChange={(e) => setOldPassword(e.target.value)}
-                    className="h-10 px-3 rounded-xl border border-gray-200 focus:outline-none focus:border-brand-500 text-xs font-semibold"
+                    className="h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:outline-none focus:border-brand-500 text-xs font-semibold"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-bold text-gray-700">
+                  <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
                     {t("New Password", "नया पासवर्ड")}
                   </label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="h-10 px-3 rounded-xl border border-gray-200 focus:outline-none focus:border-brand-500 text-xs font-semibold"
+                    className="h-10 px-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:outline-none focus:border-brand-500 text-xs font-semibold"
                   />
                 </div>
 

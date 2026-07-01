@@ -8,6 +8,7 @@ import Badge from "../../components/ui/Badge";
 import api from "../../lib/axios";
 import { useLanguage } from "../../context/LanguageContext";
 import confetti from "canvas-confetti";
+import { AlertTriangle, CheckCircle, Leaf, Pill, ShieldCheck, ScanLine, Home } from "lucide-react";
 
 const ResultPage = () => {
   const { uploadId } = useParams();
@@ -146,9 +147,7 @@ const ResultPage = () => {
       <PageLayout title={t("Analysis Unclear", "विश्लेषण अस्पष्ट")} showBack={true}>
         <Card className="max-w-md mx-auto p-6 flex flex-col items-center gap-6 text-center">
           <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center border border-amber-100 shadow-sm animate-pulse">
-            <svg className="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
+            <AlertTriangle size={32} className="text-amber-500" />
           </div>
 
           <div>
@@ -180,12 +179,10 @@ const ResultPage = () => {
   // CASE 2: Healthy Crop Response
   if (scanData.is_healthy) {
     return (
-      <PageLayout title={t("Healthy Crop", "स्वस्थ फसल")} showBack={true}>
+      <PageLayout title={t("Healthy Crop", "स्वस्वस्थ फसल")} showBack={true}>
         <Card className="max-w-md mx-auto p-6 flex flex-col items-center gap-6 text-center">
           <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center border border-emerald-100 shadow-sm animate-bounce" style={{ animationDuration: "3s" }}>
-            <svg className="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-            </svg>
+            <CheckCircle size={40} className="text-emerald-600 dark:text-emerald-400" />
           </div>
 
           <div>
@@ -193,7 +190,7 @@ const ResultPage = () => {
               {t("Crop is Healthy!", "फसल स्वस्थ है!")}
             </h2>
             <Badge variant="success" className="mt-2.5 font-bold uppercase text-xs">
-              {t("Healthy", "स्वस्थ")}
+              {t("Healthy", "स्वस्वस्थ")}
             </Badge>
           </div>
 
@@ -303,7 +300,8 @@ const ResultPage = () => {
         <Card className="p-5 flex flex-col gap-4 animate-fadeSlideUp" style={{ animationDelay: "0ms" }}>
           <div className="flex justify-between items-center gap-3">
             <div>
-              <span className="text-xs font-bold text-emerald-700/70 tracking-wide uppercase">
+              <span className="text-xs font-bold text-emerald-700/70 tracking-wide uppercase flex items-center gap-1.5">
+                <AlertTriangle size={16} className="text-red-500" />
                 {t("Detected Disease", "बीमारी")}
               </span>
               <h2 className="text-xl font-extrabold text-emerald-950 mt-0.5 leading-snug">
@@ -363,23 +361,25 @@ const ResultPage = () => {
           {/* Tabs header */}
           <div className="flex border-b border-emerald-50 bg-emerald-50/20">
             <button
-              className={`flex-1 py-3.5 text-xs font-extrabold text-center border-b-2 transition-all ${
+              className={`flex-1 py-3.5 text-xs font-extrabold text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === "organic"
                   ? "border-emerald-600 text-emerald-900 bg-emerald-50/40"
                   : "border-transparent text-emerald-800/60 hover:text-emerald-700"
               }`}
               onClick={() => setActiveTab("organic")}
             >
+              <Leaf size={16} />
               {t("Organic Care", "जैविक उपचार")}
             </button>
             <button
-              className={`flex-1 py-3.5 text-xs font-extrabold text-center border-b-2 transition-all ${
+              className={`flex-1 py-3.5 text-xs font-extrabold text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === "chemical"
                   ? "border-emerald-600 text-emerald-900 bg-emerald-50/40"
                   : "border-transparent text-emerald-800/60 hover:text-emerald-700"
               }`}
               onClick={() => setActiveTab("chemical")}
             >
+              <Pill size={16} />
               {t("Chemical Care", "रासायनिक उपचार")}
             </button>
           </div>
@@ -439,7 +439,8 @@ const ResultPage = () => {
         {/* Fertilizer & Prevention Card */}
         {(scanData.fertilizer || scanData.prevention) && (
           <Card className="p-5 flex flex-col gap-4 animate-fadeSlideUp" style={{ animationDelay: "200ms" }}>
-            <h3 className="text-sm font-extrabold text-emerald-950 tracking-wide uppercase border-b border-emerald-50 pb-2">
+            <h3 className="text-sm font-extrabold text-emerald-950 dark:text-emerald-100 tracking-wide uppercase border-b border-emerald-50 pb-2 flex items-center gap-2">
+              <ShieldCheck size={16} className="text-green-600" />
               {t("Soil & Prevention", "मिट्टी और रोकथाम")}
             </h3>
 
@@ -497,10 +498,12 @@ const ResultPage = () => {
         {/* Bottom Actions */}
         <div className="flex flex-col gap-2 w-full mt-4 animate-fadeSlideUp" style={{ animationDelay: "400ms" }}>
           <Button variant="primary" onClick={() => navigate("/scan")} fullWidth className="font-bold py-3.5">
-            {t("Scan Another Crop", "नई फसल जाँचें")}
+            <ScanLine size={18} className="mr-1 inline-block align-middle" />
+            <span className="inline-block align-middle">{t("Scan Another Crop", "नई फसल जाँचें")}</span>
           </Button>
           <Button variant="secondary" onClick={() => navigate("/dashboard")} fullWidth className="border-emerald-100 text-emerald-800 hover:bg-emerald-50 font-bold">
-            {t("Back to Dashboard", "वापस जाएं")}
+            <Home size={18} className="mr-1 inline-block align-middle" />
+            <span className="inline-block align-middle">{t("Back to Dashboard", "वापस जाएं")}</span>
           </Button>
         </div>
 

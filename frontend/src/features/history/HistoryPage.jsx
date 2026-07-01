@@ -7,6 +7,7 @@ import Alert from "../../components/ui/Alert";
 import Badge from "../../components/ui/Badge";
 import api from "../../lib/axios";
 import { useLanguage } from "../../context/LanguageContext";
+import { ChevronRight, Trash2, Pencil, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
 
 const HistoryPage = () => {
   const navigate = useNavigate();
@@ -50,32 +51,27 @@ const HistoryPage = () => {
     }
   };
 
-  const handleCancelEdit = () => {
-    setEditMode(false);
-    setSelectedIds([]);
-  };
-
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
-    
-    const confirmMessage = selectedIds.length === 1
-      ? t("Are you sure you want to delete this scan?", "क्या आप वाकई इस जाँच को हटाना चाहते हैं?")
-      : t(`Are you sure you want to delete these ${selectedIds.length} scans?`, `क्या आप वाकई इन ${selectedIds.length} जाँचों को हटाना चाहते हैं?`);
-      
-    if (!window.confirm(confirmMessage)) return;
-
     try {
       setIsDeleting(true);
-      await api.post("/api/scans/delete-bulk", { scan_ids: selectedIds });
+      setError(null);
+      await api.post("/api/scans/bulk-delete", { upload_ids: selectedIds });
       setScans(scans.filter((scan) => !selectedIds.includes(scan.upload_id)));
       setSelectedIds([]);
       setEditMode(false);
     } catch (err) {
       console.error("Failed to delete scans:", err);
-      alert(t("Failed to delete scans. Please try again.", "हटाने में विफल। कृपया पुनः प्रयास करें।"));
+      const backendError = err.response?.data?.detail;
+      setError(backendError || t("Failed to delete selected scans.", "चयनित स्कैन हटाने में विफल।"));
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleCancelEdit = () => {
+    setSelectedIds([]);
+    setEditMode(false);
   };
 
   useEffect(() => {
@@ -96,7 +92,6 @@ const HistoryPage = () => {
     }
   };
 
-  // Severity color/variant mapping helper
   const getSeverityVariant = (scan) => {
     if (scan.status === "low_confidence") return "warning";
     if (scan.status === "uploaded") return "info";
@@ -131,22 +126,33 @@ const HistoryPage = () => {
     }
   };
 
-  // Resolve Image URL
-  const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const getCropEmoji = (cropName) => {
+    if (!cropName) return "🌱";
+    const name = cropName.toLowerCase();
+    if (name.includes("potato")) return "🥔";
+    if (name.includes("tomato")) return "🍅";
+    if (name.includes("wheat") || name.includes("rice")) return "🌾";
+    return "🌱";
+  };
+
   const getImageUrl = (scan) => {
+    const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
     if (!scan.image_url) return null;
     return (scan.image_url.startsWith("http") || scan.image_url.startsWith("data:"))
       ? scan.image_url
       : `${backendUrl}${scan.image_url}`;
   };
+
   const getLeftBorderColor = (scan) => {
-    if (scan.is_healthy) return "border-l-4 border-green-400";
+    if (scan.status === "low_confidence") return "border-l-4 border-amber-500";
+    if (scan.status === "uploaded") return "border-l-4 border-blue-500";
+    if (scan.is_healthy) return "border-l-4 border-green-500";
     
     switch (scan.severity?.toLowerCase()) {
       case "high":
-        return "border-l-4 border-red-400";
+        return "border-l-4 border-red-500";
       case "medium":
-        return "border-l-4 border-amber-400";
+        return "border-l-4 border-amber-500";
       case "low":
         return "border-l-4 border-blue-400";
       case "none":
@@ -157,14 +163,21 @@ const HistoryPage = () => {
   };
 
   return (
-    <PageLayout title={t("Scan History", "इतिहास")}>
+    <PageLayout
+      title={
+        <div className="flex items-center">
+          <Clock size={20} className="text-green-600 dark:text-green-400 mr-2" />
+          <span>{t("Scan History", "इतिहास")}</span>
+        </div>
+      }
+    >
       <div className="max-w-md mx-auto flex flex-col gap-4 p-4 pb-20">
         
         {/* LOADING STATE */}
         {loading && (
           <div className="flex flex-col gap-3">
             {[1, 2, 3].map((item) => (
-              <div key={item} className="h-20 bg-gray-100 animate-pulse rounded-2xl border border-gray-200" />
+              <div key={item} className="h-20 bg-gray-150 animate-pulse rounded-2xl border border-gray-200" />
             ))}
           </div>
         )}
@@ -222,7 +235,8 @@ const HistoryPage = () => {
                     disabled={selectedIds.length === 0 || isDeleting}
                     className="font-bold py-1 px-3 text-xs"
                   >
-                    {isDeleting ? t("Deleting...", "हटाया जा रहा है...") : t("Delete", "हटाएं")}
+                    <Trash2 size={16} className="mr-1 inline-block align-middle" />
+                    <span className="inline-block align-middle">{isDeleting ? t("Deleting...", "हटाया जा रहा है...") : t("Delete", "हटाएं")}</span>
                   </Button>
                   <Button
                     variant="secondary"
@@ -246,7 +260,8 @@ const HistoryPage = () => {
                   onClick={() => setEditMode(true)}
                   className="font-bold py-1 px-3 text-xs"
                 >
-                  {t("Edit", "संपादित करें")}
+                  <Pencil size={16} className="mr-1 inline-block align-middle" />
+                  <span className="inline-block align-middle">{t("Edit", "संपादित करें")}</span>
                 </Button>
               </div>
             )}
@@ -298,17 +313,17 @@ const HistoryPage = () => {
                       />
                     ) : (
                       <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-xl border border-emerald-100/50 flex-shrink-0">
-                        🌱
+                        {getCropEmoji(scan.crop)}
                       </div>
                     )}
                     <div>
-                      <h4 className="font-extrabold text-emerald-950 text-sm leading-tight">
+                      <h4 className="font-extrabold text-emerald-950 dark:text-emerald-100 text-sm leading-tight">
                         {scan.status === "uploaded"
                           ? t("Analyzing...", "विश्लेषण...")
                           : scan.disease || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"))}
                       </h4>
                       {scan.crop && (
-                        <p className="text-xs text-emerald-800 font-bold mt-0.5">
+                        <p className="text-xs text-emerald-800 dark:text-emerald-400 font-bold mt-0.5">
                           {scan.crop}
                         </p>
                       )}
@@ -318,13 +333,16 @@ const HistoryPage = () => {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                    <Badge variant={getSeverityVariant(scan)}>
+                    <Badge variant={getSeverityVariant(scan)} className="gap-1 flex items-center">
+                      {scan.is_healthy ? (
+                        <CheckCircle2 size={12} />
+                      ) : scan.severity?.toLowerCase() === "high" ? (
+                        <AlertCircle size={12} />
+                      ) : null}
                       {getSeverityLabel(scan)}
                     </Badge>
                     {!editMode && (
-                      <svg className="w-4 h-4 text-emerald-700/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                      </svg>
+                      <ChevronRight size={16} className="text-gray-300" />
                     )}
                   </div>
                 </div>

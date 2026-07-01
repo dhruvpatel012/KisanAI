@@ -5,6 +5,7 @@ import Button from "../../components/ui/Button";
 import Alert from "../../components/ui/Alert";
 import api from "../../lib/axios";
 import { useLanguage } from "../../context/LanguageContext";
+import { Search, Mountain, Sprout, Droplets, Bug, X, ChevronRight } from "lucide-react";
 
 const AdvisoryPage = () => {
   const { t } = useLanguage();
@@ -57,7 +58,7 @@ const AdvisoryPage = () => {
     <PageLayout title={t("Crop Advisory", "फसल सलाह")}>
         {/* SEARCH BAR */}
         <div className="bg-white dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 shadow-sm flex items-center gap-3">
-          <i className="ri-search-line text-gray-400 text-lg"></i>
+          <Search size={16} className="text-gray-400" />
           <input
             type="text"
             placeholder={t("Search crop or disease...", "खोजें...")}
@@ -68,7 +69,7 @@ const AdvisoryPage = () => {
         </div>
 
         {/* CROP CHIPS */}
-        <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+        <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar mt-4">
           {[
             { id: "all", label: t("All", "सभी") },
             { id: "tomato", label: t("Tomato", "टमाटर") },
@@ -92,18 +93,18 @@ const AdvisoryPage = () => {
           ))}
         </div>
 
-        {/* LOADING STATE */}
+        {/* LOADING SHIMMER */}
         {loading && (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 mt-4">
             {[1, 2, 3].map((item) => (
-              <div key={item} className="h-28 bg-gray-100 animate-pulse rounded-2xl border border-gray-200" />
+              <div key={item} className="h-20 bg-gray-150 animate-pulse rounded-2xl border border-gray-200" />
             ))}
           </div>
         )}
 
         {/* ERROR STATE */}
         {!loading && error && (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 text-center mt-4">
             <Alert message={error} type="error" />
             <Button variant="primary" onClick={fetchAdvisories} fullWidth>
               {t("Retry", "पुनः प्रयास करें")}
@@ -113,7 +114,7 @@ const AdvisoryPage = () => {
 
         {/* CARDS LIST */}
         {!loading && !error && (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 mt-4">
             {filteredAdvisories.length === 0 ? (
               <div className="text-center py-8 text-sm text-gray-500 font-medium">
                 {t("No advisory found", "कोई सलाह नहीं मिली")}
@@ -129,14 +130,14 @@ const AdvisoryPage = () => {
                     {getCropEmoji(advisory.crop_id)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-gray-900 truncate">
+                    <h4 className="font-bold text-gray-900 dark:text-white truncate">
                       {t(advisory.crop_name, advisory.crop_name_hi)}
                     </h4>
-                    <p className="text-sm text-gray-500 mt-0.5 line-clamp-1">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">
                       {t(advisory.soil_prep, advisory.soil_prep_hi)}
                     </p>
                   </div>
-                  <i className="ri-arrow-right-s-line text-gray-300 ml-auto text-lg flex-shrink-0"></i>
+                  <ChevronRight size={18} className="text-gray-300 ml-auto flex-shrink-0" />
                 </div>
               ))
             )}
@@ -168,9 +169,9 @@ const AdvisoryPage = () => {
                 </div>
                 <button
                   onClick={() => setActiveAdvisory(null)}
-                  className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 font-bold"
+                  className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400"
                 >
-                  ✕
+                  <X size={20} />
                 </button>
               </div>
 
@@ -179,8 +180,9 @@ const AdvisoryPage = () => {
                 
                 {/* Soil Preparation */}
                 <div>
-                  <h4 className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase mb-2">
-                    {t("🌱 Soil Preparation", "🌱 मिट्टी की तैयारी")}
+                  <h4 className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase mb-2 flex items-center gap-1.5">
+                    <Mountain size={14} />
+                    {t("Soil Preparation", "मिट्टी की तैयारी")}
                   </h4>
                   <div className="bg-green-50/80 dark:bg-green-950/20 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
                     {t(activeAdvisory.soil_prep, activeAdvisory.soil_prep_hi)}
@@ -189,8 +191,9 @@ const AdvisoryPage = () => {
 
                 {/* Planting Time */}
                 <div>
-                  <h4 className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase mb-2">
-                    {t("📅 Planting Season", "📅 बोने का समय")}
+                  <h4 className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase mb-2 flex items-center gap-1.5">
+                    <Sprout size={14} />
+                    {t("Planting Season", "बोने का समय")}
                   </h4>
                   <div className="bg-green-50/80 dark:bg-green-950/20 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
                     {t(activeAdvisory.planting_time, activeAdvisory.planting_time_hi)}
@@ -199,8 +202,9 @@ const AdvisoryPage = () => {
 
                 {/* Pest & Disease Prevention */}
                 <div>
-                  <h4 className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase mb-2">
-                    {t("🛡️ Organic Pest Control", "🛡️ कीट और रोग नियंत्रण")}
+                  <h4 className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase mb-2 flex items-center gap-1.5">
+                    <Bug size={14} />
+                    {t("Organic Pest Control", "कीट और रोग नियंत्रण")}
                   </h4>
                   <div className="bg-green-50/80 dark:bg-green-950/20 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
                     {t(activeAdvisory.pest_management, activeAdvisory.pest_management_hi)}
@@ -209,8 +213,9 @@ const AdvisoryPage = () => {
 
                 {/* Irrigation */}
                 <div>
-                  <h4 className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase mb-2">
-                    {t("💧 Irrigation", "💧 सिंचाई नियम")}
+                  <h4 className="text-xs font-bold tracking-widest text-green-600 dark:text-green-400 uppercase mb-2 flex items-center gap-1.5">
+                    <Droplets size={14} />
+                    {t("Irrigation", "सिंचाई नियम")}
                   </h4>
                   <div className="bg-green-50/80 dark:bg-green-950/20 rounded-xl p-3 text-sm text-gray-700 dark:text-gray-200 leading-relaxed">
                     {t(activeAdvisory.irrigation, activeAdvisory.irrigation_hi)}

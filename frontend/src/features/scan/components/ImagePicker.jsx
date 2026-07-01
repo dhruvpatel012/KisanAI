@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import Card from "../../../components/ui/Card";
 import Button from "../../../components/ui/Button";
 import { useLanguage } from "../../../context/LanguageContext";
+import { Camera, ImagePlus, CheckCircle2, Lightbulb } from "lucide-react";
 
 const ImagePicker = ({ onFileSelect, error }) => {
   const { t } = useLanguage();
@@ -64,13 +65,13 @@ const ImagePicker = ({ onFileSelect, error }) => {
           <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-green-600 rounded-br-lg"></div>
           
           {/* Center camera icon */}
-          <i className="ri-camera-lens-line text-5xl text-green-700"></i>
+          <Camera size={48} className="text-green-600 dark:text-green-400" />
         </div>
 
-        <h2 className="text-xl font-bold text-gray-900 mb-1">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
           {t("Take a Photo", "फोटो लें")}
         </h2>
-        <p className="text-sm text-gray-500 mb-6 max-w-[280px]">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-[280px]">
           {t(
             "Position the affected crop leaf clearly inside the camera frame.",
             "फसल की पत्ती को कैमरे के सामने रखें।"
@@ -90,16 +91,16 @@ const ImagePicker = ({ onFileSelect, error }) => {
             className="group font-bold py-3.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 shadow-lg shadow-green-500/30 hover:shadow-green-500/50 active:scale-95 transition-all border-none text-white text-base rounded-xl"
             onClick={() => cameraInputRef.current?.click()}
           >
-            <i className="ri-camera-fill text-xl group-hover:animate-[shake_0.3s_ease-in-out_infinite] transition-transform duration-200"></i>
+            <Camera size={18} className="mr-2 group-hover:animate-[shake_0.3s_ease-in-out_infinite] transition-transform duration-200" />
             {t("Open Camera", "कैमरा खोलें")}
           </Button>
 
           <div className="flex items-center justify-between w-full my-1">
-            <span className="h-[1px] bg-gray-200 flex-1"></span>
+            <span className="h-[1px] bg-gray-200 dark:bg-gray-700 flex-1"></span>
             <span className="text-xs text-gray-400 px-3 uppercase tracking-wider font-semibold">
               {t("OR", "या")}
             </span>
-            <span className="h-[1px] bg-gray-200 flex-1"></span>
+            <span className="h-[1px] bg-gray-200 dark:bg-gray-700 flex-1"></span>
           </div>
 
           <Button
@@ -107,7 +108,7 @@ const ImagePicker = ({ onFileSelect, error }) => {
             className="font-bold py-3 hover:bg-green-50/50 active:scale-[0.98] transition-all rounded-xl"
             onClick={() => galleryInputRef.current?.click()}
           >
-            <i className="ri-image-add-fill text-lg"></i>
+            <ImagePlus size={18} className="mr-2" />
             {t("Upload from Gallery", "गैलरी से चुनें")}
           </Button>
         </div>
@@ -115,17 +116,17 @@ const ImagePicker = ({ onFileSelect, error }) => {
 
       {/* TIPS CARD */}
       <Card className="p-5 bg-white border border-gray-100">
-        <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 mb-4">
-          <i className="ri-pushpin-2-fill text-brand-600 text-lg"></i>
+        <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
+          <Lightbulb size={16} className="text-green-600 dark:text-green-400 mr-2" />
           {t("Tips for Accurate Scan", "सही जाँच के सुझाव")}
         </h3>
 
         <ul className="flex flex-col gap-3.5">
           {tips.map((tip, index) => (
             <li key={index} className="flex gap-3">
-              <i className="ri-checkbox-circle-fill text-brand-600 text-lg mt-0.5 shrink-0"></i>
+              <CheckCircle2 size={16} className="text-green-500 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-gray-900 leading-tight">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white leading-tight">
                   {t(tip.en, tip.hi)}
                 </p>
               </div>
