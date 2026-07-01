@@ -480,7 +480,7 @@ const ResultPage = () => {
                   </div>
                   <div className="flex justify-between items-center text-[10px]">
                     <span className="font-semibold text-gray-500">{t("Risk:", "जोखिम:")}</span>
-                    <span className="font-bold text-amber-700 uppercase">{disease.severity}</span>
+                    <span className="font-bold text-amber-700 uppercase">{getSeverityLabel(disease.severity)}</span>
                   </div>
                 </Card>
               ))}
@@ -491,7 +491,7 @@ const ResultPage = () => {
         {/* Model Disclaimer */}
         {scanData.disclaimer && (
           <p className="text-[10px] text-center text-emerald-800/50 italic leading-relaxed px-4 mt-2">
-            {scanData.disclaimer}
+            {dt(scanData.disclaimer)}
           </p>
         )}
 

@@ -39,7 +39,17 @@ const translationDictionary = {
   "use resistant varieties and crop rotation": "रोग प्रतिरोधी किस्मों और फसल चक्र का उपयोग करें",
   "use crop rotation and good sanitation": "फसल चक्र और अच्छी साफ-सफाई का पालन करें",
   "maintain current good practices": "वर्तमान अच्छी प्रथाओं को बनाए रखें",
-  "maintain good crop rotation, remove weeds that can harbor the pathogen, and ensure adequate spacing between plants to improve air circulation.": "अच्छी फसल चक्र बनाए रखें, रोगजनक को शरण देने वाले खरपतवारों को हटा दें, और हवा के संचार को बेहतर बनाने के लिए पौधों के बीच पर्याप्त दूरी सुनिश्चित करें।"
+  "maintain good crop rotation, remove weeds that can harbor the pathogen, and ensure adequate spacing between plants to improve air circulation.": "अच्छी फसल चक्र बनाए रखें, रोगजनक को शरण देने वाले खरपतवारों को हटा दें, और हवा के संचार को बेहतर बनाने के लिए पौधों के बीच पर्याप्त दूरी सुनिश्चित करें।",
+
+  // Severity / Risk levels
+  "high": "उच्च जोखिम",
+  "medium": "मध्यम जोखिम",
+  "low": "कम जोखिम",
+  "none": "कोई जोखिम नहीं",
+
+  // Disclaimers
+  "model trained on lab images. real-world accuracy may vary.": "मॉडल प्रयोगशाला चित्रों पर प्रशिक्षित है। वास्तविक सटीकता भिन्न हो सकती है।",
+  "model prediction results.": "मॉडल भविष्यवाणी परिणाम।"
 };
 
 export const LanguageProvider = ({ children }) => {
