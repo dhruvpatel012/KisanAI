@@ -5,25 +5,23 @@ const BottomNav = () => {
   const { t } = useLanguage();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 w-full h-16 bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] z-50 flex justify-center">
-      <div className="w-full max-w-6xl h-full flex items-center justify-around px-2">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] z-50">
+      <div className="max-w-md mx-auto h-16 flex items-center justify-around px-2">
         
         {/* HOME LINK */}
         <NavLink
           to="/dashboard"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center flex-1 h-full text-[11px] font-bold transition-transform duration-200 active:scale-110 ${
-              isActive ? "text-green-700" : "text-gray-400"
+            `flex flex-col items-center gap-0.5 flex-1 py-2 rounded-xl transition-colors duration-150 min-h-[44px] justify-center ${
+              isActive ? "text-green-600 bg-green-50" : "text-gray-400"
             }`
           }
         >
           {({ isActive }) => (
-            <div className={`flex flex-col items-center justify-center px-3.5 py-1 rounded-xl transition-all duration-200 ${
-              isActive ? "bg-green-50" : ""
-            }`}>
-              <i className={`text-xl mb-0.5 ${isActive ? "ri-home-5-fill" : "ri-home-5-line"}`}></i>
-              <span>{t("Home", "होम")}</span>
-            </div>
+            <>
+              <i className={`text-xl ${isActive ? "ri-home-5-fill" : "ri-home-5-line"}`}></i>
+              <span className="text-[10px] font-semibold">{t("Home", "होम")}</span>
+            </>
           )}
         </NavLink>
 
@@ -31,56 +29,52 @@ const BottomNav = () => {
         <NavLink
           to="/advisory"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center flex-1 h-full text-[11px] font-bold transition-transform duration-200 active:scale-110 ${
-              isActive ? "text-green-700" : "text-gray-400"
+            `flex flex-col items-center gap-0.5 flex-1 py-2 rounded-xl transition-colors duration-150 min-h-[44px] justify-center ${
+              isActive ? "text-green-600 bg-green-50" : "text-gray-400"
             }`
           }
         >
           {({ isActive }) => (
-            <div className={`flex flex-col items-center justify-center px-3.5 py-1 rounded-xl transition-all duration-200 ${
-              isActive ? "bg-green-50" : ""
-            }`}>
-              <i className={`text-xl mb-0.5 ${isActive ? "ri-book-open-fill" : "ri-book-open-line"}`}></i>
-              <span>{t("Advisory", "सलाह")}</span>
-            </div>
+            <>
+              <i className={`text-xl ${isActive ? "ri-book-open-fill" : "ri-book-open-line"}`}></i>
+              <span className="text-[10px] font-semibold">{t("Advisory", "सलाह")}</span>
+            </>
           )}
         </NavLink>
 
         {/* SCAN LINK (CENTER BUTTON) */}
         <NavLink
           to="/scan"
-          className="flex flex-col items-center justify-center flex-1 h-full relative transition-transform duration-200 active:scale-110"
+          className="flex flex-col items-center justify-center flex-1 -mt-5"
         >
-          {({ isActive }) => (
-            <div
-              className={`
-                w-14 h-14 bg-gradient-to-br from-green-500 to-green-700 text-white rounded-2xl
-                flex items-center justify-center shadow-lg shadow-green-500/40
-                transition-all duration-200 ring-4 ring-green-100
-                absolute -top-5
-              `}
-            >
-              <i className="ri-camera-fill text-2xl animate-[pulse_2s_infinite]"></i>
-            </div>
-          )}
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center active:scale-95 transition-transform duration-150"
+            style={{
+              background: "linear-gradient(135deg, #22c55e, #15803d)",
+              boxShadow: "0 4px 20px rgba(34,197,94,0.4)"
+            }}
+          >
+            <i className="ri-camera-fill text-2xl text-white"></i>
+          </div>
+          <span className="text-[10px] font-semibold text-green-600 mt-1">
+            {t("Scan", "जाँच")}
+          </span>
         </NavLink>
 
         {/* HISTORY LINK */}
         <NavLink
           to="/history"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center flex-1 h-full text-[11px] font-bold transition-transform duration-200 active:scale-110 ${
-              isActive ? "text-green-700" : "text-gray-400"
+            `flex flex-col items-center gap-0.5 flex-1 py-2 rounded-xl transition-colors duration-150 min-h-[44px] justify-center ${
+              isActive ? "text-green-600 bg-green-50" : "text-gray-400"
             }`
           }
         >
           {({ isActive }) => (
-            <div className={`flex flex-col items-center justify-center px-3.5 py-1 rounded-xl transition-all duration-200 ${
-              isActive ? "bg-green-50" : ""
-            }`}>
-              <i className={`text-xl mb-0.5 ${isActive ? "ri-history-fill" : "ri-history-line"}`}></i>
-              <span>{t("History", "इतिहास")}</span>
-            </div>
+            <>
+              <i className={`text-xl ${isActive ? "ri-history-fill" : "ri-history-line"}`}></i>
+              <span className="text-[10px] font-semibold">{t("History", "इतिहास")}</span>
+            </>
           )}
         </NavLink>
 
@@ -88,18 +82,16 @@ const BottomNav = () => {
         <NavLink
           to="/profile"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center flex-1 h-full text-[11px] font-bold transition-transform duration-200 active:scale-110 ${
-              isActive ? "text-green-700" : "text-gray-400"
+            `flex flex-col items-center gap-0.5 flex-1 py-2 rounded-xl transition-colors duration-150 min-h-[44px] justify-center ${
+              isActive ? "text-green-600 bg-green-50" : "text-gray-400"
             }`
           }
         >
           {({ isActive }) => (
-            <div className={`flex flex-col items-center justify-center px-3.5 py-1 rounded-xl transition-all duration-200 ${
-              isActive ? "bg-green-50" : ""
-            }`}>
-              <i className={`text-xl mb-0.5 ${isActive ? "ri-user-3-fill" : "ri-user-3-line"}`}></i>
-              <span>{t("Profile", "प्रोफाइल")}</span>
-            </div>
+            <>
+              <i className={`text-xl ${isActive ? "ri-user-3-fill" : "ri-user-3-line"}`}></i>
+              <span className="text-[10px] font-semibold">{t("Profile", "प्रोफाइल")}</span>
+            </>
           )}
         </NavLink>
         

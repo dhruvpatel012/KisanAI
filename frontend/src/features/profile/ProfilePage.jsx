@@ -15,6 +15,7 @@ const ProfilePage = () => {
     preferred_language: "en",
     farm_location: ""
   });
+  const [scanCount, setScanCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -38,6 +39,8 @@ const ProfilePage = () => {
         preferred_language: response.data.preferred_language || "en",
         farm_location: response.data.farm_location || ""
       });
+      const scansResponse = await api.get("/api/scans");
+      setScanCount(scansResponse.data.length);
     } catch (err) {
       console.error("Failed to load profile:", err);
       setProfileError(t("Could not retrieve profile information.", "प्रोफ़ाइल जानकारी पुनर्प्राप्त नहीं की जा सकी।"));
@@ -127,28 +130,26 @@ const ProfilePage = () => {
         {/* PROFILE CARD */}
         {!loading && (
           <>
-            <Card className="flex items-center gap-4 p-5 border border-emerald-50 bg-gradient-to-br from-white to-emerald-50/20">
-              <div className="w-16 h-16 bg-brand-600 rounded-2xl flex items-center justify-center text-3xl shadow-md shrink-0">
+            <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-2xl p-5 flex items-center gap-4">
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl shrink-0">
                 👨‍🌾
               </div>
               <div className="overflow-hidden">
-                <h2 className="text-lg font-extrabold text-emerald-950 truncate leading-tight">
+                <h2 className="text-xl font-bold text-white truncate leading-tight">
                   {profile.full_name || "Kisan Farmer"}
                 </h2>
-                <p className="text-xs text-gray-500 truncate mt-0.5">
+                <p className="text-sm text-green-200 truncate mt-0.5">
                   {profile.email}
                 </p>
-                {profile.farm_location && (
-                  <p className="text-[10px] bg-emerald-100/60 border border-emerald-200 text-emerald-800 font-bold px-2 py-0.5 rounded-full inline-block mt-2">
-                    📍 {profile.farm_location}
-                  </p>
-                )}
+                <div className="inline-flex mt-2 bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  {t(`${scanCount} Scans`, `${scanCount} जाँचें`)}
+                </div>
               </div>
-            </Card>
+            </div>
 
             {/* EDIT PROFILE INPUTS */}
             <form onSubmit={handleSaveProfile} className="flex flex-col gap-3">
-              <Card className="p-5 flex flex-col gap-4">
+              <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 flex flex-col gap-4">
                 <h3 className="text-sm font-black text-emerald-950 flex items-center gap-2 border-b border-gray-100 pb-2">
                   <i className="ri-user-settings-line text-brand-600 text-lg"></i>
                   {t("Edit Profile Settings", "प्रोफ़ाइल संपादित करें")}
@@ -171,7 +172,7 @@ const ProfilePage = () => {
                     type="text"
                     value={profile.full_name}
                     onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-                    className="h-10 px-3 rounded-xl border border-gray-200 focus:outline-none focus:border-brand-500 text-xs font-semibold"
+                    className="border border-gray-200 rounded-xl px-4 py-3 text-sm w-full focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
                   />
                 </div>
 
@@ -185,7 +186,7 @@ const ProfilePage = () => {
                     placeholder="e.g. Punjab, Gujarat"
                     value={profile.farm_location}
                     onChange={(e) => setProfile({ ...profile, farm_location: e.target.value })}
-                    className="h-10 px-3 rounded-xl border border-gray-200 focus:outline-none focus:border-brand-500 text-xs font-semibold"
+                    className="border border-gray-200 rounded-xl px-4 py-3 text-sm w-full focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
                   />
                 </div>
 
@@ -194,14 +195,14 @@ const ProfilePage = () => {
                   <label className="text-xs font-bold text-gray-700">
                     {t("App Language", "ऐप की भाषा")}
                   </label>
-                  <div className="grid grid-cols-2 gap-3 mt-1">
+                  <div className="bg-gray-100 rounded-xl p-1 flex gap-1 mt-1">
                     <button
                       type="button"
                       onClick={() => handleLanguageChange("en")}
-                      className={`py-2 rounded-xl font-bold text-xs border-2 transition-all duration-150 ${
+                      className={`py-2 flex-1 rounded-lg font-semibold text-sm transition-all duration-150 ${
                         profile.preferred_language === "en"
-                          ? "bg-brand-50 border-brand-600 text-brand-700"
-                          : "bg-gray-50 border-transparent text-gray-500 hover:bg-gray-100"
+                          ? "bg-white text-green-700 shadow-sm"
+                          : "text-gray-500 hover:bg-gray-200/50"
                       }`}
                     >
                       English
@@ -209,10 +210,10 @@ const ProfilePage = () => {
                     <button
                       type="button"
                       onClick={() => handleLanguageChange("hi")}
-                      className={`py-2 rounded-xl font-bold text-xs border-2 transition-all duration-150 ${
+                      className={`py-2 flex-1 rounded-lg font-semibold text-sm transition-all duration-150 ${
                         profile.preferred_language === "hi"
-                          ? "bg-brand-50 border-brand-600 text-brand-700"
-                          : "bg-gray-50 border-transparent text-gray-500 hover:bg-gray-100"
+                          ? "bg-white text-green-700 shadow-sm"
+                          : "text-gray-500 hover:bg-gray-200/50"
                       }`}
                     >
                       हिंदी
@@ -220,38 +221,45 @@ const ProfilePage = () => {
                   </div>
                 </div>
 
-                <Button variant="primary" type="submit" loading={saving}>
-                  {t("Save Preferences", "सहेजें")}
-                </Button>
-              </Card>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="bg-gradient-to-r from-green-600 to-green-500 text-white font-bold py-3 rounded-xl w-full shadow-md shadow-green-500/20 active:scale-98 transition-all"
+                >
+                  {saving ? t("Saving...", "सहेज रहा है...") : t("Save Preferences", "सहेजें")}
+                </button>
+              </div>
             </form>
 
             {/* SECURITY MANAGEMENT */}
-            <Card className="p-5 flex flex-col gap-3">
+            <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 flex flex-col gap-3">
               <h3 className="text-sm font-black text-emerald-950 flex items-center gap-2 border-b border-gray-100 pb-2">
                 <i className="ri-shield-keyhole-line text-brand-600 text-lg"></i>
                 {t("Security", "सुरक्षा")}
               </h3>
-              <Button
-                variant="secondary"
+              <button
                 onClick={() => {
                   setPasswordError(null);
                   setPasswordSuccess(false);
                   setShowPasswordModal(true);
                 }}
+                className="border-2 border-green-600 text-green-600 font-semibold py-3 rounded-xl w-full hover:bg-green-50 transition-colors"
               >
                 🔑 {t("Change Password", "पासवर्ड बदलें")}
-              </Button>
-            </Card>
+              </button>
+            </div>
           </>
         )}
 
         {/* LOGOUT */}
         <div className="mt-2">
-          <Button variant="danger" onClick={logoutUser} className="font-bold py-3">
-            <i className="ri-logout-box-r-line text-lg mr-1"></i>
-            {t("Sign Out", "लॉग आउट करें")}
-          </Button>
+          <button
+            onClick={logoutUser}
+            className="bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-3 rounded-xl w-full shadow-md shadow-red-500/20 active:scale-98 transition-all"
+          >
+            <i className="ri-logout-box-r-line text-lg mr-1 inline-block align-middle"></i>
+            <span className="inline-block align-middle">{t("Sign Out", "लॉग आउट करें")}</span>
+          </button>
           <p className="text-center text-[10px] text-gray-400 mt-6 font-medium">
             KisanAI v1.1.0 • Made for farmers 🌱
           </p>

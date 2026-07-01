@@ -257,192 +257,180 @@ const DashboardPage = () => {
 
   return (
     <PageLayout>
-      {/* SECTION 1 - Greeting */}
-      <div className="mb-6 mt-2">
-        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          {greeting} <span className="animate-bounce">👋</span>
-        </h2>
-        <p className="text-gray-500 text-sm mt-1">
-          {t("How are your crops today?", "आज आपकी फसलें कैसी हैं?")}
-        </p>
-      </div>
+      <div className="flex flex-col gap-4 pb-4 animate-fadeSlideUp">
+        
+        {/* SECTION 1 - Greeting */}
+        <div className="pt-3 px-1">
+          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            {greeting} <span className="animate-bounce">👋</span>
+          </h2>
+          <p className="text-sm text-gray-500 mt-0.5">
+            {t("How are your crops today?", "आज आपकी फसलें कैसी हैं?")}
+          </p>
+        </div>
 
-      {/* SECTION 1.5 - Weather Card */}
-      {weatherLoading ? (
-        <Card className="mb-6 h-36 bg-gray-100 animate-pulse border border-gray-200" />
-      ) : weather ? (
-        <Card className="mb-6 bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm p-4 relative overflow-hidden rounded-2xl">
-          <div className="flex justify-between items-start mb-3">
-            <div>
-              <span className="text-xs uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
-                {t("Local Weather", "स्थानीय मौसम")}{displayLocation ? ` — ${displayLocation}` : ""}
-              </span>
-              <div className="flex items-center gap-2 mt-2">
-                <span className="text-3xl font-extrabold text-emerald-950">
-                  {Math.round(weather.current.temperature)}°C
+        {/* SECTION 1.5 - Weather Card */}
+        {weatherLoading ? (
+          <div className="h-36 bg-gray-150 animate-pulse rounded-2xl border border-gray-100" />
+        ) : weather ? (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 relative overflow-hidden">
+            <div className="flex justify-between items-start">
+              <div>
+                <span className="text-xs font-bold tracking-widest text-green-600 uppercase">
+                  {t("Local Weather", "स्थानीय मौसम")}{displayLocation ? ` — ${displayLocation}` : ""}
                 </span>
-                <span className="text-2xl">{weather.current.emoji}</span>
-                <span className="text-sm font-bold text-emerald-800">
-                  {t(weather.current.description, weather.current.description_hi)}
-                </span>
-              </div>
-              <div className="flex gap-4 mt-2 text-xs font-semibold text-emerald-800">
-                <span>💧 {t("Humidity", "आर्द्रता")}: {weather.current.humidity}%</span>
-                <span>💨 {t("Wind", "हवा")}: {weather.current.wind_speed} km/h</span>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-4xl font-black text-gray-900">
+                    {Math.round(weather.current.temperature)}°C
+                  </span>
+                  <span className="text-2xl">{weather.current.emoji}</span>
+                  <span className="text-sm font-semibold text-gray-600">
+                    {t(weather.current.description, weather.current.description_hi)}
+                  </span>
+                </div>
+                <div className="flex gap-4 mt-2 text-xs font-medium text-gray-500">
+                  <span>💧 {t("Humidity", "आर्द्रता")}: {weather.current.humidity}%</span>
+                  <span>💨 {t("Wind", "हवा")}: {weather.current.wind_speed} km/h</span>
+                </div>
               </div>
             </div>
+            
+            {/* 3-Day Forecast */}
+            <div className="border-t border-gray-100 pt-3 mt-3">
+              <div className="flex gap-2 mt-3">
+                {weather.forecast.map((day, idx) => {
+                  const dateLabel = idx === 0 
+                    ? t("Today", "आज") 
+                    : idx === 1 
+                    ? t("Tomorrow", "कल") 
+                    : formatDate(day.date).split(",")[0];
+                  return (
+                    <div key={idx} className="flex-1 bg-gray-50 rounded-xl p-2 text-center text-xs">
+                      <p className="font-bold text-gray-700 leading-tight">
+                        {dateLabel}
+                      </p>
+                      <p className="text-lg my-1">{day.emoji}</p>
+                      <p className="font-extrabold text-gray-900">
+                        {Math.round(day.temp_max)}°/{Math.round(day.temp_min)}°
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {/* SECTION 2 - Hero Scan Card */}
+        <Card
+          className="relative overflow-hidden rounded-2xl p-5"
+          style={{
+            background: "linear-gradient(135deg, #15803d 0%, #16a34a 50%, #22c55e 100%)"
+          }}
+        >
+          <div className="relative z-10 flex flex-col">
+            <span className="text-xs font-bold tracking-widest text-green-200 mb-1">
+              {t("CROP HEALTH SCAN", "फसल जाँच")}
+            </span>
+            <h3 className="text-2xl font-bold text-white mb-1">
+              {t("Scan Your Crop", "फसल की जाँच करें")}
+            </h3>
+            <p className="text-sm text-green-100 mb-4">
+              {t("Detect diseases instantly using your mobile camera.", "अपने मोबाइल कैमरे से तुरंत रोगों का पता लगाएं।")}
+            </p>
+            <button
+              onClick={() => navigate("/scan")}
+              className="w-full py-3 rounded-xl bg-white text-green-700 font-bold text-center active:scale-95 transition-all duration-150"
+            >
+              {t("Start Scan →", "जाँच शुरू करें →")}
+            </button>
           </div>
           
-          {/* 3-Day Forecast */}
-          <div className="border-t border-emerald-100/70 pt-2 mt-2">
-            <p className="text-[10px] uppercase tracking-wider text-emerald-700 font-bold mb-1.5">
-              {t("3-Day Forecast", "3-दिवसीय पूर्वानुमान")}
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {weather.forecast.map((day, idx) => {
-                const dateLabel = idx === 0 
-                  ? t("Today", "आज") 
-                  : idx === 1 
-                  ? t("Tomorrow", "कल") 
-                  : formatDate(day.date).split(",")[0];
-                return (
-                  <div key={idx} className="bg-white/50 rounded-xl p-2 text-center border border-emerald-100/50">
-                    <p className="text-[10px] font-bold text-emerald-900 leading-tight">
-                      {dateLabel}
-                    </p>
-                    <p className="text-lg my-1">{day.emoji}</p>
-                    <p className="text-[10px] font-bold text-emerald-955">
-                      {Math.round(day.temp_max)}°/{Math.round(day.temp_min)}°
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
+          {/* Decorative element top right */}
+          <div className="absolute top-4 right-4 text-6xl opacity-20 select-none pointer-events-none">
+            🌿
           </div>
         </Card>
-      ) : null}
 
-      {/* SECTION 2 - Hero Scan Card */}
-      <Card
-        className="mb-6 text-white border-0 shadow-lg relative overflow-hidden rounded-2xl"
-        style={{
-          backgroundImage: "radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 1.5px), linear-gradient(135deg, #15803d, #16a34a, #10b981)",
-          backgroundSize: "16px 16px, 100% 100%"
-        }}
-      >
-        <div className="relative z-10 py-2">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <span className="text-xs uppercase tracking-wider bg-white/20 px-2.5 py-1 rounded-full font-semibold">
-                {t("Crop Health Scan", "फसल जाँच")}
-              </span>
-              <h3 className="text-xl font-bold mt-2">
-                {t("Scan Your Crop", "फसल की जाँच करें")}
-              </h3>
-              <p className="text-green-50 text-xs mt-1 max-w-[200px]">
-                {t("Detect diseases instantly using your mobile camera.", "अपने मोबाइल कैमरे से तुरंत रोगों का पता लगाएं।")}
-              </p>
-            </div>
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-4xl shadow-inner">
-              📸
-            </div>
-          </div>
-          <Button
-            variant="secondary"
-            onClick={() => navigate("/scan")}
-            className="bg-white border-white text-green-800 hover:bg-green-50 font-bold"
+        {/* SECTION 4 - Recent Scans heading */}
+        <div className="flex items-center justify-between px-1">
+          <h3 className="font-bold text-gray-900 text-base">
+            {t("Recent Scans", "हालिया जाँच")}
+          </h3>
+          <Link
+            to="/history"
+            className="text-sm text-green-600 font-semibold flex items-center gap-1"
           >
-            {t("Start Scan →", "जाँच शुरू करें →")}
-          </Button>
+            {t("See All", "सभी देखें")} <i className="ri-arrow-right-s-line text-sm"></i>
+          </Link>
         </div>
-        
-        {/* Background decorative leaf shape */}
-        <div className="absolute -top-4 -right-4 opacity-20 text-8xl rotate-12 select-none pointer-events-none font-bold">
-          🍃
-        </div>
-        
-        <div className="absolute right-[-20px] bottom-[-20px] text-white/5 text-[150px] pointer-events-none select-none font-bold">
-          🌾
-        </div>
-      </Card>
 
-      {/* SECTION 3 - Recent Scans */}
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-base font-bold text-gray-900">
-          {t("Recent Scans", "हालिया जाँच")}
-        </h3>
-        <Link
-          to="/history"
-          className="text-xs font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1"
-        >
-          {t("See All", "सभी देखें")} <i className="ri-arrow-right-s-line text-sm"></i>
-        </Link>
-      </div>
+        {/* LOADING STATE */}
+        {loading && (
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="flex-shrink-0 w-64 h-20 bg-gray-150 animate-pulse rounded-2xl border border-gray-100" />
+            ))}
+          </div>
+        )}
 
-      {/* LOADING STATE */}
-      {loading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {[1, 2, 3].map((item) => (
-            <div key={item} className="h-20 bg-gray-100 animate-pulse rounded-2xl border border-gray-200" />
-          ))}
-        </div>
-      )}
+        {/* EMPTY STATE */}
+        {!loading && scans.length === 0 && (
+          <div className="text-center py-6 text-sm text-gray-500 font-medium bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+            {t("No scans yet", "कोई जाँच नहीं")}
+          </div>
+        )}
 
-      {/* EMPTY STATE */}
-      {!loading && scans.length === 0 && (
-        <div className="text-center py-6 text-sm text-gray-500 font-medium bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
-          {t("No scans yet", "कोई जाँच नहीं")}
-        </div>
-      )}
-
-      {/* DYNAMIC SCANS FEED */}
-      {!loading && scans.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {scans.map((scan) => {
-            const imgUrl = getImageUrl(scan);
-            return (
-              <Card
-                key={scan.upload_id}
-                onClick={() => navigate(`/result/${scan.upload_id}`)}
-                className={`flex items-center justify-between hover:shadow-md transition-all duration-200 cursor-pointer border border-emerald-50 ${getLeftBorderColor(scan)}`}
-              >
-                <div className="flex items-center gap-3">
-                  {imgUrl ? (
-                    <img
-                      src={imgUrl}
-                      alt="Crop Thumbnail"
-                      className="w-12 h-12 rounded-xl object-cover border border-emerald-100/50 flex-shrink-0"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center text-2xl border border-brand-100/50 flex-shrink-0">
-                      {getCropEmoji(scan.crop)}
+        {/* DYNAMIC SCANS FEED */}
+        {!loading && scans.length > 0 && (
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
+            {scans.map((scan) => {
+              const imgUrl = getImageUrl(scan);
+              return (
+                <div
+                  key={scan.upload_id}
+                  onClick={() => navigate(`/result/${scan.upload_id}`)}
+                  className={`flex-shrink-0 w-64 bg-white rounded-2xl shadow-sm border border-gray-100 p-3 flex items-center justify-between hover:shadow-md transition-all duration-200 cursor-pointer ${getLeftBorderColor(scan)}`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    {imgUrl ? (
+                      <img
+                        src={imgUrl}
+                        alt="Crop Thumbnail"
+                        className="w-12 h-12 rounded-xl object-cover border border-emerald-100/50 flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center text-2xl border border-brand-100/50 flex-shrink-0">
+                        {getCropEmoji(scan.crop)}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-gray-900 text-sm truncate">
+                        {scan.crop || t("Unknown", "अज्ञात")}
+                      </h4>
+                      <p className="text-xs text-gray-500 truncate">
+                        {scan.status === "uploaded"
+                          ? t("Analyzing...", "विश्लेषण...")
+                          : scan.disease || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"))}
+                      </p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">
+                        {formatDate(scan.created_at)}
+                      </p>
                     </div>
-                  )}
-                  <div>
-                    <h4 className="font-bold text-gray-900 text-sm truncate max-w-[150px]">
-                      {scan.crop || t("Unknown", "अज्ञात")}
-                    </h4>
-                    <p className="text-xs text-gray-500 truncate max-w-[150px]">
-                      {scan.status === "uploaded"
-                        ? t("Analyzing...", "विश्लेषण...")
-                        : scan.disease || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"))}
-                    </p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">
-                      {formatDate(scan.created_at)}
-                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1 flex-shrink-0 ml-2">
+                    <Badge variant={getSeverityVariant(scan)}>
+                      {getSeverityLabel(scan)}
+                    </Badge>
+                    <i className="ri-arrow-right-s-line text-gray-400"></i>
                   </div>
                 </div>
-                <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                  <Badge variant={getSeverityVariant(scan)}>
-                    {getSeverityLabel(scan)}
-                  </Badge>
-                  <i className="ri-arrow-right-s-line text-gray-400"></i>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
+        
+      </div>
     </PageLayout>
   );
 };

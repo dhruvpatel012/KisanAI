@@ -55,18 +55,16 @@ const AdvisoryPage = () => {
 
   return (
     <PageLayout title={t("Crop Advisory", "फसल सलाह")}>
-      <div className="max-w-md mx-auto flex flex-col gap-4 p-4 pb-20">
-        
         {/* SEARCH BAR */}
-        <div className="relative">
+        <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-sm flex items-center gap-3">
+          <i className="ri-search-line text-gray-400 text-lg"></i>
           <input
             type="text"
             placeholder={t("Search crop or disease...", "खोजें...")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-11 pl-10 pr-4 rounded-xl border border-gray-200 focus:outline-none focus:border-brand-500 text-sm font-medium"
+            className="flex-1 outline-none text-sm bg-transparent placeholder-gray-400"
           />
-          <i className="ri-search-line absolute left-3 top-3.5 text-gray-400 text-base"></i>
         </div>
 
         {/* CROP CHIPS */}
@@ -79,12 +77,13 @@ const AdvisoryPage = () => {
           ].map((chip) => (
             <button
               key={chip.id}
+              type="button"
               onClick={() => setSelectedCrop(chip.id)}
               className={`
-                px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap border transition-all duration-150
+                px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer
                 ${selectedCrop === chip.id
-                  ? "bg-brand-600 text-white border-brand-650 shadow-sm"
-                  : "bg-gray-50 text-gray-650 border-gray-200 hover:bg-gray-100"
+                  ? "bg-green-600 text-white shadow-md shadow-green-500/20 border-transparent"
+                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
                 }
               `}
             >
@@ -121,26 +120,24 @@ const AdvisoryPage = () => {
               </div>
             ) : (
               filteredAdvisories.map((advisory) => (
-                <Card
+                <div
                   key={advisory.crop_id}
                   onClick={() => setActiveAdvisory(advisory)}
-                  className="flex items-center justify-between p-4 cursor-pointer hover:shadow-md transition-all duration-200 border border-emerald-50"
+                  className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-4 active:scale-[0.99] transition-all cursor-pointer hover:shadow-md"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl bg-brand-50 w-12 h-12 rounded-xl flex items-center justify-center border border-brand-100/50">
-                      {getCropEmoji(advisory.crop_id)}
-                    </span>
-                    <div>
-                      <h4 className="font-extrabold text-emerald-950 text-sm">
-                        {t(advisory.crop_name, advisory.crop_name_hi)}
-                      </h4>
-                      <p className="text-xs text-gray-500 line-clamp-1 mt-0.5 max-w-[200px]">
-                        {t(advisory.soil_prep, advisory.soil_prep_hi)}
-                      </p>
-                    </div>
+                  <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center text-2xl flex-shrink-0">
+                    {getCropEmoji(advisory.crop_id)}
                   </div>
-                  <i className="ri-arrow-right-s-line text-gray-400 text-lg"></i>
-                </Card>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-gray-900 truncate">
+                      {t(advisory.crop_name, advisory.crop_name_hi)}
+                    </h4>
+                    <p className="text-sm text-gray-500 mt-0.5 line-clamp-1">
+                      {t(advisory.soil_prep, advisory.soil_prep_hi)}
+                    </p>
+                  </div>
+                  <i className="ri-arrow-right-s-line text-gray-300 ml-auto text-lg flex-shrink-0"></i>
+                </div>
               ))
             )}
           </div>
@@ -148,18 +145,23 @@ const AdvisoryPage = () => {
 
         {/* ARTICLE DETAIL MODAL */}
         {activeAdvisory && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center p-4">
-            <div className="bg-white rounded-3xl w-full max-w-md p-6 max-h-[85vh] overflow-y-auto shadow-2xl relative animate-in slide-in-from-bottom duration-250">
-              
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center" onClick={() => setActiveAdvisory(null)}>
+            <div 
+              className="w-full max-w-md bg-white rounded-t-3xl shadow-2xl z-50 p-5 pb-8 max-h-[85vh] overflow-y-auto animate-in slide-in-from-bottom duration-250"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Handle bar at top */}
+              <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+
               {/* Header */}
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-3">
                   <span className="text-4xl">{getCropEmoji(activeAdvisory.crop_id)}</span>
                   <div>
-                    <h3 className="text-xl font-black text-emerald-950">
+                    <h3 className="text-xl font-bold text-gray-900">
                       {t(activeAdvisory.crop_name, activeAdvisory.crop_name_hi)}
                     </h3>
-                    <p className="text-xs text-emerald-700 font-bold">
+                    <p className="text-xs text-green-600 font-bold">
                       {t("Agronomy Manual", "फसल विवरण")}
                     </p>
                   </div>
@@ -177,57 +179,59 @@ const AdvisoryPage = () => {
                 
                 {/* Soil Preparation */}
                 <div>
-                  <h4 className="text-xs uppercase tracking-wider text-emerald-800 font-extrabold mb-1 flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold tracking-widest text-green-600 uppercase mb-2">
                     {t("🌱 Soil Preparation", "🌱 मिट्टी की तैयारी")}
                   </h4>
-                  <p className="text-xs text-gray-655 font-medium leading-relaxed bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
+                  <div className="bg-green-50 rounded-xl p-3 text-sm text-gray-700 leading-relaxed">
                     {t(activeAdvisory.soil_prep, activeAdvisory.soil_prep_hi)}
-                  </p>
+                  </div>
                 </div>
 
                 {/* Planting Time */}
                 <div>
-                  <h4 className="text-xs uppercase tracking-wider text-emerald-800 font-extrabold mb-1 flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold tracking-widest text-green-600 uppercase mb-2">
                     {t("📅 Planting Season", "📅 बोने का समय")}
                   </h4>
-                  <p className="text-xs text-gray-655 font-medium leading-relaxed bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
+                  <div className="bg-green-50 rounded-xl p-3 text-sm text-gray-700 leading-relaxed">
                     {t(activeAdvisory.planting_time, activeAdvisory.planting_time_hi)}
-                  </p>
+                  </div>
                 </div>
 
                 {/* Pest & Disease Prevention */}
                 <div>
-                  <h4 className="text-xs uppercase tracking-wider text-emerald-800 font-extrabold mb-1 flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold tracking-widest text-green-600 uppercase mb-2">
                     {t("🛡️ Organic Pest Control", "🛡️ कीट और रोग नियंत्रण")}
                   </h4>
-                  <p className="text-xs text-gray-655 font-medium leading-relaxed bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
+                  <div className="bg-green-50 rounded-xl p-3 text-sm text-gray-700 leading-relaxed">
                     {t(activeAdvisory.pest_management, activeAdvisory.pest_management_hi)}
-                  </p>
+                  </div>
                 </div>
 
                 {/* Irrigation */}
                 <div>
-                  <h4 className="text-xs uppercase tracking-wider text-emerald-800 font-extrabold mb-1 flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold tracking-widest text-green-600 uppercase mb-2">
                     {t("💧 Irrigation", "💧 सिंचाई नियम")}
                   </h4>
-                  <p className="text-xs text-gray-655 font-medium leading-relaxed bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100/50">
+                  <div className="bg-green-50 rounded-xl p-3 text-sm text-gray-700 leading-relaxed">
                     {t(activeAdvisory.irrigation, activeAdvisory.irrigation_hi)}
-                  </p>
+                  </div>
                 </div>
 
               </div>
 
               <div className="mt-6 pt-2">
-                <Button variant="primary" onClick={() => setActiveAdvisory(null)} fullWidth>
+                <button
+                  onClick={() => setActiveAdvisory(null)}
+                  className="w-full py-3 bg-gradient-to-r from-green-600 to-green-500 text-white font-bold rounded-xl shadow-md shadow-green-500/20 active:scale-98 transition-all"
+                >
                   {t("Dismiss", "बंद करें")}
-                </Button>
+                </button>
               </div>
 
             </div>
           </div>
         )}
 
-      </div>
     </PageLayout>
   );
 };

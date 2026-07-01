@@ -140,18 +140,17 @@ const HistoryPage = () => {
       : `${backendUrl}${scan.image_url}`;
   };
   const getLeftBorderColor = (scan) => {
-    if (scan.status === "low_confidence") return "border-l-4 border-amber-400";
-    if (scan.status === "uploaded") return "border-l-4 border-blue-500";
-    if (scan.is_healthy) return "border-l-4 border-green-500";
+    if (scan.is_healthy) return "border-l-4 border-green-400";
     
     switch (scan.severity?.toLowerCase()) {
       case "high":
-        return "border-l-4 border-red-500";
+        return "border-l-4 border-red-400";
       case "medium":
         return "border-l-4 border-amber-400";
       case "low":
+        return "border-l-4 border-blue-400";
       case "none":
-        return "border-l-4 border-green-500";
+        return "border-l-4 border-green-400";
       default:
         return "border-l-4 border-gray-300";
     }
@@ -270,15 +269,14 @@ const HistoryPage = () => {
               };
 
               return (
-                <Card
+                <div
                   key={scan.upload_id}
                   onClick={handleCardClick}
                   style={{
-                    animation: "slideInUp 0.3s ease both",
-                    animationDelay: `${idx * 100}ms`
+                    animationDelay: `${idx * 80}ms`
                   }}
-                  className={`flex items-center justify-between p-4 hover:shadow-md transition-all duration-200 cursor-pointer border active:scale-[0.99] ${
-                    isSelected ? "border-emerald-500 bg-emerald-50/10" : "border-emerald-50"
+                  className={`animate-fadeSlideUp opacity-0 flex items-center justify-between p-4 bg-white rounded-2xl shadow-sm overflow-hidden active:scale-[0.99] transition-all cursor-pointer ${
+                    isSelected ? "bg-emerald-50/20" : ""
                   } ${getLeftBorderColor(scan)}`}
                 >
                   <div className="flex items-center gap-3">
@@ -329,7 +327,7 @@ const HistoryPage = () => {
                       </svg>
                     )}
                   </div>
-                </Card>
+                </div>
               );
             })}
           </div>

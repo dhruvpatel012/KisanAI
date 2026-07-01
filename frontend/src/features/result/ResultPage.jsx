@@ -274,7 +274,7 @@ const ResultPage = () => {
       <div className="max-w-md mx-auto flex flex-col gap-5 p-4 pb-20">
         
         {/* Main Details Card */}
-        <Card className="p-5 flex flex-col gap-4">
+        <Card className="p-5 flex flex-col gap-4 animate-fadeSlideUp" style={{ animationDelay: "0ms" }}>
           <div className="flex justify-between items-center gap-3">
             <div>
               <span className="text-xs font-bold text-emerald-700/70 tracking-wide uppercase">
@@ -326,7 +326,7 @@ const ResultPage = () => {
         </Card>
 
         {/* Treatment Recommendations Tabs Card */}
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden animate-fadeSlideUp" style={{ animationDelay: "100ms" }}>
           {/* Tabs header */}
           <div className="flex border-b border-emerald-50 bg-emerald-50/20">
             <button
@@ -405,7 +405,7 @@ const ResultPage = () => {
 
         {/* Fertilizer & Prevention Card */}
         {(scanData.fertilizer || scanData.prevention) && (
-          <Card className="p-5 flex flex-col gap-4">
+          <Card className="p-5 flex flex-col gap-4 animate-fadeSlideUp" style={{ animationDelay: "200ms" }}>
             <h3 className="text-sm font-extrabold text-emerald-950 tracking-wide uppercase border-b border-emerald-50 pb-2">
               {t("Soil & Prevention", "मिट्टी और रोकथाम")}
             </h3>
@@ -432,7 +432,7 @@ const ResultPage = () => {
 
         {/* Similar Diseases Section */}
         {scanData.similar_diseases && scanData.similar_diseases.length > 0 && (
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-2.5 animate-fadeSlideUp" style={{ animationDelay: "300ms" }}>
             <h3 className="text-xs font-bold text-emerald-800 tracking-wider uppercase pl-1">
               {t("Similar Matches", "मिलते-जुलते रोग")}
             </h3>
@@ -462,7 +462,7 @@ const ResultPage = () => {
         )}
 
         {/* Bottom Actions */}
-        <div className="flex flex-col gap-2 w-full mt-4">
+        <div className="flex flex-col gap-2 w-full mt-4 animate-fadeSlideUp" style={{ animationDelay: "400ms" }}>
           <Button variant="primary" onClick={() => navigate("/scan")} fullWidth className="font-bold py-3.5">
             {t("Scan Another Crop", "नई फसल जाँचें")}
           </Button>
