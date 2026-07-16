@@ -46,6 +46,12 @@ async def plant_identify(
     saved_filename = scan.get("saved_filename")
     temp_file_path = None
     
+    # ── Tag scan_type immediately so history always routes correctly ──
+    await database["scans"].update_one(
+        {"_id": ObjectId(upload_id)},
+        {"$set": {"scan_type": "plant_identify"}}
+    )
+    
     if saved_filename and saved_filename.startswith("data:"):
         try:
             header, encoded = saved_filename.split(",", 1)
@@ -60,9 +66,21 @@ async def plant_identify(
         if not file_path or not os.path.exists(file_path):
             raise HTTPException(status_code=500, detail="Image file missing")
         temp_file_path = file_path
-        
+    
+    result = None
     try:
         result = await identify_plant(temp_file_path)
+    except HTTPException as e:
+        # Store the error so PlantResultPage can show a proper error card
+        await database["scans"].update_one(
+            {"_id": ObjectId(upload_id)},
+            {"$set": {
+                "plant_result": {"error": e.detail},
+                "status": "identify_failed",
+                "analyzed_at": datetime.now(timezone.utc)
+            }}
+        )
+        raise e
     finally:
         if saved_filename and saved_filename.startswith("data:") and temp_file_path and os.path.exists(temp_file_path):
             try:
@@ -74,7 +92,6 @@ async def plant_identify(
         {"_id": ObjectId(upload_id)},
         {
             "$set": {
-                "scan_type": "plant_identify",
                 "plant_result": result,
                 "status": "identified",
                 "analyzed_at": datetime.now(timezone.utc)
@@ -109,6 +126,12 @@ async def land_analyze(
     saved_filename = scan.get("saved_filename")
     temp_file_path = None
     
+    # ── Tag scan_type immediately so history always routes correctly ──
+    await database["scans"].update_one(
+        {"_id": ObjectId(upload_id)},
+        {"$set": {"scan_type": "land_analysis"}}
+    )
+    
     if saved_filename and saved_filename.startswith("data:"):
         try:
             header, encoded = saved_filename.split(",", 1)
@@ -123,9 +146,20 @@ async def land_analyze(
         if not file_path or not os.path.exists(file_path):
             raise HTTPException(status_code=500, detail="Image file missing")
         temp_file_path = file_path
-        
+
+    result = None
     try:
         result = await analyze_land(temp_file_path)
+    except HTTPException as e:
+        await database["scans"].update_one(
+            {"_id": ObjectId(upload_id)},
+            {"$set": {
+                "land_result": {"error": e.detail},
+                "status": "land_failed",
+                "analyzed_at": datetime.now(timezone.utc)
+            }}
+        )
+        raise e
     finally:
         if saved_filename and saved_filename.startswith("data:") and temp_file_path and os.path.exists(temp_file_path):
             try:
@@ -137,7 +171,6 @@ async def land_analyze(
         {"_id": ObjectId(upload_id)},
         {
             "$set": {
-                "scan_type": "land_analysis",
                 "land_result": result,
                 "status": "land_analyzed",
                 "analyzed_at": datetime.now(timezone.utc)

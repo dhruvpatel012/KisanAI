@@ -142,8 +142,14 @@ const HistoryPage = () => {
   };
 
   const getSeverityLabel = (scan) => {
-    if (scan.scan_type === "plant_identify") return t("Plant ID", "पौधा ID");
-    if (scan.scan_type === "land_analysis") return t("Soil Analysis", "मिट्टी जाँच");
+    if (scan.scan_type === "plant_identify") {
+      if (scan.status === "identify_failed") return t("ID Failed", "पहचान विफल");
+      return t("Plant ID", "पौधा ID");
+    }
+    if (scan.scan_type === "land_analysis") {
+      if (scan.status === "land_failed") return t("Analysis Failed", "विश्लेषण विफल");
+      return t("Soil Analysis", "मिट्टी जाँच");
+    }
     if (scan.status === "low_confidence") return t("Unclear", "अस्पष्ट");
     if (scan.status === "uploaded") return t("Analyzing...", "विश्लेषण...");
     if (scan.is_healthy) return t("Healthy", "स्वस्थ");
