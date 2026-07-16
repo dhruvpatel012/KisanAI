@@ -223,12 +223,15 @@ async def get_scans_list(
             
         scans_list.append({
             "upload_id": str(scan["_id"]),
+            "scan_type": scan.get("scan_type"),
             "crop": scan.get("crop"),
             "disease": scan.get("disease"),
             "confidence": scan.get("confidence"),
             "severity": scan.get("severity"),
             "is_healthy": scan.get("is_healthy"),
             "status": scan.get("status"),
+            "plant_result": scan.get("plant_result"),
+            "land_result": scan.get("land_result"),
             "image_url": scan.get('saved_filename') if (scan.get('saved_filename') and scan.get('saved_filename').startswith("data:")) else (f"/uploads/{scan.get('saved_filename')}" if scan.get('saved_filename') else None),
             "created_at": created_at_str
         })
