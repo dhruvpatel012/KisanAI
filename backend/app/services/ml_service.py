@@ -150,6 +150,20 @@ async def identify_plant(image_path: str) -> dict:
             raise HTTPException(status_code=503, detail="Plant identification unavailable")
             
         data = response.json()
+
+        # Handle explicit error responses from the HuggingFace space
+        # e.g. {"error": "API error: 401"} when PlantNet quota is exceeded
+        if data.get("error"):
+            error_msg = data.get("error", "")
+            if "401" in error_msg:
+                raise HTTPException(
+                    status_code=503,
+                    detail="Plant identification service quota exceeded. Please try again later."
+                )
+            raise HTTPException(
+                status_code=503,
+                detail=f"Plant identification failed: {error_msg}"
+            )
         
         if data.get("status") == "low_confidence":
             return {
