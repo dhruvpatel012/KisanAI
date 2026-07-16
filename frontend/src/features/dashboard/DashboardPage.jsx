@@ -6,7 +6,7 @@ import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import api from "../../lib/axios";
 import { useLanguage } from "../../context/LanguageContext";
-import { Droplets, Wind, ScanLine, ChevronRight } from "lucide-react";
+import { Droplets, Wind, ScanLine, ChevronRight, Leaf, Mountain } from "lucide-react";
 
 const WEATHER_CODE_MAPPING = {
   0: { desc: "Clear sky", desc_hi: "साफ़ आसमान", emoji: "☀️" },
@@ -175,7 +175,15 @@ const DashboardPage = () => {
     }
   };
 
+  const getScanRoute = (scan) => {
+    if (scan.scan_type === "plant_identify") return `/plant-result/${scan.upload_id}`;
+    if (scan.scan_type === "land_analysis") return `/land-result/${scan.upload_id}`;
+    return `/result/${scan.upload_id}`;
+  };
+
   const getSeverityVariant = (scan) => {
+    if (scan.scan_type === "plant_identify") return "success";
+    if (scan.scan_type === "land_analysis") return "info";
     if (scan.status === "low_confidence") return "warning";
     if (scan.status === "uploaded") return "info";
     if (scan.is_healthy) return "success";
@@ -193,6 +201,8 @@ const DashboardPage = () => {
   };
 
   const getSeverityLabel = (scan) => {
+    if (scan.scan_type === "plant_identify") return t("Plant ID", "पौधा ID");
+    if (scan.scan_type === "land_analysis") return t("Soil Analysis", "मिट्टी जाँच");
     if (scan.status === "low_confidence") return t("Unclear", "अस्पष्ट");
     if (scan.status === "uploaded") return t("Analyzing...", "विश्लेषण...");
     if (scan.is_healthy) return t("Healthy", "स्वस्थ");
@@ -209,9 +219,30 @@ const DashboardPage = () => {
     }
   };
 
-  const getCropEmoji = (cropName) => {
-    if (!cropName) return "🌱";
-    const name = cropName.toLowerCase();
+  const getScanTitle = (scan) => {
+    if (scan.scan_type === "plant_identify") {
+      return scan.plant_result?.plant_name || t("Plant Scan", "पौधा स्कैन");
+    }
+    if (scan.scan_type === "land_analysis") {
+      const soilType = scan.land_result?.soil_type;
+      return soilType
+        ? `${soilType.charAt(0).toUpperCase() + soilType.slice(1)} Soil`
+        : t("Land Analysis", "भूमि विश्लेषण");
+    }
+    return dt(scan.crop) || t("Unknown", "अज्ञात");
+  };
+
+  const getScanSubtitle = (scan) => {
+    if (scan.scan_type === "plant_identify") return t("Plant Identifier", "पौधा पहचानकर्ता");
+    if (scan.scan_type === "land_analysis") return t("Soil Analyzer", "मिट्टी विश्लेषक");
+    if (scan.status === "uploaded") return t("Analyzing...", "विश्लेषण...");
+    return dt(scan.disease) || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"));
+  };
+
+  const getCropEmoji = (scan) => {
+    if (scan.scan_type === "plant_identify") return null;
+    if (scan.scan_type === "land_analysis") return null;
+    const name = scan.crop?.toLowerCase() || "";
     if (name.includes("potato")) return "🥔";
     if (name.includes("tomato")) return "🍅";
     if (name.includes("wheat") || name.includes("rice")) return "🌾";
@@ -415,7 +446,7 @@ const DashboardPage = () => {
               return (
                 <div
                   key={scan.upload_id}
-                  onClick={() => navigate(`/result/${scan.upload_id}`)}
+                  onClick={() => navigate(getScanRoute(scan))}
                   className={`flex-shrink-0 w-64 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/40 p-3 flex items-center justify-between hover:shadow-md transition-all duration-200 cursor-pointer ${getLeftBorderColor(scan)}`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
@@ -425,19 +456,25 @@ const DashboardPage = () => {
                         alt="Crop Thumbnail"
                         className="w-12 h-12 rounded-xl object-cover border border-emerald-100/50 flex-shrink-0"
                       />
+                    ) : scan.scan_type === "plant_identify" ? (
+                      <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center border border-emerald-100/50 flex-shrink-0">
+                        <Leaf size={22} className="text-emerald-600" />
+                      </div>
+                    ) : scan.scan_type === "land_analysis" ? (
+                      <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center border border-amber-100/50 flex-shrink-0">
+                        <Mountain size={22} className="text-amber-600" />
+                      </div>
                     ) : (
                       <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center text-2xl border border-brand-100/50 flex-shrink-0">
-                        {getCropEmoji(scan.crop)}
+                        {getCropEmoji(scan)}
                       </div>
                     )}
                     <div className="min-w-0">
                       <h4 className="font-bold text-gray-900 dark:text-white text-sm truncate">
-                        {dt(scan.crop) || t("Unknown", "अज्ञात")}
+                        {getScanTitle(scan)}
                       </h4>
                       <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                        {scan.status === "uploaded"
-                          ? t("Analyzing...", "विश्लेषण...")
-                          : dt(scan.disease) || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"))}
+                        {getScanSubtitle(scan)}
                       </p>
                       <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">
                         {formatDate(scan.created_at)}
