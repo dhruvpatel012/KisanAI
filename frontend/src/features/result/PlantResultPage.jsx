@@ -79,6 +79,32 @@ const PlantResultPage = () => {
     );
   }
 
+  // Handle stored error responses (e.g. PlantNet API quota exceeded)
+  if (result.error || (!result.status && !result.plant_name)) {
+    const errorMsg = result.error
+      ? (result.error.includes("401")
+        ? t("Plant identification service is temporarily unavailable. The API quota may be exceeded. Please try again later.", "पौधा पहचान सेवा अस्थायी रूप से अनुपलब्ध है। कृपया बाद में पुनः प्रयास करें।")
+        : result.error)
+      : t("Could not get identification result. Please scan again.", "परिणाम प्राप्त नहीं हो सका। कृपया दोबारा स्कैन करें।");
+
+    return (
+      <PageLayout title={t("Plant Identity", "पौधे की पहचान")} showBack={true}>
+        <div className="max-w-md mx-auto p-4 flex flex-col gap-6">
+          <Card className="border-l-4 border-red-400 bg-red-50/60 p-6 flex flex-col items-center text-center">
+            <AlertTriangle className="w-12 h-12 text-red-400 mb-4" />
+            <h3 className="text-lg font-bold text-red-800 mb-2">
+              {t("Identification Failed", "पहचान विफल")}
+            </h3>
+            <p className="text-sm text-red-700 mb-6">{errorMsg}</p>
+            <Button variant="primary" onClick={() => navigate("/scan")} fullWidth>
+              {t("Try Again", "पुनः प्रयास करें")}
+            </Button>
+          </Card>
+        </div>
+      </PageLayout>
+    );
+  }
+
   if (result.status === "low_confidence") {
     const confVal = result.confidence != null 
       ? (result.confidence <= 1 ? (result.confidence * 100).toFixed(0) : result.confidence) 
