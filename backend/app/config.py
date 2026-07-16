@@ -16,9 +16,9 @@ class Settings(BaseSettings):
     )
     max_file_size: int = 5242880
     allowed_extensions: list[str] = ["jpg", "jpeg", "png", "webp"]
-    ml_service_url: str = "http://localhost:8001"
+    ml_service_url: str
     ml_endpoint: str = "/analyze"
-    use_mock_ml: bool = True
+    use_mock_ml: bool = False
 
 
     model_config = {

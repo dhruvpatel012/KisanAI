@@ -3,6 +3,8 @@ import Card from "../../../components/ui/Card";
 import Button from "../../../components/ui/Button";
 import Alert from "../../../components/ui/Alert";
 import { useAnalyze } from "../hooks/useAnalyze";
+import { usePlantIdentify } from "../hooks/usePlantIdentify";
+import { useLandAnalyze } from "../hooks/useLandAnalyze";
 import AnalyzingState from "./AnalyzingState";
 import { useLanguage } from "../../../context/LanguageContext";
 
@@ -13,27 +15,76 @@ const ImagePreview = ({
   error: uploadError,
   handleUpload,
   resetUpload,
+  scanType,
 }) => {
   const { t } = useLanguage();
-  const { analyzeImage, analyzing, error: analyzeError } = useAnalyze();
+  const { analyzeImage, analyzing: analyzingDisease, error: analyzeError } = useAnalyze();
+  const { identifyPlant, identifying, error: identifyError } = usePlantIdentify();
+  const { analyzeLand, analyzing: analyzingLand, error: landError } = useLandAnalyze();
+
+  const isAnalyzing = analyzingDisease || identifying || analyzingLand;
 
   // Trigger analysis automatically once upload succeeds
   useEffect(() => {
     if (uploadResult?.upload_id) {
-      analyzeImage(uploadResult.upload_id);
+      if (scanType === "disease") {
+        analyzeImage(uploadResult.upload_id);
+      } else if (scanType === "plant") {
+        identifyPlant(uploadResult.upload_id);
+      } else if (scanType === "land") {
+        analyzeLand(uploadResult.upload_id);
+      } else {
+        analyzeImage(uploadResult.upload_id);
+      }
     }
-  }, [uploadResult]);
+  }, [uploadResult, scanType]);
+
+  let loadingText = t("Analyzing...", "विश्लेषण हो रहा है...");
+  if (scanType === "disease") {
+    loadingText = t("Analyzing crop disease...", "फसल रोग का विश्लेषण...");
+  } else if (scanType === "plant") {
+    loadingText = t("Identifying plant species...", "पौधे की प्रजाति की पहचान...");
+  } else if (scanType === "land") {
+    loadingText = t("Analyzing soil quality...", "मिट्टी की गुणवत्ता का विश्लेषण...");
+  }
 
   // Show AnalyzingState screen while analyzing
-  if (analyzing) {
+  if (isAnalyzing) {
     return (
       <Card className="max-w-md mx-auto overflow-hidden p-6">
-        <AnalyzingState previewImage={preview} onCancel={resetUpload} />
+        <AnalyzingState 
+          previewImage={preview} 
+          onCancel={resetUpload} 
+          message={loadingText}
+        />
       </Card>
     );
   }
 
-  const displayError = uploadError || analyzeError;
+  const displayError = uploadError || analyzeError || identifyError || landError;
+
+  const handleRetry = () => {
+    if (uploadResult?.upload_id) {
+      if (scanType === "disease") {
+        analyzeImage(uploadResult.upload_id);
+      } else if (scanType === "plant") {
+        identifyPlant(uploadResult.upload_id);
+      } else if (scanType === "land") {
+        analyzeLand(uploadResult.upload_id);
+      } else {
+        analyzeImage(uploadResult.upload_id);
+      }
+    } else {
+      handleUpload();
+    }
+  };
+
+  const getButtonText = () => {
+    if (scanType === "disease") return t("Analyze Disease →", "रोग विश्लेषण →");
+    if (scanType === "plant") return t("Identify Plant →", "पौधे की पहचान →");
+    if (scanType === "land") return t("Analyze Soil →", "मिट्टी की जाँच →");
+    return t("Analyze →", "विश्लेषण करें →");
+  };
 
   return (
     <Card className="max-w-md mx-auto overflow-hidden p-6">
@@ -64,9 +115,9 @@ const ImagePreview = ({
 
         {/* Action Buttons */}
         <div className="flex flex-col gap-2.5 mt-2">
-          {analyzeError ? (
+          {analyzeError || identifyError || landError ? (
             <Button
-              onClick={() => uploadResult?.upload_id ? analyzeImage(uploadResult.upload_id) : handleUpload()}
+              onClick={handleRetry}
               variant="primary"
               fullWidth
             >
@@ -79,7 +130,7 @@ const ImagePreview = ({
               variant="primary"
               fullWidth
             >
-              {t("Analyze This Crop →", "फसल की जाँच करें →")}
+              {getButtonText()}
             </Button>
           )}
 

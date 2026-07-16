@@ -128,3 +128,92 @@ async def predict_disease(image_path: str) -> dict:
             raise e
         raise HTTPException(status_code=500, detail=f"ML prediction failed: {str(e)}")
 
+
+async def identify_plant(image_path: str) -> dict:
+    if not os.path.exists(image_path):
+        raise HTTPException(status_code=404, detail="Image file not found")
+
+    try:
+        with open(image_path, "rb") as f:
+            image_bytes = f.read()
+    except Exception:
+        raise HTTPException(status_code=404, detail="Image file not found")
+
+    try:
+        url = f"{settings.ml_service_url.rstrip('/')}/identify"
+        files = {"file": ("image.jpg", image_bytes, "image/jpeg")}
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, files=files, timeout=30.0)
+            
+        if response.status_code != 200:
+            raise HTTPException(status_code=503, detail="Plant identification unavailable")
+            
+        data = response.json()
+        
+        if data.get("status") == "low_confidence":
+            return {
+                "status": "low_confidence",
+                "message": data.get("message"),
+                "confidence": data.get("confidence"),
+                "plant_name": data.get("best_guess") or "Unknown Plant"
+            }
+            
+        if data.get("status") == "success":
+            return {
+                "status": "success",
+                "plant_name": data.get("plant_name"),
+                "scientific_name": data.get("scientific_name"),
+                "family": data.get("family"),
+                "confidence": data.get("confidence")
+            }
+            
+        return data
+        
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=503, detail="Plant identification service error")
+
+
+async def analyze_land(image_path: str) -> dict:
+    if not os.path.exists(image_path):
+        raise HTTPException(status_code=404, detail="Image file not found")
+
+    try:
+        with open(image_path, "rb") as f:
+            image_bytes = f.read()
+    except Exception:
+        raise HTTPException(status_code=404, detail="Image file not found")
+
+    try:
+        url = f"{settings.ml_service_url.rstrip('/')}/land"
+        files = {"file": ("image.jpg", image_bytes, "image/jpeg")}
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, files=files, timeout=60.0)
+            
+        if response.status_code != 200:
+            raise HTTPException(status_code=503, detail="Land analysis service unavailable")
+            
+        data = response.json()
+        
+        return {
+            "status": "success",
+            "soil_type": data.get("soil_type"),
+            "soil_color": data.get("soil_color"),
+            "estimated_ph": data.get("estimated_ph"),
+            "moisture_level": data.get("moisture_level"),
+            "fertility": data.get("fertility"),
+            "best_crops": data.get("best_crops"),
+            "avoid_crops": data.get("avoid_crops"),
+            "fertilizer_recommendation": data.get("fertilizer_recommendation"),
+            "irrigation_advice": data.get("irrigation_advice"),
+            "soil_improvement_tips": data.get("soil_improvement_tips")
+        }
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=503, detail="Land analysis service error")
+
+

@@ -7,6 +7,8 @@ import ScanPage from "./features/scan/ScanPage";
 import HistoryPage from "./features/history/HistoryPage";
 import ProfilePage from "./features/profile/ProfilePage";
 import ResultPage from "./features/result/ResultPage";
+import PlantResultPage from "./features/result/PlantResultPage";
+import LandResultPage from "./features/result/LandResultPage";
 import AdvisoryPage from "./features/advisory/AdvisoryPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -59,6 +61,20 @@ const AnimatedRoutes = () => {
           <ProtectedRoute>
             <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition}>
               <ResultPage />
+            </motion.div>
+          </ProtectedRoute>
+        } />
+        <Route path="/plant-result/:uploadId" element={
+          <ProtectedRoute>
+            <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition}>
+              <PlantResultPage />
+            </motion.div>
+          </ProtectedRoute>
+        } />
+        <Route path="/land-result/:uploadId" element={
+          <ProtectedRoute>
+            <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition}>
+              <LandResultPage />
             </motion.div>
           </ProtectedRoute>
         } />

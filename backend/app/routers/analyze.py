@@ -186,6 +186,9 @@ async def get_scan_details(
     return {
         "upload_id": str(scan["_id"]),
         "status": scan.get("status"),
+        "scan_type": scan.get("scan_type"),
+        "plant_result": scan.get("plant_result"),
+        "land_result": scan.get("land_result"),
         "crop": scan.get("crop"),
         "disease": scan.get("disease"),
         "confidence": scan.get("confidence"),

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Button from "../../../components/ui/Button";
 import { useLanguage } from "../../../context/LanguageContext";
 
-const AnalyzingState = ({ previewImage, onCancel }) => {
+const AnalyzingState = ({ previewImage, onCancel, message }) => {
   const { t } = useLanguage();
   const [tipIndex, setTipIndex] = useState(0);
 
@@ -67,7 +67,7 @@ const AnalyzingState = ({ previewImage, onCancel }) => {
 
       {/* Main text */}
       <h3 className="text-xl font-extrabold text-emerald-950 mb-2">
-        {t("Analyzing crop health...", "फसल स्वास्थ्य का विश्लेषण...")}
+        {message || t("Analyzing crop health...", "फसल स्वास्थ्य का विश्लेषण...")}
       </h3>
       <p className="text-sm text-emerald-700/80 mb-8">
         {t("This will take just a few seconds.", "इसमें कुछ ही सेकंड लगेंगे।")}
