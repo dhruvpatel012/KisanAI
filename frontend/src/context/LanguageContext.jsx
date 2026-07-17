@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import api from "../lib/axios";
 
 const LanguageContext = createContext();
@@ -133,23 +133,8 @@ export const LanguageProvider = ({ children }) => {
     return localStorage.getItem("kisanai_lang") || "en";
   });
 
-  useEffect(() => {
-    const syncProfileLanguage = async () => {
-      const token = localStorage.getItem("kisanai_token");
-      if (!token) return;
-      try {
-        const response = await api.get("/auth/me");
-        const userLang = response.data.preferred_language || "en";
-        if (userLang !== language) {
-          setLanguageState(userLang);
-          localStorage.setItem("kisanai_lang", userLang);
-        }
-      } catch (err) {
-        console.error("Failed to sync language from profile:", err);
-      }
-    };
-    syncProfileLanguage();
-  }, []);
+
+
 
   const setLanguage = async (newLang) => {
     setLanguageState(newLang);
@@ -157,12 +142,18 @@ export const LanguageProvider = ({ children }) => {
     const token = localStorage.getItem("kisanai_token");
     if (token) {
       try {
-        const profileResponse = await api.get("/auth/me");
+        // Use cached profile to avoid an extra GET call
+        const cached = JSON.parse(localStorage.getItem("kisanai_profile") || "{}");
         await api.put("/auth/profile", {
-          full_name: profileResponse.data.full_name || "Kisan Farmer",
+          full_name: cached.full_name || "Kisan Farmer",
           preferred_language: newLang,
-          farm_location: profileResponse.data.farm_location || ""
+          farm_location: cached.farm_location || "",
+          avatar_url: cached.avatar_url || ""
         });
+        // Update cached profile preferred_language too
+        if (cached.full_name !== undefined) {
+          localStorage.setItem("kisanai_profile", JSON.stringify({ ...cached, preferred_language: newLang }));
+        }
       } catch (err) {
         console.error("Failed to update language on backend:", err);
       }

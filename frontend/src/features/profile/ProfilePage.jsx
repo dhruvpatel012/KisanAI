@@ -14,15 +14,18 @@ const ProfilePage = () => {
   const { isDark, toggleTheme } = useTheme();
   const avatarInputRef = useRef(null);
   
-  const [profile, setProfile] = useState({
-    full_name: "",
-    email: "",
-    preferred_language: "en",
-    farm_location: "",
-    avatar_url: ""
+  const [profile, setProfile] = useState(() => {
+    // Instant load from cache while real data fetches
+    try {
+      const cached = localStorage.getItem("kisanai_profile");
+      if (cached) return JSON.parse(cached);
+    } catch {}
+    return { full_name: "", email: "", preferred_language: "en", farm_location: "", avatar_url: "" };
   });
-  const [scanCount, setScanCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [scanCount, setScanCount] = useState(() => {
+    return parseInt(localStorage.getItem("kisanai_scan_count") || "0", 10);
+  });
+  const [loading, setLoading] = useState(!localStorage.getItem("kisanai_profile"));
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [profileError, setProfileError] = useState(null);
@@ -37,20 +40,29 @@ const ProfilePage = () => {
 
   const fetchProfile = async () => {
     try {
-      setLoading(true);
-      const response = await api.get("/auth/me");
-      setProfile({
-        full_name: response.data.full_name || "",
-        email: response.data.email || "",
-        preferred_language: response.data.preferred_language || "en",
-        farm_location: response.data.farm_location || "",
-        avatar_url: response.data.avatar_url || ""
-      });
-      const scansResponse = await api.get("/api/scans");
-      setScanCount(scansResponse.data.length);
+      // Parallel fetch — both requests fire at the same time
+      const [meResp, scansResp] = await Promise.all([
+        api.get("/auth/me"),
+        api.get("/api/scans")
+      ]);
+      const fresh = {
+        full_name: meResp.data.full_name || "",
+        email: meResp.data.email || "",
+        preferred_language: meResp.data.preferred_language || "en",
+        farm_location: meResp.data.farm_location || "",
+        avatar_url: meResp.data.avatar_url || ""
+      };
+      const count = scansResp.data.length;
+      setProfile(fresh);
+      setScanCount(count);
+      // Cache for instant next load
+      localStorage.setItem("kisanai_profile", JSON.stringify(fresh));
+      localStorage.setItem("kisanai_scan_count", String(count));
     } catch (err) {
       console.error("Failed to load profile:", err);
-      setProfileError(t("Could not retrieve profile information.", "प्रोफ़ाइल जानकारी पुनर्प्राप्त नहीं की जा सकी।"));
+      if (!localStorage.getItem("kisanai_profile")) {
+        setProfileError(t("Could not retrieve profile information.", "प्रोफ़ाइल जानकारी पुनर्प्राप्त नहीं की जा सकी।"));
+      }
     } finally {
       setLoading(false);
     }
@@ -73,13 +85,15 @@ const ProfilePage = () => {
         farm_location: profile.farm_location,
         avatar_url: profile.avatar_url
       });
-      setProfile({
+      const updated = {
         full_name: response.data.full_name,
         email: response.data.email,
         preferred_language: response.data.preferred_language,
         farm_location: response.data.farm_location,
         avatar_url: response.data.avatar_url || ""
-      });
+      };
+      setProfile(updated);
+      localStorage.setItem("kisanai_profile", JSON.stringify(updated));
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
