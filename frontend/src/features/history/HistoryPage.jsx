@@ -220,7 +220,7 @@ const HistoryPage = () => {
         {loading && (
           <div className="flex flex-col gap-3">
             {[1, 2, 3].map((item) => (
-              <div key={item} className="h-20 bg-gray-150 animate-pulse rounded-2xl border border-gray-200" />
+              <div key={item} className="h-20 bg-gray-100 dark:bg-gray-800/50 animate-pulse rounded-2xl border border-gray-200 dark:border-gray-700" />
             ))}
           </div>
         )}
@@ -238,13 +238,13 @@ const HistoryPage = () => {
         {/* EMPTY STATE */}
         {!loading && !error && scans.length === 0 && (
           <Card className="flex flex-col items-center text-center p-8">
-            <div className="w-20 h-20 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-6 text-3xl">
+            <div className="w-20 h-20 rounded-full bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center mb-6 text-3xl">
               🌾
             </div>
-            <h2 className="text-xl font-bold text-gray-950 mb-1">
+            <h2 className="text-xl font-bold text-gray-950 dark:text-white mb-1">
               {t("No Scans Yet", "कोई जाँच नहीं")}
             </h2>
-            <p className="text-xs text-gray-600 mb-6 leading-relaxed">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
               {t("Start by scanning your first crop to diagnose diseases.", "अपनी पहली फसल की जाँच शुरू करें।")}
             </p>
             <Button variant="primary" onClick={() => navigate("/scan")} className="font-bold px-8">
@@ -255,7 +255,7 @@ const HistoryPage = () => {
 
         {/* ACTION BAR */}
         {!loading && !error && scans.length > 0 && (
-          <div className="flex items-center justify-between bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100/60 mb-2">
+          <div className="flex items-center justify-between bg-emerald-50/50 dark:bg-emerald-900/20 p-3 rounded-2xl border border-emerald-100/60 dark:border-emerald-800/40 mb-2">
             {editMode ? (
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-2">
@@ -266,7 +266,7 @@ const HistoryPage = () => {
                     className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
                     id="select-all-checkbox"
                   />
-                  <label htmlFor="select-all-checkbox" className="text-xs font-bold text-emerald-950 cursor-pointer select-none">
+                  <label htmlFor="select-all-checkbox" className="text-xs font-bold text-emerald-950 dark:text-emerald-100 cursor-pointer select-none">
                     {t("Select All", "सभी चुनें")} ({selectedIds.length}/{scans.length})
                   </label>
                 </div>
@@ -296,7 +296,7 @@ const HistoryPage = () => {
               </div>
             ) : (
               <div className="flex items-center justify-between w-full">
-                <span className="text-xs font-bold text-emerald-950 pr-4">
+                <span className="text-xs font-bold text-emerald-950 dark:text-emerald-100 pr-4">
                   {t(`${scans.length} scans saved`, `${scans.length} जाँचें सहेजी गईं`)}
                 </span>
                 <Button
@@ -355,18 +355,18 @@ const HistoryPage = () => {
                       <img
                         src={imgUrl}
                         alt="Crop Thumbnail"
-                        className="w-12 h-12 rounded-xl object-cover border border-emerald-100 flex-shrink-0"
+                        className="w-12 h-12 rounded-xl object-cover border border-emerald-100 dark:border-emerald-800 flex-shrink-0"
                       />
                     ) : scan.scan_type === "plant_identify" ? (
-                      <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center border border-emerald-100/50 flex-shrink-0">
-                        <Leaf size={22} className="text-emerald-600" />
+                      <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center border border-emerald-100/50 dark:border-emerald-800/50 flex-shrink-0">
+                        <Leaf size={22} className="text-emerald-600 dark:text-emerald-400" />
                       </div>
                     ) : scan.scan_type === "land_analysis" ? (
-                      <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center border border-amber-100/50 flex-shrink-0">
-                        <Mountain size={22} className="text-amber-600" />
+                      <div className="w-12 h-12 bg-amber-50 dark:bg-amber-900/30 rounded-xl flex items-center justify-center border border-amber-100/50 dark:border-amber-800/50 flex-shrink-0">
+                        <Mountain size={22} className="text-amber-600 dark:text-amber-400" />
                       </div>
                     ) : (
-                      <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-xl border border-emerald-100/50 flex-shrink-0">
+                      <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center text-xl border border-emerald-100/50 dark:border-emerald-800/50 flex-shrink-0">
                         {getCropEmoji(scan)}
                       </div>
                     )}

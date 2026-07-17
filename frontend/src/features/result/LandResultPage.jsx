@@ -144,10 +144,10 @@ const LandResultPage = () => {
         {/* SECTION 2 — Metrics 2x2 Grid */}
         <div className="grid grid-cols-2 gap-3">
           {/* pH Level */}
-          <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col gap-1.5">
+          <div className="bg-white dark:bg-gray-800/60 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700/50 flex flex-col gap-1.5">
             <div className="flex items-center gap-1.5 text-gray-400">
-              <FlaskConical className="w-4 h-4 text-gray-500" />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+              <FlaskConical className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                 {t("pH Level", "पीएच स्तर")}
               </span>
             </div>
@@ -157,10 +157,10 @@ const LandResultPage = () => {
           </div>
 
           {/* Moisture */}
-          <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col gap-1.5">
+          <div className="bg-white dark:bg-gray-800/60 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700/50 flex flex-col gap-1.5">
             <div className="flex items-center gap-1.5 text-gray-400">
               <Droplets className="w-4 h-4 text-blue-500" />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                 {t("Moisture", "नमी")}
               </span>
             </div>
@@ -170,10 +170,10 @@ const LandResultPage = () => {
           </div>
 
           {/* Fertility */}
-          <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col gap-1.5">
+          <div className="bg-white dark:bg-gray-800/60 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700/50 flex flex-col gap-1.5">
             <div className="flex items-center gap-1.5 text-gray-400">
               <Sprout className="w-4 h-4 text-emerald-500" />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                 {t("Fertility", "उर्वरता")}
               </span>
             </div>
@@ -183,14 +183,14 @@ const LandResultPage = () => {
           </div>
 
           {/* Soil Type */}
-          <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col gap-1.5">
+          <div className="bg-white dark:bg-gray-800/60 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700/50 flex flex-col gap-1.5">
             <div className="flex items-center gap-1.5 text-gray-400">
               <Mountain className="w-4 h-4 text-amber-600" />
-              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-500">
+              <span className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                 {t("Soil Type", "मिट्टी प्रकार")}
               </span>
             </div>
-            <span className="text-sm font-bold text-gray-700 bg-gray-50 px-2 py-0.5 rounded-md inline-block w-fit capitalize">
+            <span className="text-sm font-bold text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700/50 px-2 py-0.5 rounded-md inline-block w-fit capitalize">
               {tDyn(result.soil_type) || t("Unknown", "अज्ञात")}
             </span>
           </div>
@@ -198,16 +198,16 @@ const LandResultPage = () => {
 
         {/* SECTION 3 — Best Crops Card */}
         {result.best_crops && result.best_crops.length > 0 && (
-          <div className="bg-green-50 border border-green-100 rounded-2xl p-4 shadow-sm">
-            <div className="flex items-center gap-2 text-green-800 font-bold mb-2">
-              <Sprout className="w-5 h-5 text-green-600" />
+          <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800/40 rounded-2xl p-4 shadow-sm">
+            <div className="flex items-center gap-2 text-green-800 dark:text-green-300 font-bold mb-2">
+              <Sprout className="w-5 h-5 text-green-600 dark:text-green-400" />
               <span>{t("Recommended Crops", "अनुशंसित फसलें")}</span>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
               {result.best_crops.map((crop, idx) => (
                 <span 
                   key={idx} 
-                  className="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full capitalize"
+                  className="bg-green-100 dark:bg-green-800/40 text-green-800 dark:text-green-200 text-xs font-semibold px-3 py-1 rounded-full capitalize"
                 >
                   {tDyn(crop)}
                 </span>
@@ -218,8 +218,8 @@ const LandResultPage = () => {
 
         {/* SECTION 4 — Avoid Crops Card */}
         {result.avoid_crops && result.avoid_crops.length > 0 && (
-          <div className="bg-red-50 border border-red-100 rounded-2xl p-4 shadow-sm">
-            <div className="flex items-center gap-2 text-red-800 font-bold mb-2">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/40 rounded-2xl p-4 shadow-sm">
+            <div className="flex items-center gap-2 text-red-800 dark:text-red-300 font-bold mb-2">
               <X className="w-5 h-5 text-red-500" />
               <span>{t("Avoid These Crops", "इन फसलों से बचें")}</span>
             </div>
@@ -227,7 +227,7 @@ const LandResultPage = () => {
               {result.avoid_crops.map((crop, idx) => (
                 <span 
                   key={idx} 
-                  className="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full capitalize"
+                  className="bg-red-100 dark:bg-red-800/40 text-red-700 dark:text-red-200 text-xs font-semibold px-3 py-1 rounded-full capitalize"
                 >
                   {tDyn(crop)}
                 </span>
@@ -237,7 +237,7 @@ const LandResultPage = () => {
         )}
 
         {/* SECTION 5 — Recommendations Card */}
-        <Card className="bg-white shadow-sm rounded-2xl p-4 border border-gray-100 flex flex-col gap-4">
+        <Card className="bg-white dark:bg-gray-800/60 shadow-sm rounded-2xl p-4 border border-gray-100 dark:border-gray-700/50 flex flex-col gap-4">
           {/* Fertilizer Advisory */}
           <div>
             <div className="flex items-center gap-2 text-green-600 font-bold">
@@ -246,12 +246,12 @@ const LandResultPage = () => {
                 {t("Fertilizer Advisory", "उर्वरक सलाह")}
               </span>
             </div>
-            <p className="text-sm text-gray-700 mt-1.5 leading-relaxed">
+            <p className="text-sm text-gray-700 dark:text-gray-200 mt-1.5 leading-relaxed">
               {tDyn(result.fertilizer_recommendation) || t("No fertilizer advisory available.", "कोई उर्वरक सलाह उपलब्ध नहीं है।")}
             </p>
           </div>
 
-          <hr className="border-gray-100" />
+          <hr className="border-gray-100 dark:border-gray-700/50" />
 
           {/* Irrigation Advice */}
           <div>
@@ -261,24 +261,24 @@ const LandResultPage = () => {
                 {t("Irrigation Advice", "सिंचाई सलाह")}
               </span>
             </div>
-            <p className="text-sm text-gray-700 mt-1.5 leading-relaxed">
+            <p className="text-sm text-gray-700 dark:text-gray-200 mt-1.5 leading-relaxed">
               {tDyn(result.irrigation_advice) || t("No irrigation advice available.", "कोई सिंचाई सलाह उपलब्ध नहीं है।")}
             </p>
           </div>
 
           {result.soil_improvement_tips && result.soil_improvement_tips.length > 0 && (
             <>
-              <hr className="border-gray-100" />
+              <hr className="border-gray-100 dark:border-gray-700/50" />
               {/* Soil Improvement Tips */}
               <div>
-                <span className="text-xs font-extrabold text-amber-600 uppercase tracking-wide mb-1.5 block">
+                <span className="text-xs font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-wide mb-1.5 block">
                   {t("Improvement Tips", "सुधार के उपाय")}
                 </span>
                 <div className="flex flex-col gap-2 mt-1">
                   {result.soil_improvement_tips.map((tip, idx) => (
                     <div key={idx} className="flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700 leading-normal">{tDyn(tip)}</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-200 leading-normal">{tDyn(tip)}</span>
                     </div>
                   ))}
                 </div>
