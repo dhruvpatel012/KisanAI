@@ -171,14 +171,17 @@ export const LanguageProvider = ({ children }) => {
     return translationDictionary[key] || text;
   };
 
-  // Dynamic translation for API values — handles comma-separated lists too
+  // Dynamic translation for API values — handles comma-separated lists and semantic phrase matching
   const tDyn = (text) => {
     if (!text) return text;
     if (language !== "hi") return text;
     const key = text.trim().toLowerCase().replace(/\s+/g, " ");
+    
+    // 1. Check exact match in dictionary first
     if (translationDictionary[key]) return translationDictionary[key];
-    // Try translating word-by-word in comma-separated lists
-    if (text.includes(",")) {
+    
+    // 2. Comma-separated lists (like crops)
+    if (text.includes(",") && !text.includes(".")) {
       return text.split(",")
         .map(w => {
           const wk = w.trim().toLowerCase();
@@ -186,6 +189,66 @@ export const LanguageProvider = ({ children }) => {
         })
         .join(", ");
     }
+    
+    // 3. Semantic keyword/phrase matching for treatment steps
+    if (key.includes("remove infected leaves") || key.includes("remove and destroy infected leaves") || key.includes("remove infected fruit") || key.includes("remove infected fruits")) {
+      return "संक्रमित पत्तियों और फलों को तुरंत हटाकर नष्ट कर दें (प्रसार रोकने के लिए)";
+    }
+    if (key.includes("remove all infected plants") || key.includes("remove and dispose of infected plants") || key.includes("remove infected plants") || key.includes("remove and destroy infected plants")) {
+      return "सभी संक्रमित पौधों को तुरंत उखाड़कर नष्ट कर दें";
+    }
+    if (key.includes("fungicide containing chlorothalonil") || key.includes("fungicide containing copper") || key.includes("apply copper-based fungicide") || key.includes("apply a fungicide") || key.includes("copper oxychloride")) {
+      return "कवकनाशी (तांबा या क्लोरोथैलोनिल युक्त) का छिड़काव करें";
+    }
+    if (key.includes("improve air circulation") || key.includes("pruning nearby vegetation") || key.includes("adequate spacing")) {
+      return "पौधों के आसपास हवा के संचार में सुधार करें (छंटाई करें और उचित दूरी रखें)";
+    }
+    if (key.includes("disinfect tools") || key.includes("bleach solution")) {
+      return "उपकरणों और औजारों को 1% या 10% ब्लीच समाधान से विसंक्रमित करें";
+    }
+    if (key.includes("insecticidal soap") || key.includes("neem oil") || key.includes("whiteflies") || key.includes("thrips") || key.includes("aphids")) {
+      return "कीटों (सफेद मक्खी/थ्रिप्स) को नियंत्रित करने के लिए नीम तेल या कीटनाशक साबुन लगाएं";
+    }
+    if (key.includes("virus-free seed source") || key.includes("resistant varieties")) {
+      return "रोग प्रतिरोधी किस्मों और वायरस-मुक्त प्रमाणित बीजों का उपयोग करें";
+    }
+    
+    // 4. Semantic keyword/phrase matching for fertilizer
+    if (key.includes("avoid using high-nitrogen") || key.includes("avoid high-nitrogen") || key.includes("avoid high nitrogen") || key.includes("exacerbate")) {
+      return "अत्यधिक नाइट्रोजन वाले उर्वरकों से बचें, यह रोग बढ़ा सकता है; संतुलित एनपीके (NPK) खाद का उपयोग करें";
+    }
+    if (key.includes("maintain regular fertilization") || key.includes("balanced fertilizer")) {
+      return "संतुलित एनपीके (10-10-10) उर्वरक के साथ नियमित खाद देना जारी रखें";
+    }
+    if (key.includes("no specific fertilizer") || key.includes("no fertilizer application")) {
+      return "किसी विशिष्ट उर्वरक परिवर्तन की आवश्यकता नहीं है, संतुलित पोषण देना जारी रखें";
+    }
+    
+    // 5. Semantic keyword/phrase matching for prevention
+    if (key.includes("maintain good sanitation") || key.includes("good sanitation practices") || key.includes("removing weeds")) {
+      return "खेत में अच्छी साफ-सफाई रखें, खरपतवारों और मलबे को नियमित रूप से हटाएं";
+    }
+    if (key.includes("crop rotation") || key.includes("rotate crops") || key.includes("disease cycle") || key.includes("break the disease")) {
+      return "फसल चक्र (क्रॉप रोटेशन) अपनाएं ताकि रोग का चक्र टूट सके";
+    }
+    if (key.includes("avoid overhead irrigation") || key.includes("proper watering") || key.includes("irrigation practices")) {
+      return "ऊपर से पानी देने (छिड़काव) से बचें ताकि पत्तियों पर अधिक नमी न रहे";
+    }
+    
+    // 6. Disease names
+    if (key.includes("tomato septoria leaf spot") || key.includes("septoria")) {
+      return "टमाटर का सेप्टोरिया पत्ता धब्बा रोग (Septoria Leaf Spot)";
+    }
+    if (key.includes("tomato tomato mosaic virus") || key.includes("mosaic virus")) {
+      return "टमाटर का मोज़ेक वायरस रोग (Tomato Mosaic Virus)";
+    }
+    if (key.includes("potato late blight")) {
+      return "आलू का पछेती झुलसा रोग (Late Blight)";
+    }
+    if (key.includes("potato early blight")) {
+      return "आलू का अगेती झुलसा रोग (Early Blight)";
+    }
+    
     return text;
   };
 

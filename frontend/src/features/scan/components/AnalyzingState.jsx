@@ -66,16 +66,16 @@ const AnalyzingState = ({ previewImage, onCancel, message }) => {
       </div>
 
       {/* Main text */}
-      <h3 className="text-xl font-extrabold text-emerald-950 mb-2">
+      <h3 className="text-xl font-extrabold text-emerald-950 dark:text-white mb-2">
         {message || t("Analyzing crop health...", "फसल स्वास्थ्य का विश्लेषण...")}
       </h3>
-      <p className="text-sm text-emerald-700/80 mb-8">
+      <p className="text-sm text-emerald-700/80 dark:text-emerald-300/80 mb-8">
         {t("This will take just a few seconds.", "इसमें कुछ ही सेकंड लगेंगे।")}
       </p>
 
       {/* Rotating tips */}
-      <div className="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 w-full mb-8 min-h-[76px] flex items-center justify-center transition-all duration-300">
-        <p className="text-sm font-semibold text-emerald-800 animate-pulse">
+      <div className="bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800/40 rounded-2xl p-4 w-full mb-8 min-h-[76px] flex items-center justify-center transition-all duration-300">
+        <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300 animate-pulse">
           {t(tips[tipIndex].en, tips[tipIndex].hi)}
         </p>
       </div>
@@ -84,7 +84,7 @@ const AnalyzingState = ({ previewImage, onCancel, message }) => {
       <Button
         variant="secondary"
         onClick={onCancel}
-        className="px-6 py-2 text-emerald-700 font-bold border-emerald-200 hover:bg-emerald-50"
+        className="px-6 py-2 text-emerald-700 dark:text-emerald-300 font-bold border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
       >
         {t("Cancel", "रद्द करें")}
       </Button>

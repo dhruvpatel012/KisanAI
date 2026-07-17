@@ -203,7 +203,7 @@ const ResultPage = () => {
               {t("Advisory", "सलाह")}:
             </h4>
             <p className="text-xs text-emerald-700 leading-relaxed">
-              {dt("No disease symptoms detected. Keep maintaining standard balanced fertilizer, regular watering, and good crop rotation practices.")}
+              {tDyn("No disease symptoms detected. Keep maintaining standard balanced fertilizer, regular watering, and good crop rotation practices.")}
             </p>
           </div>
 
@@ -304,14 +304,14 @@ const ResultPage = () => {
                 <AlertTriangle size={16} className="text-red-500" />
                 {t("Detected Disease", "बीमारी")}
               </span>
-              <h2 className="text-xl font-extrabold text-emerald-950 mt-0.5 leading-snug">
-                {dt(scanData.disease)}
+              <h2 className="text-xl font-extrabold text-emerald-950 dark:text-white mt-0.5 leading-snug">
+                {tDyn(scanData.disease)}
               </h2>
               <div className="flex items-center gap-2 mt-2">
-                <span className="text-xs font-semibold text-gray-500">
-                  {t("Crop:", "फसल:")} {dt(scanData.crop)}
+                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                  {t("Crop:", "फसल:")} <span className="text-gray-800 dark:text-gray-200">{tDyn(scanData.crop)}</span>
                 </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-gray-300" />
+                <span className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700" />
                 <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${getSeverityColor(scanData.severity)}`}>
                   {getSeverityLabel(scanData.severity)}
                 </span>
@@ -399,7 +399,7 @@ const ResultPage = () => {
                       className="flex gap-3 items-start bg-emerald-50/30 dark:bg-emerald-950/10 border border-emerald-100/50 dark:border-emerald-900/30 rounded-xl p-3 animate-[slideInUp_0.3s_ease_both]"
                     >
                       <span className="text-emerald-600 mt-0.5 text-sm font-extrabold">✓</span>
-                      <p className="text-xs text-emerald-900 dark:text-emerald-200 font-medium leading-relaxed">{dt(step)}</p>
+                      <p className="text-xs text-emerald-900 dark:text-emerald-200 font-medium leading-relaxed">{tDyn(step)}</p>
                     </div>
                   ))
                 ) : (
@@ -421,7 +421,7 @@ const ResultPage = () => {
                       className="flex gap-3 items-start bg-rose-50/20 dark:bg-rose-950/10 border border-rose-100/40 dark:border-rose-900/20 rounded-xl p-3 animate-[slideInUp_0.3s_ease_both]"
                     >
                       <span className="text-rose-500 mt-0.5 text-sm font-extrabold">⚠</span>
-                      <p className="text-xs text-rose-950 dark:text-rose-200 font-medium leading-relaxed">{dt(step)}</p>
+                      <p className="text-xs text-rose-950 dark:text-rose-200 font-medium leading-relaxed">{tDyn(step)}</p>
                     </div>
                   ))
                 ) : (
@@ -449,7 +449,7 @@ const ResultPage = () => {
                 <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase">
                   {t("Fertilizer Advisory", "खाद सलाह")}
                 </span>
-                <p className="text-xs text-emerald-950 dark:text-emerald-200 font-medium mt-1 leading-relaxed">{dt(scanData.fertilizer)}</p>
+                <p className="text-xs text-emerald-950 dark:text-emerald-200 font-medium mt-1 leading-relaxed">{tDyn(scanData.fertilizer)}</p>
               </div>
             )}
 
@@ -458,7 +458,7 @@ const ResultPage = () => {
                 <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase">
                   {t("Prevention Plan", "बचाव योजना")}
                 </span>
-                <p className="text-xs text-emerald-950 dark:text-emerald-200 font-medium mt-1 leading-relaxed">{dt(scanData.prevention)}</p>
+                <p className="text-xs text-emerald-950 dark:text-emerald-200 font-medium mt-1 leading-relaxed">{tDyn(scanData.prevention)}</p>
               </div>
             )}
           </Card>
@@ -467,20 +467,20 @@ const ResultPage = () => {
         {/* Similar Diseases Section */}
         {scanData.similar_diseases && scanData.similar_diseases.length > 0 && (
           <div className="flex flex-col gap-2.5 animate-fadeSlideUp" style={{ animationDelay: "300ms" }}>
-            <h3 className="text-xs font-bold text-emerald-800 tracking-wider uppercase pl-1">
+            <h3 className="text-xs font-bold text-emerald-800 dark:text-emerald-400 tracking-wider uppercase pl-1">
               {t("Similar Matches", "मिलते-जुलते रोग")}
             </h3>
             <div className="grid grid-cols-2 gap-3">
               {scanData.similar_diseases.map((disease, idx) => (
                 <Card key={idx} className="p-3.5 flex flex-col gap-1.5">
-                  <span className="text-xs font-bold text-emerald-950 truncate">{dt(disease.name)}</span>
+                  <span className="text-xs font-bold text-emerald-950 dark:text-emerald-50 truncate">{tDyn(disease.name)}</span>
                   <div className="flex justify-between items-center text-[10px]">
-                    <span className="font-semibold text-gray-500">{t("Match:", "तुलना:")}</span>
-                    <span className="font-extrabold text-emerald-700">{(disease.confidence * 100).toFixed(1)}%</span>
+                    <span className="font-semibold text-gray-500 dark:text-gray-400">{t("Match:", "तुलना:")}</span>
+                    <span className="font-extrabold text-emerald-700 dark:text-emerald-400">{(disease.confidence * 100).toFixed(1)}%</span>
                   </div>
                   <div className="flex justify-between items-center text-[10px]">
-                    <span className="font-semibold text-gray-500">{t("Risk:", "जोखिम:")}</span>
-                    <span className="font-bold text-amber-700 uppercase">{getSeverityLabel(disease.severity)}</span>
+                    <span className="font-semibold text-gray-500 dark:text-gray-400">{t("Risk:", "जोखिम:")}</span>
+                    <span className="font-bold text-amber-700 dark:text-amber-400 uppercase">{getSeverityLabel(disease.severity)}</span>
                   </div>
                 </Card>
               ))}
@@ -490,8 +490,8 @@ const ResultPage = () => {
 
         {/* Model Disclaimer */}
         {scanData.disclaimer && (
-          <p className="text-[10px] text-center text-emerald-800/50 italic leading-relaxed px-4 mt-2">
-            {dt(scanData.disclaimer)}
+          <p className="text-[10px] text-center text-emerald-800/50 dark:text-emerald-400/50 italic leading-relaxed px-4 mt-2">
+            {tDyn(scanData.disclaimer)}
           </p>
         )}
 
