@@ -100,7 +100,7 @@ const ScanPage = () => {
           <div>
             <button
               onClick={() => setScanType(null)}
-              className="flex items-center gap-2 text-gray-600 mb-4 text-sm font-medium"
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-300 dark:hover:text-white mb-4 text-sm font-medium transition-colors"
             >
               <ArrowLeft size={16} />
               Change Scan Type
@@ -108,17 +108,17 @@ const ScanPage = () => {
 
             <div className="mb-4">
               {scanType === "disease" && (
-                <span className="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                <span className="inline-block px-3 py-1 bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300 text-xs font-semibold rounded-full border border-green-200/50 dark:border-green-800/30">
                   Crop Disease Scanner
                 </span>
               )}
               {scanType === "plant" && (
-                <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded-full">
+                <span className="inline-block px-3 py-1 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-xs font-semibold rounded-full border border-emerald-200/50 dark:border-emerald-800/30">
                   Plant Identifier
                 </span>
               )}
               {scanType === "land" && (
-                <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-semibold rounded-full">
+                <span className="inline-block px-3 py-1 bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs font-semibold rounded-full border border-amber-200/50 dark:border-amber-800/30">
                   Land & Soil Analyzer
                 </span>
               )}

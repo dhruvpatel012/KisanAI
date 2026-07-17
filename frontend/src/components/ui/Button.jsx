@@ -19,8 +19,8 @@ const Button = ({
   
   const variants = {
     primary: "bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white shadow-lg shadow-brand-600/25 hover:shadow-brand-600/40 hover:-translate-y-0.5",
-    secondary: "bg-white border-2 border-brand-600 text-brand-600 hover:bg-brand-50 hover:shadow-md hover:-translate-y-0.5",
-    ghost: "bg-transparent text-brand-600 hover:bg-brand-50",
+    secondary: "bg-white dark:bg-gray-800 border-2 border-brand-600 dark:border-emerald-600 text-brand-600 dark:text-emerald-400 hover:bg-brand-50 dark:hover:bg-gray-700/50 hover:shadow-md hover:-translate-y-0.5",
+    ghost: "bg-transparent text-brand-600 dark:text-emerald-400 hover:bg-brand-50 dark:hover:bg-gray-800/40",
     danger: "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg shadow-red-600/25 hover:shadow-red-600/40 hover:-translate-y-0.5",
   };
 

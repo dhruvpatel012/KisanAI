@@ -90,7 +90,7 @@ const ImagePreview = ({
     <Card className="max-w-md mx-auto overflow-hidden p-6">
       <div className="flex flex-col gap-5">
         <div className="text-center">
-          <h2 className="text-xl font-bold text-gray-800">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white">
             {t("Selected Photo", "चयनित फोटो")}
           </h2>
           <p className="text-sm text-gray-500 mt-1">
@@ -102,7 +102,7 @@ const ImagePreview = ({
         </div>
 
         {/* Local Image Preview Box */}
-        <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-100 border border-gray-200">
+        <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <img
             src={preview}
             alt="Crop Preview"

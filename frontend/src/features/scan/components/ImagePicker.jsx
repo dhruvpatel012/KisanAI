@@ -55,7 +55,7 @@ const ImagePicker = ({ onFileSelect, error }) => {
       />
 
       {/* UPLOAD CARD */}
-      <Card className="flex flex-col items-center text-center p-6 bg-gradient-to-b from-white to-green-50/30 border border-green-100/60 shadow-sm rounded-3xl">
+      <Card className="flex flex-col items-center text-center p-6 bg-gradient-to-b from-white to-green-50/30 dark:from-gray-900 dark:to-emerald-950/10 border border-green-100/60 dark:border-emerald-800/40 shadow-sm rounded-3xl">
         {/* Viewfinder corner brackets container */}
         <div className="relative w-28 h-28 flex items-center justify-center mb-5 mt-2 animate-pulse">
           {/* Corner Brackets */}
@@ -115,7 +115,7 @@ const ImagePicker = ({ onFileSelect, error }) => {
       </Card>
 
       {/* TIPS CARD */}
-      <Card className="p-5 bg-white border border-gray-100">
+      <Card className="p-5 bg-white dark:bg-gray-900/60 border border-gray-100 dark:border-gray-800/50">
         <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
           <Lightbulb size={16} className="text-green-600 dark:text-green-400 mr-2" />
           {t("Tips for Accurate Scan", "सही जाँच के सुझाव")}
