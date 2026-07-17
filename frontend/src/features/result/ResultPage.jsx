@@ -179,7 +179,7 @@ const ResultPage = () => {
   // CASE 2: Healthy Crop Response
   if (scanData.is_healthy) {
     return (
-      <PageLayout title={t("Healthy Crop", "स्वस्वस्थ फसल")} showBack={true}>
+      <PageLayout title={t("Healthy Crop", "स्वस्थ फसल")} showBack={true}>
         <Card className="max-w-md mx-auto p-6 flex flex-col items-center gap-6 text-center">
           <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center border border-emerald-100 shadow-sm animate-bounce" style={{ animationDuration: "3s" }}>
             <CheckCircle size={40} className="text-emerald-600 dark:text-emerald-400" />
@@ -187,10 +187,10 @@ const ResultPage = () => {
 
           <div>
             <h2 className="text-2xl font-extrabold text-emerald-950">
-              {dt(scanData.crop)} {t("is Healthy!", "स्वस्थ है!")}
+              {tDyn(scanData.crop)} {t("is Healthy!", "स्वस्थ है!")}
             </h2>
             <Badge variant="success" className="mt-2.5 font-bold uppercase text-xs">
-              {t("Healthy", "स्वस्वस्थ")}
+              {t("Healthy", "स्वस्थ")}
             </Badge>
           </div>
 
