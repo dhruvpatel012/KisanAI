@@ -85,8 +85,8 @@ async def plant_identify(
         if saved_filename and saved_filename.startswith("data:") and temp_file_path and os.path.exists(temp_file_path):
             try:
                 os.remove(temp_file_path)
-            except Exception as e:
-                print("Failed to remove temp file:", e)
+            except Exception:
+                pass
     
     await database["scans"].update_one(
         {"_id": ObjectId(upload_id)},
@@ -164,8 +164,8 @@ async def land_analyze(
         if saved_filename and saved_filename.startswith("data:") and temp_file_path and os.path.exists(temp_file_path):
             try:
                 os.remove(temp_file_path)
-            except Exception as e:
-                print("Failed to remove temp file:", e)
+            except Exception:
+                pass
     
     await database["scans"].update_one(
         {"_id": ObjectId(upload_id)},

@@ -53,7 +53,6 @@ export const useAnalyze = () => {
       setAnalysisResult(response.data);
       navigate(`/result/${uploadId}`);
     } catch (err) {
-      console.error("Analysis error details:", err);
       const backendError = err.response?.data?.detail;
       setError(backendError || t("Failed to analyze image. Please try again.", "छवि का विश्लेषण करने में विफल। कृपया पुनः प्रयास करें।"));
     } finally {

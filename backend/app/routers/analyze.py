@@ -98,8 +98,8 @@ async def analyze_crop(
         if saved_filename and saved_filename.startswith("data:") and temp_file_path and os.path.exists(temp_file_path):
             try:
                 os.remove(temp_file_path)
-            except Exception as e:
-                print("Failed to remove temp file:", e)
+            except Exception:
+                pass
     
     # Update MongoDB scan record
     if ml_result.get("status") == "low_confidence":

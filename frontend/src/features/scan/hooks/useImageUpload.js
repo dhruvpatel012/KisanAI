@@ -61,7 +61,6 @@ export const useImageUpload = () => {
       });
       setUploadResult(response.data);
     } catch (err) {
-      console.error("Upload error details:", err);
       const backendError = err.response?.data?.detail;
       setError(backendError || t("Failed to upload image. Please try again.", "छवि अपलोड करने में विफल। कृपया पुन: प्रयास करें।"));
     } finally {

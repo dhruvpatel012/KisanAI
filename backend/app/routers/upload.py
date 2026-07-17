@@ -4,7 +4,6 @@ from app.utils.jwt import verify_token
 from app.config import settings
 from app.database import database
 import os
-import uuid
 from datetime import datetime, timezone
 
 router = APIRouter(tags=["Upload"])

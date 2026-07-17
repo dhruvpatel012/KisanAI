@@ -39,4 +39,8 @@ backend/local_db/
 backend/uploads/*
 !backend/uploads/.gitkeep
 
+# Model Weight Files
+*.pth
+*.pt
+
 
