@@ -34,7 +34,7 @@ const WEATHER_CODE_MAPPING = {
 
 const DashboardPage = () => {
   const navigate = useNavigate();
-  const { t, dt } = useLanguage();
+  const { t, dt, tDyn } = useLanguage();
   const [timeOfDay, setTimeOfDay] = useState("morning");
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -226,17 +226,17 @@ const DashboardPage = () => {
     if (scan.scan_type === "land_analysis") {
       const soilType = scan.land_result?.soil_type;
       return soilType
-        ? `${soilType.charAt(0).toUpperCase() + soilType.slice(1)} Soil`
+        ? `${tDyn(soilType).charAt(0).toUpperCase() + tDyn(soilType).slice(1)} Soil`
         : t("Land Analysis", "भूमि विश्लेषण");
     }
-    return dt(scan.crop) || t("Unknown", "अज्ञात");
+    return tDyn(scan.crop) || t("Unknown", "अज्ञात");
   };
 
   const getScanSubtitle = (scan) => {
     if (scan.scan_type === "plant_identify") return t("Plant Identifier", "पौधा पहचानकर्ता");
     if (scan.scan_type === "land_analysis") return t("Soil Analyzer", "मिट्टी विश्लेषक");
     if (scan.status === "uploaded") return t("Analyzing...", "विश्लेषण...");
-    return dt(scan.disease) || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"));
+    return tDyn(scan.disease) || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"));
   };
 
   const getCropEmoji = (scan) => {

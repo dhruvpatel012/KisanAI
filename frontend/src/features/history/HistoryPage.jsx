@@ -11,7 +11,7 @@ import { ChevronRight, Trash2, Pencil, Clock, AlertCircle, CheckCircle2, Leaf, M
 
 const HistoryPage = () => {
   const navigate = useNavigate();
-  const { t, dt } = useLanguage();
+  const { t, dt, tDyn } = useLanguage();
 
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -105,11 +105,11 @@ const HistoryPage = () => {
     if (scan.scan_type === "land_analysis") {
       const soilType = scan.land_result?.soil_type;
       return soilType
-        ? `${soilType.charAt(0).toUpperCase() + soilType.slice(1)} Soil`
+        ? `${tDyn(soilType).charAt(0).toUpperCase() + tDyn(soilType).slice(1)} Soil`
         : t("Land Analysis", "भूमि विश्लेषण");
     }
     if (scan.status === "uploaded") return t("Analyzing...", "विश्लेषण...");
-    return dt(scan.disease) || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"));
+    return tDyn(scan.disease) || (scan.status === "low_confidence" ? t("Unclear Image", "अस्पष्ट चित्र") : t("Healthy", "स्वस्थ"));
   };
 
   const getScanSubtitle = (scan) => {
@@ -119,7 +119,7 @@ const HistoryPage = () => {
     if (scan.scan_type === "land_analysis") {
       return t("Land & Soil Analyzer", "भूमि और मिट्टी विश्लेषक");
     }
-    return scan.crop ? dt(scan.crop) : null;
+    return scan.crop ? tDyn(scan.crop) : null;
   };
 
   const getSeverityVariant = (scan) => {
