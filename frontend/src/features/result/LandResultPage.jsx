@@ -21,7 +21,7 @@ import {
 const LandResultPage = () => {
   const { uploadId } = useParams();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, tDyn } = useLanguage();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -131,11 +131,11 @@ const LandResultPage = () => {
               {t("SOIL ANALYSIS RESULTS", "मिट्टी विश्लेषण परिणाम")}
             </span>
             <h2 className="text-2xl font-bold text-white leading-tight capitalize">
-              {result.soil_type}
+              {tDyn(result.soil_type)}
             </h2>
             {result.soil_color && (
               <p className="text-amber-200 text-sm mt-1">
-                {result.soil_color}
+                {tDyn(result.soil_color)}
               </p>
             )}
           </div>
@@ -152,7 +152,7 @@ const LandResultPage = () => {
               </span>
             </div>
             <span className={`text-sm font-bold capitalize ${getPhColor(result.estimated_ph)} px-2 py-0.5 rounded-md inline-block w-fit`}>
-              {result.estimated_ph || t("Unknown", "अज्ञात")}
+              {tDyn(result.estimated_ph) || t("Unknown", "अज्ञात")}
             </span>
           </div>
 
@@ -165,7 +165,7 @@ const LandResultPage = () => {
               </span>
             </div>
             <span className={`text-sm font-bold capitalize ${getMoistureColor(result.moisture_level)} px-2 py-0.5 rounded-md inline-block w-fit`}>
-              {result.moisture_level || t("Unknown", "अज्ञात")}
+              {tDyn(result.moisture_level) || t("Unknown", "अज्ञात")}
             </span>
           </div>
 
@@ -178,7 +178,7 @@ const LandResultPage = () => {
               </span>
             </div>
             <span className={`text-sm font-bold capitalize ${getFertilityColor(result.fertility)} px-2 py-0.5 rounded-md inline-block w-fit`}>
-              {result.fertility || t("Unknown", "अज्ञात")}
+              {tDyn(result.fertility) || t("Unknown", "अज्ञात")}
             </span>
           </div>
 
@@ -191,7 +191,7 @@ const LandResultPage = () => {
               </span>
             </div>
             <span className="text-sm font-bold text-gray-700 bg-gray-50 px-2 py-0.5 rounded-md inline-block w-fit capitalize">
-              {result.soil_type || t("Unknown", "अज्ञात")}
+              {tDyn(result.soil_type) || t("Unknown", "अज्ञात")}
             </span>
           </div>
         </div>
@@ -209,7 +209,7 @@ const LandResultPage = () => {
                   key={idx} 
                   className="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full capitalize"
                 >
-                  {crop}
+                  {tDyn(crop)}
                 </span>
               ))}
             </div>
@@ -229,7 +229,7 @@ const LandResultPage = () => {
                   key={idx} 
                   className="bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full capitalize"
                 >
-                  {crop}
+                  {tDyn(crop)}
                 </span>
               ))}
             </div>
@@ -247,7 +247,7 @@ const LandResultPage = () => {
               </span>
             </div>
             <p className="text-sm text-gray-700 mt-1.5 leading-relaxed">
-              {result.fertilizer_recommendation || t("No fertilizer advisory available.", "कोई उर्वरक सलाह उपलब्ध नहीं है।")}
+              {tDyn(result.fertilizer_recommendation) || t("No fertilizer advisory available.", "कोई उर्वरक सलाह उपलब्ध नहीं है।")}
             </p>
           </div>
 
@@ -262,7 +262,7 @@ const LandResultPage = () => {
               </span>
             </div>
             <p className="text-sm text-gray-700 mt-1.5 leading-relaxed">
-              {result.irrigation_advice || t("No irrigation advice available.", "कोई सिंचाई सलाह उपलब्ध नहीं है।")}
+              {tDyn(result.irrigation_advice) || t("No irrigation advice available.", "कोई सिंचाई सलाह उपलब्ध नहीं है।")}
             </p>
           </div>
 
@@ -278,7 +278,7 @@ const LandResultPage = () => {
                   {result.soil_improvement_tips.map((tip, idx) => (
                     <div key={idx} className="flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700 leading-normal">{tip}</span>
+                      <span className="text-sm text-gray-700 leading-normal">{tDyn(tip)}</span>
                     </div>
                   ))}
                 </div>

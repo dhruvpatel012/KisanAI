@@ -13,7 +13,7 @@ import { AlertTriangle, CheckCircle, Leaf, Pill, ShieldCheck, ScanLine, Home } f
 const ResultPage = () => {
   const { uploadId } = useParams();
   const navigate = useNavigate();
-  const { t, dt } = useLanguage();
+  const { t, dt, tDyn } = useLanguage();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
