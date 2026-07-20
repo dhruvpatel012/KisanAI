@@ -266,7 +266,7 @@ const LandResultPage = () => {
             </p>
           </div>
 
-          {result.soil_improvement_tips && result.soil_improvement_tips.length > 0 && (
+          {result.soil_improvement_tips && (Array.isArray(result.soil_improvement_tips) ? result.soil_improvement_tips.length > 0 : Boolean(result.soil_improvement_tips)) && (
             <>
               <hr className="border-gray-100 dark:border-gray-700/50" />
               {/* Soil Improvement Tips */}
@@ -275,7 +275,10 @@ const LandResultPage = () => {
                   {t("Improvement Tips", "सुधार के उपाय")}
                 </span>
                 <div className="flex flex-col gap-2 mt-1">
-                  {result.soil_improvement_tips.map((tip, idx) => (
+                  {(Array.isArray(result.soil_improvement_tips)
+                    ? result.soil_improvement_tips
+                    : [result.soil_improvement_tips]
+                  ).map((tip, idx) => (
                     <div key={idx} className="flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                       <span className="text-sm text-gray-700 dark:text-gray-200 leading-normal">{tDyn(tip)}</span>
