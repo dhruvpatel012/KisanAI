@@ -157,36 +157,37 @@ async def identify_plant(image_path: str) -> dict:
             
         if response.status_code == 200:
             data = response.json()
-            if not data.get("error"):
-                if data.get("status") == "low_confidence":
-                    return {
-                        "status": "low_confidence",
-                        "message": data.get("message"),
-                        "confidence": data.get("confidence"),
-                        "plant_name": data.get("best_guess") or "Unknown Plant"
-                    }
-                if data.get("status") == "success":
-                    return {
-                        "status": "success",
-                        "plant_name": data.get("plant_name"),
-                        "scientific_name": data.get("scientific_name"),
-                        "family": data.get("family"),
-                        "confidence": data.get("confidence")
-                    }
-                return data
+            if data.get("error"):
+                error_msg = data.get("error", "")
+                if "401" in error_msg:
+                    raise HTTPException(
+                        status_code=503,
+                        detail="Plant identification service quota exceeded. Please try again later."
+                    )
+                raise HTTPException(status_code=503, detail=f"Plant identification failed: {error_msg}")
 
-        print(f"Plant identify API returned status {response.status_code}. Using fallback.")
+            if data.get("status") == "low_confidence":
+                return {
+                    "status": "low_confidence",
+                    "message": data.get("message"),
+                    "confidence": data.get("confidence"),
+                    "plant_name": data.get("best_guess") or "Unknown Plant"
+                }
+            if data.get("status") == "success":
+                return {
+                    "status": "success",
+                    "plant_name": data.get("plant_name"),
+                    "scientific_name": data.get("scientific_name"),
+                    "family": data.get("family"),
+                    "confidence": data.get("confidence")
+                }
+            return data
+
+        raise HTTPException(status_code=503, detail="Plant identification service unavailable")
     except Exception as e:
-        print("Plant identification API error:", str(e))
-
-    # Graceful fallback when HF Space / PlantNet API quota is reached
-    return {
-        "status": "success",
-        "plant_name": "Tomato",
-        "scientific_name": "Solanum lycopersicum",
-        "family": "Solanaceae",
-        "confidence": 0.8950
-    }
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=503, detail="Plant identification service error")
 
 
 async def analyze_land(image_path: str) -> dict:
@@ -243,27 +244,12 @@ async def analyze_land(image_path: str) -> dict:
                 "soil_improvement_tips": tips
             }
 
-        print(f"Land analyze API returned status {response.status_code}. Using fallback.")
+        raise HTTPException(status_code=503, detail="Land analysis service unavailable")
     except Exception as e:
-        print("Land analysis API error:", str(e))
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=503, detail="Land analysis service error")
 
-    # Graceful fallback when HF Space / Groq API error occurs
-    return {
-        "status": "success",
-        "soil_type": "Loamy Soil",
-        "soil_color": "Reddish Brown",
-        "estimated_ph": "6.5 - Slightly Acidic",
-        "moisture_level": "Moderate",
-        "fertility": "Medium to High",
-        "best_crops": ["Soybeans", "Corn (Maize)", "Wheat", "Tomato", "Cotton"],
-        "avoid_crops": ["Paddy Rice (requires clayey flooded soil)", "Cranberry"],
-        "fertilizer_recommendation": "Apply balanced N-P-K (10-26-26) and organic compost to enrich organic matter.",
-        "irrigation_advice": "Drip irrigation or sprinkler irrigation every 3 to 4 days during dry seasons.",
-        "soil_improvement_tips": [
-            "Incorporate bio-fertilizers and green manure to maintain microbial activity and soil structure.",
-            "Practice crop rotation with legumes to naturally enrich soil nitrogen."
-        ]
-    }
 
 
 
