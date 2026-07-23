@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import api from "../../../lib/axios";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 import Alert from "../../../components/ui/Alert";
@@ -18,6 +19,11 @@ const registerSchema = z.object({
 const RegisterForm = () => {
   const { register: registerUser, loading, error } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+
+  // Pre-warm backend server in background to eliminate cloud cold start delays
+  useEffect(() => {
+    api.get("/health").catch(() => {});
+  }, []);
 
   const {
     register,

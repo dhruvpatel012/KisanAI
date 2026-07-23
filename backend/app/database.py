@@ -188,7 +188,10 @@ class DatabaseProxy:
         if self._client is None:
             self._client = motor.motor_asyncio.AsyncIOMotorClient(
                 settings.mongodb_url,
-                serverSelectionTimeoutMS=10000
+                serverSelectionTimeoutMS=3000,
+                connectTimeoutMS=3000,
+                maxPoolSize=20,
+                minPoolSize=5
             )
             self._db = self._client[settings.database_name]
 

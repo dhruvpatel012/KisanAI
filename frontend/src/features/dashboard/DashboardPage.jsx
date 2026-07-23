@@ -115,19 +115,19 @@ const DashboardPage = () => {
         if (cityName) {
           setLocationName(cityName);
         } else {
-          try {
-            const geoResp = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=en`,
-              { headers: { "User-Agent": "KisanAI-App/1.0" } }
-            );
-            const geoData = await geoResp.json();
-            const addr = geoData.address || {};
-            const city = addr.city || addr.town || addr.village || addr.suburb || addr.state || "My Location";
-            setLocationName(city);
-          } catch (geoErr) {
-            console.error("Failed to reverse geocode:", geoErr);
-            setLocationName("My Location");
-          }
+          setLocationName("My Location");
+          // Fetch reverse geocode asynchronously in background without blocking weather rendering
+          fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=en`,
+            { headers: { "User-Agent": "KisanAI-App/1.0" } }
+          )
+            .then((res) => res.json())
+            .then((geoData) => {
+              const addr = geoData.address || {};
+              const city = addr.city || addr.town || addr.village || addr.suburb || addr.state || "My Location";
+              setLocationName(city);
+            })
+            .catch(() => setLocationName("My Location"));
         }
       } catch (err) {
         console.warn("Direct weather fetch failed, trying backend fallback:", err);
@@ -154,7 +154,7 @@ const DashboardPage = () => {
           console.warn("Geolocation access denied or failed, using default (Delhi)");
           fetchWeather(28.6139, 77.2090, "Delhi");
         },
-        { timeout: 3000, enableHighAccuracy: false, maximumAge: 600000 }
+        { timeout: 1200, enableHighAccuracy: false, maximumAge: 600000 }
       );
     } else {
       fetchWeather(28.6139, 77.2090, "Delhi");
