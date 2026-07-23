@@ -26,6 +26,15 @@ async def lifespan(app: FastAPI):
     os.makedirs(settings.upload_dir, exist_ok=True)
     await ping_database()
     print("MongoDB connected successfully!")
+    
+    # Pre-warm the users collection connection pool so first login/signup is instant
+    if not database._use_fallback:
+        try:
+            await database["users"].find_one({"_warmup": True})
+            print("Database connection pool warmed up.")
+        except Exception:
+            pass
+    
     print(f"Environment: {settings.environment}")
     
     # Start background task to monitor connection and reconnect if fallback is active
@@ -77,7 +86,6 @@ app.add_middleware(
 
 @app.get("/health")
 async def health_check():
-    await ping_database()
     return {
         "status": "ok",
         "environment": settings.environment,

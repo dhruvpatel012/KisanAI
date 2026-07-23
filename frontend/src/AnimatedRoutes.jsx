@@ -3,10 +3,11 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
-const LoginPage = lazy(() => import("./features/auth/pages/LoginPage"));
-const RegisterPage = lazy(() => import("./features/auth/pages/RegisterPage"));
-const DashboardPage = lazy(() => import("./features/dashboard/DashboardPage"));
-const ScanPage = lazy(() => import("./features/scan/ScanPage"));
+import LoginPage from "./features/auth/pages/LoginPage";
+import RegisterPage from "./features/auth/pages/RegisterPage";
+import DashboardPage from "./features/dashboard/DashboardPage";
+import ScanPage from "./features/scan/ScanPage";
+
 const HistoryPage = lazy(() => import("./features/history/HistoryPage"));
 const ProfilePage = lazy(() => import("./features/profile/ProfilePage"));
 const ResultPage = lazy(() => import("./features/result/ResultPage"));
